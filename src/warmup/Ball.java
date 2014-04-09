@@ -1,9 +1,12 @@
 package warmup;
 import physics.*;
 
+
 public class Ball {
     public Vect velocity;
     public Circle circle;
+    private double posX = 10; //initial pos. Added for convenience
+    private double posY = 10; 
     
     public Ball(double speed){
         this.velocity = new Vect(new Angle(1), speed);
@@ -20,5 +23,12 @@ public class Ball {
         if (newY-circle.getRadius() < 0) newY = 0+circle.getRadius();
         
         this.circle = new Circle(newX, newY, circle.getRadius());
+        
+        this.posX = newX;
+        this.posY = newY;
     }
+    
+    public double getPosX(){return posX;}
+    public double getPosY(){return posY;}
+    
 }
