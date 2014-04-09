@@ -9,17 +9,20 @@ public class Ball {
     private double posY = 10; 
     
     public Ball(double speed){
-        this.velocity = new Vect(new Angle(1), speed);
+        this.velocity = new Vect(new Angle(1), speed); //1=L
         this.circle = new Circle(10,10,1);
     }
     
-    public void move(Board board){
+    //if conditions represent the case when the ball bounces off of the wall
+    //better to to have modularity so not have board call on ball and ball 
+    //also calling on board
+    public void move(int w, int h){
         double newX = circle.getCenter().x() + velocity.x();
-        if (newX+circle.getRadius() > board.width) newX = board.width-circle.getRadius();
+        if (newX+circle.getRadius() > w) newX = w-circle.getRadius();
         if (newX-circle.getRadius() < 0) newX = 0+circle.getRadius();
         
         double newY = circle.getCenter().y() + velocity.y();
-        if (newY+circle.getRadius() > board.height) newY = board.height-circle.getRadius();
+        if (newY+circle.getRadius() > h) newY = h-circle.getRadius();
         if (newY-circle.getRadius() < 0) newY = 0+circle.getRadius();
         
         this.circle = new Circle(newX, newY, circle.getRadius());
