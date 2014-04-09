@@ -29,22 +29,7 @@ public class Board {
 	
 	private int prevBallX;
 	private int prevBallY;
-
-	public Board(){
-		initBoard();
-		prevBallX = 10; //init pos of the ball in Ball class
-		prevBallY = 10;
-	}
-
-	public LineSegment collideWith(Ball ball){
-		for (LineSegment wall: walls){
-			//System.out.println("time until collision: " + Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity));
-			if (!(Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity)>0.0)){
-				return wall;
-			}
-		}
-		return null;
-	}
+	
 	
 	/**
 	 * Exactly what it says bro.
@@ -60,6 +45,32 @@ public class Board {
 				}
 			}
 		}
+	}
+	
+	//sets up the boundaries through initBoard
+	//sets the location of the ball to be at the centre
+	public Board(){
+		initBoard();
+		prevBallX = 10; //init pos of the ball in Ball class
+		prevBallY = 10;
+	}
+	
+	public int getWidth(){
+		return this.width;
+	}
+	
+	public int getHeight(){
+		return this.height;
+	}
+
+	public LineSegment collideWith(Ball ball){
+		for (LineSegment wall: walls){
+			//System.out.println("time until collision: " + Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity));
+			if (!(Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity)>0.0)){
+				return wall;
+			}
+		}
+		return null;
 	}
 	
 	/**

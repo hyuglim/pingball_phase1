@@ -8,6 +8,10 @@ public class Main {
     
     /**
      * TODO: describe your main function's command line arguments here
+     * 
+     * If no collisions (collideWith returns null), delay 100 ms between frames
+     * moves the ball along then print the updated version of the board
+     * else, collision, instantly change the position of the ball
      */
     public static void main(String[] args) {
         Ball ball = new Ball(1.0);
@@ -16,10 +20,10 @@ public class Main {
         double maxY = -100;
         while(true){
             while (board.collideWith(ball)==null){
-                try{Thread.sleep(100);}
+                try{Thread.sleep(100);} //delay in between frames
                 catch(Exception e){e.printStackTrace();}
                 
-                ball.move(board);
+                ball.move(board.getWidth(),board.getHeight()); //gets the ball moving
                 
                 System.out.println(board.getBoardPic(ball));
                 System.out.println("position: "+ball.circle.getCenter().x()+" , "+ball.circle.getCenter().y());
@@ -33,8 +37,9 @@ public class Main {
             }
             //System.out.println(">>>>>>>>>>>>>>COLLISION!");
             
+            //instantly changes the position of the ball, no delay
             ball.velocity = Geometry.reflectWall(board.collideWith(ball), ball.velocity);
-            ball.move(board);
+            ball.move(board.getWidth(),board.getHeight());
             
             //System.out.println("position: "+ball.circle.getCenter().x()+" , "+ball.circle.getCenter().y());
             //System.out.println("velocity: "+ball.velocity);
