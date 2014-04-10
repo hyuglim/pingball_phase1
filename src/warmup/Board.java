@@ -26,6 +26,7 @@ public class Board {
 	public final int picsWidth = 20 + 1; 
 	public final int picsHeight = 20 + 1;
 	private final String [][]pics = new String[picsHeight][picsWidth];
+	//!important this should later be changed to a CONCURRENTHASHMAP with TUPLEs as keys
 	
 	private int prevBallX;
 	private int prevBallY;
@@ -65,7 +66,6 @@ public class Board {
 
 	public LineSegment collideWith(Ball ball){
 		for (LineSegment wall: walls){
-			//System.out.println("time until collision: " + Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity));
 			if (!(Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity)>0.0)){
 				return wall;
 			}

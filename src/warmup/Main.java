@@ -20,7 +20,7 @@ public class Main {
         double maxY = -100;
         while(true){
             while (board.collideWith(ball)==null){
-                try{Thread.sleep(100);} //delay in between frames
+                try{Thread.sleep(80);} //delay in between frames
                 catch(Exception e){e.printStackTrace();}
                 
                 ball.move(board.getWidth(),board.getHeight()); //gets the ball moving
@@ -33,16 +33,11 @@ public class Main {
                 if(ball.getPosY() > maxY) maxY = ball.getPosY();
                 System.out.println("max pos: " + maxX + "," + maxY);
                 
-                
             }
-            //System.out.println(">>>>>>>>>>>>>>COLLISION!");
             
-            //instantly changes the position of the ball, no delay
+            // this means a collision happened!! change the position AND the velocity of the ball
             ball.velocity = Geometry.reflectWall(board.collideWith(ball), ball.velocity);
             ball.move(board.getWidth(),board.getHeight());
-            
-            //System.out.println("position: "+ball.circle.getCenter().x()+" , "+ball.circle.getCenter().y());
-            //System.out.println("velocity: "+ball.velocity);
         }
     }
     
