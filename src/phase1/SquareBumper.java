@@ -1,5 +1,5 @@
 package phase1;
 
-public class SquareBumper {
+public class SquareBumper implements Gadgets {
 
 }

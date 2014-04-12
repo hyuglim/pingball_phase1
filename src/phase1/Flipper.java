@@ -1,5 +1,5 @@
 package phase1;
 
-public class Flipper {
+public class Flipper implements Gadgets {
 
 }
