@@ -17,7 +17,7 @@ public class Board {
 	private Float friction1;
 	private Float friction2;
 	private List <Gadgets> listofGadgets;
-	private Ball ball;
+	private List<Ball> balls;
 	
 	public void matching (String line) {
 		
@@ -33,6 +33,27 @@ public class Board {
 			this.friction1=Float.parseFloat(boardMatch.group(5).substring(10));
 			//sets the board
 		}
+		
+		//board name=NAME gravity=FLOAT
+		//fire trigger=NAME action=NAME
+		String twoFields="(+.?) (.+?) (.+?)";
+		Pattern twoPat=Pattern.compile(twoFields);
+		Matcher twoMatch=twoPat.matcher(line);
+		if (twoMatch.find()) {
+			String twoId=twoMatch.group(1);
+			if (twoId.equals("board")) {
+				this.name=twoMatch.group(2).substring(5);
+				this.gravity=Float.parseFloat(twoMatch.group(3).substring(9));
+				this.friction1=(float) 0.025;
+				this.friction2=(float) 0.025;
+			}
+			if (twoId.equals("fire")) {
+				String fireTrigger=twoMatch.group(2).substring(8);
+				String actionTrigger=twoMatch.group(3).substring(7);
+			}
+		}
+		
+		
 		
 		//ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
 		String ballname="ball (.+?) (.+?) (.+?) (.+?) (.+?)";
@@ -100,15 +121,6 @@ public class Board {
 			Integer hAbsorb=Integer.parseInt(absorbMatch.group(6).substring(7));
 		}
 		
-		//fire trigger=NAME action=NAME
-		String firet="fire (.+?) (.+?)";
-		Pattern firepat=Pattern.compile(firet);
-		Matcher fireMatch=firepat.matcher(line);
-		if (fireMatch.find()) {
-			String fireTrigger=fireMatch.group(2).substring(8);
-			String actionTrigger=fireMatch.group(3).substring(7);
-		}
-		
 	}
 	
 	public Board (File file) throws IOException {
@@ -116,7 +128,7 @@ public class Board {
 		BufferedReader bfread=new BufferedReader(new FileReader (file));
 		String line;
 		while ((line=bfread.readLine())!=null) {
-			if (line.startsWith("#")) { //ignores comments
+			if (line.startsWith("#")||line.equals("")) { //ignores comments, empty lines
 				continue;
 			}
 			else {
