@@ -28,9 +28,8 @@ public class Board {
 	}
 	
 	public static void main(String[] args) {
-		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
-		Board b=new Board("try", (float) 0, (float) 0, (float) 0);
-		b.matching(s);
+		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
+		Board b=new Board("try", (float) 0,(float) 0,(float) 0);
 	}
 	
 	public void test() {
@@ -65,10 +64,9 @@ public class Board {
 			String word2=sArray[2];
 			String word3=sArray[3];
 			String bumpName=this.equate(word1);
-			Integer xcord=Integer.parseInt(this.equate(word2));
+			Integer xCord=Integer.parseInt(this.equate(word2));
 			Integer yCord=Integer.parseInt(this.equate(word3));
 			if (id.equals("squareBumper")) {
-				
 			}
 			if (id.equals("circleBumper")) {
 				
@@ -143,11 +141,15 @@ public class Board {
 		BufferedReader bfread=new BufferedReader(new FileReader (file));
 		String line;
 		while ((line=bfread.readLine())!=null) {
-			if (line.startsWith("#")||line.equals("")) { //ignores comments, empty lines
+			//may need to remove a number of spaces before all the words
+			while (line.substring(0, 1).equals(" ")) {
+				line=line.substring(1);
+			}
+			if (line.startsWith("#")) { //ignores comments
 				continue;
 			}
 			else {
-				this.matching(line);
+				this.matching(line); //empty lines with just spaces will be ignored
 			}
 		}
 		bfread.close();
