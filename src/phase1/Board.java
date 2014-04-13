@@ -77,6 +77,28 @@ public class Board {
 		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
 		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
+<<<<<<< HEAD
+		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270 
+		String orientObject="(.+?) (.+?) (.+?) (.+?) (.+?)";
+		Pattern orientPat=Pattern.compile(orientObject);
+		Matcher orientMatch=orientPat.matcher(line);
+		if (orientMatch.find()) {
+			String orientId=orientMatch.group(1);
+			String orientName=orientMatch.group(2).substring(5);
+			Integer xCord=Integer.parseInt(orientMatch.group(3).substring(2));
+			Integer yCord=Integer.parseInt(orientMatch.group(4).substring(2));
+			Integer orientation=Integer.parseInt(orientMatch.group(5).substring(12));
+			Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
+			if (orientId.equals("triangleBumper")) {
+				//listofGadgets.put(cord, new TriangularBumper(cord,new Angle(orientation),orientName));
+				//stuff
+			}
+			if (orientId.equals("leftFlipper")) {
+				//listofGadgets.put(cord, new );
+			}
+			if (orientId.equals("rightFlipper")) {
+				//listofGadgets.put(cord, );
+=======
 		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		if (sArray.length==5) {
 			String word1=this.equate(sArray[1]);
@@ -107,6 +129,7 @@ public class Board {
 				Integer xRfipper=Integer.parseInt(word2);
 				Integer yRflipper=Integer.parseInt(word3);
 				Integer oRflipper=Integer.parseInt(word4);
+>>>>>>> 98cd876e1975ca2575ec267e34f4201014faeab1
 			}
 
 		}
