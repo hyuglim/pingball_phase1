@@ -107,14 +107,14 @@ public class Board {
 			Integer orientation=Integer.parseInt(orientMatch.group(5).substring(12));
 			Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
 			if (orientId.equals("triangleBumper")) {
-				listofGadgets.put(cord, new TriangularBumper(cord,new Angle(orientation),orientName));
+				//listofGadgets.put(cord, new TriangularBumper(cord,new Angle(orientation),orientName));
 				//stuff
 			}
 			if (orientId.equals("leftFlipper")) {
-				listofGadgets.put(cord, new )
+				//listofGadgets.put(cord, new );
 			}
 			if (orientId.equals("rightFlipper")) {
-				listofGadgets.put(cord, )
+				//listofGadgets.put(cord, );
 			}
 		}
 		
