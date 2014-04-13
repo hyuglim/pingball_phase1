@@ -22,114 +22,120 @@ public class Board {
 	private Map <Geometry.DoublePair, Gadget> listofGadgets;
 	private List<Ball> balls;
 	
+	public String equate(String equation) {
+		String [] sArray=equation.split("=");
+		return sArray[1];
+	}
+	
+	public static void main(String[] args) {
+		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
+		Board b=new Board("try", (float) 0, (float) 0, (float) 0);
+		b.matching(s);
+	}
+	
+	public void test() {
+		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
+		this.matching(s);
+	}
+	
 	public void matching (String line) {
 		
-		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
-		String boardname="(board) (.+?) (.+?) (.+?) (.+?)"; //friction might not be mentioned
-		Pattern boardpat=Pattern.compile(boardname);
-		Matcher boardMatch=boardpat.matcher(line);
-		
-		if (boardMatch.find()) {
-			this.name=boardMatch.group(2).substring(5); //removes name=
-			this.gravity=Float.parseFloat(boardMatch.group(3).substring(9));
-			this.friction1=Float.parseFloat(boardMatch.group(4).substring(10));
-			this.friction1=Float.parseFloat(boardMatch.group(5).substring(10));
-			//sets the board
-		}
+		String[] sArray=line.split(" ");
 		
 		//board name=NAME gravity=FLOAT
 		//fire trigger=NAME action=NAME
-		String twoFields="(+.?) (.+?) (.+?)";
-		Pattern twoPat=Pattern.compile(twoFields);
-		Matcher twoMatch=twoPat.matcher(line);
-		if (twoMatch.find()) {
-			String twoId=twoMatch.group(1);
-			if (twoId.equals("board")) {
-				this.name=twoMatch.group(2).substring(5);
-				this.gravity=Float.parseFloat(twoMatch.group(3).substring(9));
-				this.friction1=(float) 0.025;
-				this.friction2=(float) 0.025;
+		String id=sArray[0];
+		if (sArray.length==3) {
+			String word1=sArray[1];
+			String word2=sArray[2];
+			if (id.equals("fire")) {
+				String trigName=this.equate(word1);
+				String actName=this.equate(word2);
 			}
-			if (twoId.equals("fire")) {
-				String fireTrigger=twoMatch.group(2).substring(8);
-				String actionTrigger=twoMatch.group(3).substring(7);
+			if (id.equals("board")) {
+				String boardName=this.equate(word1);
+				Float boardGravity=Float.parseFloat(this.equate(word2));
 			}
-		}
-		
-		//ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
-		String ballname="ball (.+?) (.+?) (.+?) (.+?) (.+?)";
-		Pattern ballpat=Pattern.compile(ballname);
-		Matcher ballMatch=ballpat.matcher(line);
-		
-		if (ballMatch.find()) {
-			String nameBall=ballMatch.group(2).substring(5);
-			Float xBall=Float.parseFloat(ballMatch.group(3).substring(2));
-			Float yBall=Float.parseFloat(ballMatch.group(4).substring(2));
-			Float xVel=Float.parseFloat(ballMatch.group(5).substring(10));
-			Float yVel=Float.parseFloat(ballMatch.group(6).substring(10));
-			Ball ball=new Ball(nameBall,xBall,yBall,xVel,yVel);
-			//do ball stuff
 		}
 		
 		//squareBumper name=NAME x=INTEGER y=INTEGER
 		//circleBumper name=NAME x=INTEGER y=INTEGER
-		String bumper="(.+?) (.+?) (.+?) (.+?)";
-		Pattern bumpPat=Pattern.compile(bumper);
-		Matcher bumpMatch=bumpPat.matcher(line);
-		if (bumpMatch.find()) {
-			String bumperId=bumpMatch.group(1);
-			String bumpName=bumpMatch.group(2).substring(5);
-			Integer xCord=Integer.parseInt(bumpMatch.group(3).substring(2));
-			Integer yCord=Integer.parseInt(bumpMatch.group(4).substring(2));
-			if (bumperId.equals("squareBumper")) {
-				Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
-				listofGadgets.put(cord, new SquareBumper(cord, bumpName));
-				//do square stuff
+		if (sArray.length==4) {
+			String word1=sArray[1];
+			String word2=sArray[2];
+			String word3=sArray[3];
+			String bumpName=this.equate(word1);
+			Integer xcord=Integer.parseInt(this.equate(word2));
+			Integer yCord=Integer.parseInt(this.equate(word3));
+			if (id.equals("squareBumper")) {
+				
 			}
-			if (bumperId.equals("circleBumper")) {
-				Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
-				listofGadgets.put(cord, new CircleBumper(cord,bumpName));
-				//do circle stuff
+			if (id.equals("circleBumper")) {
+				
 			}
+			
 		}
 		
+		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
 		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270 
-		String orientObject="(.+?) (.+?) (.+?) (.+?) (.+?)";
-		Pattern orientPat=Pattern.compile(orientObject);
-		Matcher orientMatch=orientPat.matcher(line);
-		if (orientMatch.find()) {
-			String orientId=orientMatch.group(1);
-			String orientName=orientMatch.group(2).substring(5);
-			Integer xCord=Integer.parseInt(orientMatch.group(3).substring(2));
-			Integer yCord=Integer.parseInt(orientMatch.group(4).substring(2));
-			Integer orientation=Integer.parseInt(orientMatch.group(5).substring(12));
-			Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
-			if (orientId.equals("triangleBumper")) {
-				listofGadgets.put(cord, new TriangularBumper(cord,new Angle(orientation),orientName));
-				//stuff
+		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
+		if (sArray.length==5) {
+			String word1=this.equate(sArray[1]);
+			String word2=this.equate(sArray[2]);
+			String word3=this.equate(sArray[3]);
+			String word4=this.equate(sArray[4]);
+			if (id.equals("board")) {
+				String boardName=word1;
+				Float boardGravity=Float.parseFloat(word2);
+				Float friction1=Float.parseFloat(word3);
+				Float friction2=Float.parseFloat(word4);
 			}
-			if (orientId.equals("leftFlipper")) {
-				listofGadgets.put(cord, new )
+			if (id.equals("triangleBumper")) {
+				String triangName=word1;
+				Integer xTriang=Integer.parseInt(word2);
+				Integer yTriang=Integer.parseInt(word3);
+				Integer oTriang=Integer.parseInt(word4);
 			}
-			if (orientId.equals("rightFlipper")) {
-				listofGadgets.put(cord, )
+			if (id.equals("leftFlipper")) {
+				String lflipperName=word1;
+				Integer xLfipper=Integer.parseInt(word2);
+				Integer yLflipper=Integer.parseInt(word3);
+				Integer oLflipper=Integer.parseInt(word4);
+				
 			}
+			if (id.equals("rightFlipper")) {
+				String rflipperName=word1;
+				Integer xRfipper=Integer.parseInt(word2);
+				Integer yRflipper=Integer.parseInt(word3);
+				Integer oRflipper=Integer.parseInt(word4);
+			}
+
 		}
-		
 		//absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
-		String absorb="absorber (.+?) (.+?) (.+?) (.+?) (.+?)";
-		Pattern absorbpat=Pattern.compile(absorb);
-		Matcher absorbMatch=absorbpat.matcher(line);
-		if (absorbMatch.find()) {
-			String absorberName=absorbMatch.group(2).substring(5);
-			Integer xAbsorb=Integer.parseInt(absorbMatch.group(3).substring(2));
-			Integer yAbsorb=Integer.parseInt(absorbMatch.group(4).substring(2));
-			Integer wAbsorb=Integer.parseInt(absorbMatch.group(5).substring(6));
-			Integer hAbsorb=Integer.parseInt(absorbMatch.group(6).substring(7));
+		//ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
+		if (sArray.length==6) {
+			String word1=this.equate(sArray[1]);
+			String word2=this.equate(sArray[2]);
+			String word3=this.equate(sArray[3]);
+			String word4=this.equate(sArray[4]);
+			String word5=this.equate(sArray[5]);
+			if (id.equals("absorber")) {
+				String absorbName=word1;
+				Integer xAbsorb=Integer.parseInt(word2);
+				Integer yAbsorb=Integer.parseInt(word3);
+				Integer wAbsorb=Integer.parseInt(word4);
+				Integer hAbsorb=Integer.parseInt(word5);
+			}
+			if (id.equals("ball")) {
+				String ballName=word1;
+				Float xBall=Float.parseFloat(word2);
+				Float yBall=Float.parseFloat(word3);
+				Float xVel=Float.parseFloat(word4);
+				Float yVel=Float.parseFloat(word5);
+			}
+			
 		}
-		
 	}
 	
 	public Board (File file) throws IOException {
@@ -152,6 +158,7 @@ public class Board {
 		this.gravity=gravity;
 		this.friction1=fric1;
 		this.friction2=fric2;
-		
 	}
+	
+	
 }
