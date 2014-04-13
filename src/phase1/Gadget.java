@@ -2,6 +2,7 @@ package phase1;
 import physics.*;
 
 public interface Gadget {    
+    public void addTrigger(Gadget gadget);
     public void collide(Ball ball);
     public void action();
     //everyone's action method will be something like
@@ -10,5 +11,5 @@ public interface Gadget {
     //2. call the next gadget.action() if it's not null
     //recursive call!
     
-    //addTrigger(Gadget gadget);
+    
 }
