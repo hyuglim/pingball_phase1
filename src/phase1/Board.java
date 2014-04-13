@@ -16,7 +16,7 @@ public class Board {
 	private Float gravity;
 	private Float friction1;
 	private Float friction2;
-	private List <Gadgets> listofGadgets;
+	private List <Gadget> listofGadgets;
 	private List<Ball> balls;
 	
 	public void matching (String line) {
