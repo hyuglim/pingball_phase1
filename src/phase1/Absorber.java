@@ -48,4 +48,5 @@ public class Absorber implements Gadget {
             heldBalls.clear();
         }
     }
+
 }
