@@ -19,4 +19,14 @@ public class SquareBumper implements Gadget {
         this.right = new LineSegment(coord.d1 + 1, coord.d2, coord.d1 + 1, coord.d2 + 1);
         this.bottom = new LineSegment(coord.d1 + 1, coord.d2 + 1, coord.d1, coord.d2 + 1);
     }
+
+	public void trigger() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void action() {
+		// TODO Auto-generated method stub
+		
+	}
 }

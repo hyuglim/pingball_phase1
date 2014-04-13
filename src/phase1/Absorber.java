@@ -20,4 +20,14 @@ public class Absorber implements Gadget {
         this.bottom = new LineSegment(coord.d1 + width, coord.d2 + height, coord.d1, coord.d2 + height);
     }
 
+	public void trigger() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void action() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
