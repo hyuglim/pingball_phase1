@@ -7,8 +7,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import physics.Geometry;
 
 public class Board {
 	
@@ -16,7 +19,7 @@ public class Board {
 	private Float gravity;
 	private Float friction1;
 	private Float friction2;
-	private List <Gadget> listofGadgets;
+	private Map <Geometry.DoublePair, Gadget> listofGadgets;
 	private List<Ball> balls;
 	
 	public void matching (String line) {
@@ -53,8 +56,6 @@ public class Board {
 			}
 		}
 		
-		
-		
 		//ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
 		String ballname="ball (.+?) (.+?) (.+?) (.+?) (.+?)";
 		Pattern ballpat=Pattern.compile(ballname);
@@ -66,6 +67,7 @@ public class Board {
 			Float yBall=Float.parseFloat(ballMatch.group(4).substring(2));
 			Float xVel=Float.parseFloat(ballMatch.group(5).substring(10));
 			Float yVel=Float.parseFloat(ballMatch.group(6).substring(10));
+			Ball ball=new Ball(nameBall,xBall,yBall,xVel,yVel);
 			//do ball stuff
 		}
 		
@@ -80,9 +82,13 @@ public class Board {
 			Integer xCord=Integer.parseInt(bumpMatch.group(3).substring(2));
 			Integer yCord=Integer.parseInt(bumpMatch.group(4).substring(2));
 			if (bumperId.equals("squareBumper")) {
+				Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
+				listofGadgets.put(cord, new SquareBumper(cord, bumpName));
 				//do square stuff
 			}
 			if (bumperId.equals("circleBumper")) {
+				Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
+				listofGadgets.put(cord, new CircleBumper(cord,bumpName));
 				//do circle stuff
 			}
 		}
@@ -95,17 +101,20 @@ public class Board {
 		Matcher orientMatch=orientPat.matcher(line);
 		if (orientMatch.find()) {
 			String orientId=orientMatch.group(1);
+			String orientName=orientMatch.group(2).substring(5);
 			Integer xCord=Integer.parseInt(orientMatch.group(3).substring(2));
 			Integer yCord=Integer.parseInt(orientMatch.group(4).substring(2));
 			Integer orientation=Integer.parseInt(orientMatch.group(5).substring(12));
+			Geometry.DoublePair cord=new Geometry.DoublePair((double) xCord,(double) yCord);
 			if (orientId.equals("triangleBumper")) {
+				listofGadgets.put(cord, new TriangularBumper(cord,new Angle(orientation),orientName));
 				//stuff
 			}
 			if (orientId.equals("leftFlipper")) {
-				
+				listofGadgets.put(cord, new )
 			}
 			if (orientId.equals("rightFlipper")) {
-				
+				listofGadgets.put(cord, )
 			}
 		}
 		
