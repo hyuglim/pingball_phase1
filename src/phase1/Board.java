@@ -29,6 +29,11 @@ public class Board {
 		return sArray[1];
 	}
 	
+	public static void main(String[] args) {
+		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
+	//	Board b= new Board("try", (float) 0,(float) 0,(float) 0);
+	}
+	
 	public void test() {
 		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
 		this.matching(s);
@@ -41,6 +46,7 @@ public class Board {
 		//board name=NAME gravity=FLOAT
 		//fire trigger=NAME action=NAME
 		String id=sArray[0];
+		
 		if (sArray.length==3) {
 			String word1=sArray[1];
 			String word2=sArray[2];
@@ -79,7 +85,6 @@ public class Board {
 		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
 		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-				
 		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		if (sArray.length==5) {
 			String word1=this.equate(sArray[1]);
@@ -101,24 +106,24 @@ public class Board {
 				Integer xTriang=Integer.parseInt(word2);
 				Integer yTriang=Integer.parseInt(word3);
 				Integer oTriang=Integer.parseInt(word4);
-				Geometry.DoublePair cord=new Geometry.DoublePair(xTriang, yTriang);
-				listofGadgets.put(cord, new TriangularBumper(cord, new Angle((double) oTriang), triangName));
+				Geometry.DoublePair tCord=new Geometry.DoublePair(xTriang, yTriang);
+				listofGadgets.put(tCord, new TriangularBumper(tCord, new Angle((double) oTriang), triangName));
 			}
 			if (id.equals("leftFlipper")) {
 				String lflipperName=word1;
 				Integer xLfipper=Integer.parseInt(word2);
 				Integer yLflipper=Integer.parseInt(word3);
 				Integer oLflipper=Integer.parseInt(word4);
-				Geometry.DoublePair cord=new Geometry.DoublePair(xLfipper, yLflipper);
-				listofGadgets.put(cord, new LeftFlipper(cord,lflipperName, new Angle((double) oLflipper)));
+				Geometry.DoublePair lfCord=new Geometry.DoublePair(xLfipper, yLflipper);
+				listofGadgets.put(lfCord, new LeftFlipper(lfCord,lflipperName, new Angle((double) oLflipper)));
 			}
 			if (id.equals("rightFlipper")) {
 				String rflipperName=word1;
 				Integer xRfipper=Integer.parseInt(word2);
 				Integer yRflipper=Integer.parseInt(word3);
 				Integer oRflipper=Integer.parseInt(word4);
-				Geometry.DoublePair cord=new Geometry.DoublePair(xRfipper, yRflipper);
-				listofGadgets.put(cord, new RightFlipper(cord,rflipperName, new Angle((double) oRflipper)));
+				Geometry.DoublePair rfCord=new Geometry.DoublePair(xRfipper, yRflipper);
+				listofGadgets.put(rfCord, new RightFlipper(rfCord,rflipperName, new Angle((double) oRflipper)));
 			}
 
 		}
@@ -136,8 +141,8 @@ public class Board {
 				Integer yAbsorb=Integer.parseInt(word3);
 				Integer wAbsorb=Integer.parseInt(word4);
 				Integer hAbsorb=Integer.parseInt(word5);
-				Geometry.DoublePair cord=new Geometry.DoublePair(xAbsorb,yAbsorb);
-				listofGadgets.put(cord, new Absorber(cord,absorbName,wAbsorb,hAbsorb));
+				Geometry.DoublePair aCord=new Geometry.DoublePair(xAbsorb,yAbsorb);
+				listofGadgets.put(aCord, new Absorber(aCord,absorbName,wAbsorb,hAbsorb));
 			}
 			if (id.equals("ball")) {
 				String ballName=word1;
@@ -145,6 +150,7 @@ public class Board {
 				Float yBall=Float.parseFloat(word3);
 				Float xVel=Float.parseFloat(word4);
 				Float yVel=Float.parseFloat(word5);
+				//do ball thingies
 			}
 			
 		}
@@ -172,7 +178,4 @@ public class Board {
 		}
 		bfread.close();
 	}
-	
-	
-	
 }

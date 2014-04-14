@@ -18,6 +18,8 @@ public class Ball {
 	}
 	
 	public void move(){
-	    //one step
+        double newX = circle.getCenter().x() + 0.05*velocity.x();
+        double newY = circle.getCenter().y() + 0.05*velocity.y();
+        this.circle = new Circle(newX, newY, circle.getRadius());
 	}
 }
