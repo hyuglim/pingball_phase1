@@ -26,23 +26,19 @@ public class Board {
 		String [] sArray=equation.split("=");
 		return sArray[1];
 	}
-<<<<<<< HEAD
 
 
 
-=======
-	
-	public static void main(String[] args) {
-		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
-	//	Board b= new Board("try", (float) 0,(float) 0,(float) 0);
-	}
-	
+
+
+
+
 	public void test() {
 		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
 		this.matching(s);
 	}
-	
->>>>>>> e77085673158c6283d533296bc24df83329337c1
+
+
 	public void matching (String line) {
 
 		String[] sArray=line.split(" ");
@@ -83,10 +79,6 @@ public class Board {
 		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
 		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-<<<<<<< HEAD
-
-=======
->>>>>>> e77085673158c6283d533296bc24df83329337c1
 		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270 
 		String orientObject="(.+?) (.+?) (.+?) (.+?) (.+?)";
 		Pattern orientPat=Pattern.compile(orientObject);
@@ -107,41 +99,6 @@ public class Board {
 			}
 			if (orientId.equals("rightFlipper")) {
 				//listofGadgets.put(cord, );
-<<<<<<< HEAD
-=======
-		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-		if (sArray.length==5) {
-			String word1=this.equate(sArray[1]);
-			String word2=this.equate(sArray[2]);
-			String word3=this.equate(sArray[3]);
-			String word4=this.equate(sArray[4]);
-			if (id.equals("board")) {
-				String boardName=word1;
-				Float boardGravity=Float.parseFloat(word2);
-				Float friction1=Float.parseFloat(word3);
-				Float friction2=Float.parseFloat(word4);
-			}
-			if (id.equals("triangleBumper")) {
-				String triangName=word1;
-				Integer xTriang=Integer.parseInt(word2);
-				Integer yTriang=Integer.parseInt(word3);
-				Integer oTriang=Integer.parseInt(word4);
-			}
-			if (id.equals("leftFlipper")) {
-				String lflipperName=word1;
-				Integer xLfipper=Integer.parseInt(word2);
-				Integer yLflipper=Integer.parseInt(word3);
-				Integer oLflipper=Integer.parseInt(word4);
-				
-			}
-			if (id.equals("rightFlipper")) {
-				String rflipperName=word1;
-				Integer xRfipper=Integer.parseInt(word2);
-				Integer yRflipper=Integer.parseInt(word3);
-				Integer oRflipper=Integer.parseInt(word4);
-			}
->>>>>>> e77085673158c6283d533296bc24df83329337c1
-
 				//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 				if (sArray.length==5) {
 					String word1=this.equate(sArray[1]);
@@ -172,43 +129,71 @@ public class Board {
 						Integer xRfipper=Integer.parseInt(word2);
 						Integer yRflipper=Integer.parseInt(word3);
 						Integer oRflipper=Integer.parseInt(word4);
-
 					}
 
-				}
-				//absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
-				//ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
-				if (sArray.length==6) {
-					String word1=this.equate(sArray[1]);
-					String word2=this.equate(sArray[2]);
-					String word3=this.equate(sArray[3]);
-					String word4=this.equate(sArray[4]);
-					String word5=this.equate(sArray[5]);
-					if (id.equals("absorber")) {
-						String absorbName=word1;
-						Integer xAbsorb=Integer.parseInt(word2);
-						Integer yAbsorb=Integer.parseInt(word3);
-						Integer wAbsorb=Integer.parseInt(word4);
-						Integer hAbsorb=Integer.parseInt(word5);
-					}
-					if (id.equals("ball")) {
-						String ballName=word1;
-						Float xBall=Float.parseFloat(word2);
-						Float yBall=Float.parseFloat(word3);
-						Float xVel=Float.parseFloat(word4);
-						Float yVel=Float.parseFloat(word5);
-					}
+					//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
+					if (sArray.length==5) {
+						String word1=this.equate(sArray[1]);
+						String word2=this.equate(sArray[2]);
+						String word3=this.equate(sArray[3]);
+						String word4=this.equate(sArray[4]);
+						if (id.equals("board")) {
+							String boardName=word1;
+							Float boardGravity=Float.parseFloat(word2);
+							Float friction1=Float.parseFloat(word3);
+							Float friction2=Float.parseFloat(word4);
+						}
+						if (id.equals("triangleBumper")) {
+							String triangName=word1;
+							Integer xTriang=Integer.parseInt(word2);
+							Integer yTriang=Integer.parseInt(word3);
+							Integer oTriang=Integer.parseInt(word4);
+						}
+						if (id.equals("leftFlipper")) {
+							String lflipperName=word1;
+							Integer xLfipper=Integer.parseInt(word2);
+							Integer yLflipper=Integer.parseInt(word3);
+							Integer oLflipper=Integer.parseInt(word4);
 
+						}
+						if (id.equals("rightFlipper")) {
+							String rflipperName=word1;
+							Integer xRfipper=Integer.parseInt(word2);
+							Integer yRflipper=Integer.parseInt(word3);
+							Integer oRflipper=Integer.parseInt(word4);
+
+						}
+
+					}
+					//absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
+					//ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
+					if (sArray.length==6) {
+						String word1=this.equate(sArray[1]);
+						String word2=this.equate(sArray[2]);
+						String word3=this.equate(sArray[3]);
+						String word4=this.equate(sArray[4]);
+						String word5=this.equate(sArray[5]);
+						if (id.equals("absorber")) {
+							String absorbName=word1;
+							Integer xAbsorb=Integer.parseInt(word2);
+							Integer yAbsorb=Integer.parseInt(word3);
+							Integer wAbsorb=Integer.parseInt(word4);
+							Integer hAbsorb=Integer.parseInt(word5);
+						}
+						if (id.equals("ball")) {
+							String ballName=word1;
+							Float xBall=Float.parseFloat(word2);
+							Float yBall=Float.parseFloat(word3);
+							Float xVel=Float.parseFloat(word4);
+							Float yVel=Float.parseFloat(word5);
+						}
+
+					}
 				}
 			}
 		}
-<<<<<<< HEAD
 	}
 
-=======
-	}}}
-	
->>>>>>> e77085673158c6283d533296bc24df83329337c1
 	public Board (File file) throws IOException {
 
 		BufferedReader bfread=new BufferedReader(new FileReader (file));
@@ -227,8 +212,7 @@ public class Board {
 		}
 		bfread.close();
 	}
-<<<<<<< HEAD
-	
+
 	public static void main(String[] args) {
 		try {
 			Board b = new Board(new File("/home/jonathan/Documents/Sophomore_Spring/6.005/workspace/pingball-phase1/src/phase1"));
@@ -237,8 +221,4 @@ public class Board {
 		}		
 	}
 
-
-
-=======
->>>>>>> e77085673158c6283d533296bc24df83329337c1
 }
