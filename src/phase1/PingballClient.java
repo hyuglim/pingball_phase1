@@ -48,7 +48,7 @@ public class PingballClient implements Runnable{
 			singleRun();
 		} else {
 			// helper method -> call handleConnection and handleRequest
-			// meanwhile request id set from the server and put the ball in server hashmap
+			
 		}		
 	}
 	
@@ -68,6 +68,99 @@ public class PingballClient implements Runnable{
 			System.exit(-1);
 		}
 	}
+	
+	/**
+     * Handle a single client connection. Returns when client disconnects.
+     * 
+     * @param socket socket where the client is connected
+     * @throws IOException if connection has an error or terminates unexpectedly
+     */
+    private void handleConnection(Socket socket) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+        try {
+        	numOfClients.incrementAndGet();
+        	
+        	String hello = "Welcome to Minesweeper. Board: " + myBoard.getDimX() + " columns by "
+        			      + myBoard.getDimY() + " rows. Players: " + numOfClients + " including you. "
+        			      + "Type 'help' for help.\r\n";
+        	out.println(hello);        	
+        	
+        	
+            for (String line = in.readLine(); line != null; line = in.readLine()) { //reading client lines
+                String output = handleRequest(line);
+                if (output != null) {
+                	// writing messages from the server to the client
+
+                	if (output.equals("bye")) { // bye -> close connection
+                		return;
+                	} else if (output.equals("BOOM!") && !debugMode) { //boom -> send BOOM! and close connection
+                		out.println(output);
+                		if (!debugMode) {                			
+                			return;
+                		}                 		
+                	} else {
+                		out.println(output);
+                	}      	
+                    
+                }
+            }
+        } finally {
+            out.close();
+            in.close();
+        }
+    }
+
+    /**
+     * Handler for client input, performing requested operations and returning an output message.
+     * 
+     * @param input message from client
+     * @return message to client
+     */
+    private String handleRequest(String input) {
+        String regex = "(look)|(dig -?\\d+ -?\\d+)|(flag -?\\d+ -?\\d+)|"
+                + "(deflag -?\\d+ -?\\d+)|(help)|(bye)";
+        if ( ! input.matches(regex)) {
+            // invalid input
+            return null;
+        }
+        String[] tokens = input.split(" ");
+        if (tokens[0].equals("look")) {
+            // 'look' request
+        	return myBoard.displayBoard();
+        } else if (tokens[0].equals("help")) {
+            // 'help' request
+        	String help = "1. command 'look' => shows the board        " 
+        			  	 +"2. command 'flag X Y' => flags the square at location X, Y        "
+        			  	 +"3. command 'deflag X Y' => deflags the square at location X, Y        "
+        			  	 +"4. command 'dig X Y' => digs the square at location X, Y        "
+        			  	 +"any command digging an already dug or invalid location, flagging a " 
+        			  	 +"dug location, deflagging an unflagged location will be ignored.";
+        	
+            return help;
+        } else if (tokens[0].equals("bye")) {
+            // 'bye' request
+            return "bye";
+        } else {
+        	
+        	// WARNING: X AND Y AXES ARE FLIPPED
+            int y = Integer.parseInt(tokens[1]);
+            int x = Integer.parseInt(tokens[2]);
+            if (tokens[0].equals("dig")) {
+                // 'dig x y' request
+            	return myBoard.dig(x, y);
+            } else if (tokens[0].equals("flag")) {
+                // 'flag x y' request
+            	return myBoard.flag(x, y);
+            } else if (tokens[0].equals("deflag")) {
+                // 'deflag x y' request
+                return myBoard.deflag(x, y);
+            }
+        }
+        // Should never get here--make sure to return in each of the valid cases above.
+        throw new UnsupportedOperationException();
+    }
 	
 	/**
      * Handle a single client connection. Returns when client disconnects.
