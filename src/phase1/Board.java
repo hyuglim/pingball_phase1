@@ -29,7 +29,7 @@ public class Board {
 	
 	public static void main(String[] args) {
 		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
-		Board b=new Board("try", (float) 0,(float) 0,(float) 0);
+	//	Board b= new Board("try", (float) 0,(float) 0,(float) 0);
 	}
 	
 	public void test() {
@@ -77,7 +77,6 @@ public class Board {
 		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
 		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-<<<<<<< HEAD
 		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270 
 		String orientObject="(.+?) (.+?) (.+?) (.+?) (.+?)";
 		Pattern orientPat=Pattern.compile(orientObject);
@@ -98,7 +97,6 @@ public class Board {
 			}
 			if (orientId.equals("rightFlipper")) {
 				//listofGadgets.put(cord, );
-=======
 		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		if (sArray.length==5) {
 			String word1=this.equate(sArray[1]);
@@ -129,7 +127,6 @@ public class Board {
 				Integer xRfipper=Integer.parseInt(word2);
 				Integer yRflipper=Integer.parseInt(word3);
 				Integer oRflipper=Integer.parseInt(word4);
->>>>>>> 98cd876e1975ca2575ec267e34f4201014faeab1
 			}
 
 		}
@@ -157,7 +154,7 @@ public class Board {
 			}
 			
 		}
-	}
+	}}}
 	
 	public Board (File file) throws IOException {
 		
@@ -177,13 +174,4 @@ public class Board {
 		}
 		bfread.close();
 	}
-	
-	public Board( String name, Float gravity, Float fric1, Float fric2 ) {
-		this.name=name;
-		this.gravity=gravity;
-		this.friction1=fric1;
-		this.friction2=fric2;
-	}
-	
-	
 }
