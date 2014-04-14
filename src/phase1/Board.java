@@ -24,6 +24,21 @@ public class Board {
 	private Map <Geometry.DoublePair, Gadget> listofGadgets;
 	private List<Ball> balls;
 
+	public List<Ball> getBalls() {
+		return balls;
+	}
+
+
+	public void setBalls(List<Ball> balls) {
+		this.balls = balls;
+	}
+
+
+
+
+
+
+
 	public String equate(String equation) {
 		String [] sArray=equation.split("=");
 		return sArray[1];

@@ -8,10 +8,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
 import physics.Geometry;
+import physics.Geometry.DoublePair;
 
 
 //each client has a board
@@ -25,10 +27,10 @@ import physics.Geometry;
 public class PingballClient implements Runnable{
 	
 	private Socket client = null;
-	private Board myBoard = null;
 	private int id;
 	private boolean isSinglePlayerMode = true;
 	
+	private Board myBoard = null;
 	
 
 	//multiplayer constructor
@@ -70,31 +72,7 @@ public class PingballClient implements Runnable{
 		}
 	}
 	
-	/**
-     * Handler for client input, performing requested operations and returning an output message.
-     * 
-     * @param input message from client
-     * @return message to client
-     */
-    private String handleRequest(String input) {
-        
-        String[] tokens = input.split(" ");
-        if (tokens[0].equals("hit")) {
-        	double x = Double.parseDouble(tokens[1]);
-        	double y = Double.parseDouble(tokens[2]);
-        	
-        	// first, find the adjacent neighbor
-        	// second, see if the wall that is hit is invisible
-        	// third, if so, change the coordinate and send message to the adjacent neighbor
-        	
-        	
-        	
-            Geometry.DoublePair loc = new Geometry.DoublePair(x, y);
-        	return myBoard.displayBoard();
-        } 
-        // Should never get here--make sure to return in each of the valid cases above.
-        throw new UnsupportedOperationException();
-    }
+	
 	
 	/**
      * Handle a single client connection. Returns when client disconnects.
@@ -112,20 +90,79 @@ public class PingballClient implements Runnable{
         	out.println(hello);        	       	
         	
             for (String line = in.readLine(); line != null; line = in.readLine()) { //reading client lines
-//                String output = handleRequest(line);
-//                if (output != null) {
-//                	// writing messages from the server to the client
-//
-//                	if (output.equals("bye")) { // bye -> close connection
-//                		
-//                	}  	
-//                    
-//                }
+                String output = handleRequest(line);
+                if (output != null) {
+                	// receiving messages from the server to the client
+                	String[] tokens = output.split(" ");
+                	
+                	//CONFIRMING IF BALL HIT AN INVISIBLE WALL
+                	if(tokens[0].equals("invisible")){
+                		// sample input: invisible NAME
+                		String ballToBeRemoved = tokens[1];
+                		List<Ball> balls = myBoard.getBalls();
+                		
+                		for (Ball b : balls) {
+                			if (b.name.equals(ballToBeRemoved)) {
+                				balls.remove(b);
+                			}
+                		}                		
+                	}
+                	if(tokens[0].equals("visible")) {
+                		// DON'T DO ANYTHING. BUSINESS AS USUAL            		                		
+                	}
+                	if(tokens[0].equals("newBall")) {
+                		double x = Double.parseDouble(tokens[1]);
+                		double y = Double.parseDouble(tokens[2]);
+                		// TODO: ADD A NEW BALL AT X,Y LOC IN THE CLIENT                		
+                	}                	
+                	                    
+                }
             }
         } finally {
             out.close();
             in.close();
         }
+    }
+    
+    /**
+     * Handler for client input, performing requested operations and returning an output message.
+     * 
+     * @param input message from client
+     * @return message to client
+     */
+    private String handleRequest(String input) {
+        
+        String[] tokens = input.split(" ");
+        
+        //goes into the Server file
+//        if (tokens[0].equals("h")) {
+//        	String[] firstArg = tokens[1].split("_");
+//        	String leftBoard = firstArg[0];
+//        	String[] secondArg = tokens[2].split("_");
+//        	String rightBoard = secondArg[0];
+//        	
+//        	
+//        }
+//        if (tokens[0].equals("v")) {
+//        	
+//        }
+        
+        if (tokens[0].equals("hit")) {
+        	double x = Double.parseDouble(tokens[1]);
+        	double y = Double.parseDouble(tokens[2]);
+        	
+        	// TODO: 
+        	// first, find the adjacent neighbor
+        	// second, see if the wall that is hit is invisible
+        	// third, if so, change the coordinate and send message to the adjacent neighbor
+        	
+        	
+        	
+            Geometry.DoublePair loc = new Geometry.DoublePair(x, y);
+        	
+        } 
+        // Should never get here--make sure to return in each of the valid cases above.
+        throw new UnsupportedOperationException();
     }
 	
 	public int getId() {
