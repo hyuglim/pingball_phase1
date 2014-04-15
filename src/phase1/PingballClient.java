@@ -34,7 +34,11 @@ public class PingballClient{
 	private int whichWallHit = -1;
 
 
-	//multiplayer constructor
+	/**
+	 * multiplayer constructor
+	 * @param socket
+	 * @param board
+	 */
 	PingballClient(Socket socket, Board board) {
 		this.player = new GamePlayer(board);
 		this.messenger = new Communicator(socket, board);
@@ -43,21 +47,35 @@ public class PingballClient{
 		new Thread(messenger).start();
 	}
 
-	//singleplayer constructor
+	/**
+	 * singleplayer constructor
+	 * @param board
+	 */
 	PingballClient(Board board) {
 		
 	}	
 	
 
-
+	/**
+	 * 
+	 * @return single player
+	 */
 	public boolean isSinglePlayerMode() {
 		return isSinglePlayerMode;
 	}
 
+	/**
+	 * 
+	 * @param isSinglePlayerMode
+	 */
 	public void setSinglePlayerMode(boolean isSinglePlayerMode) {
 		this.isSinglePlayerMode = isSinglePlayerMode;
 	}
-
+	
+	/**
+	 * read command line arguments
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		int port = 10987; // default port
 		String host = ""; // if no host provided, go to single player mode
