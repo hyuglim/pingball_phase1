@@ -1,5 +1,6 @@
 package phase1;
 
+
 import java.lang.Float;
 import java.lang.Integer;
 import java.io.BufferedReader;
@@ -8,8 +9,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import physics.*;
 
@@ -23,44 +22,83 @@ public class Board {
 	private Float friction1;
 	private Float friction2;
 	private Map <Geometry.DoublePair, Gadget> listofGadgets;
-	private List<Ball> balls;
-	
-	
-	/**
-	 * a helper function that returns whatever string is at the right of an equal sign.
-	 * @param equation
-	 * @return the right hand side of an equation
-	 */
+	private Map<String, Ball> balls;
+
+
+    /**
+     * a helper function that returns whatever string is at the right of an equal sign.
+     * @param equation
+     * @return the right hand side of an equation
+     */
 	public String equate(String equation) {
 		String [] sArray=equation.split("=");
+		for (String s: sArray) {
+			System.out.println(s);
+		}
 		return sArray[1];
 	}
 	
+
 	   //these are temporary methods we added to test our parser
     /*
 	public static void main(String[] args) {
 		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
 	//	Board b= new Board("try", (float) 0,(float) 0,(float) 0);
+*/
+	/**
+	 * @returns the name of the board
+	 */
+	public String getName() {
+		return name;
 	}
-	
-	public void test() {
-		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
-		this.matching(s);
-	}
-	*/
 	
 	/**
-	 * Reads the line and gets information about the board from it. 
-	 * @param line one line of String read from the file
-	 */
+     * @returns the gravity of the board
+     */
+	public Float getGravity() {
+		return gravity;
+	}
+	
+    /**
+     * @returns friction1 coeffcient of the board
+     */
+	public Float getFriction1() {
+		return friction1;
+	}
+
+	 /**
+     * @returns the friction2 coefficient of the board
+     */
+	public Float getFriction2() {
+		return friction2;
+	}
+	
+    /**
+     * @returns the list of gadgets in the board
+     */
+	public Map<Geometry.DoublePair, Gadget> getListofGadgets() {
+		return listofGadgets;
+	}
+
+	 /**
+     * @returns the balls in the board at this step
+     */
+	public Map<String, Ball> getBalls() {
+		return balls;
+	}
+
+    /**
+     * Reads the line and gets information about the board from it. 
+     * @param line one line of String read from the file
+     */
 	public void matching (String line) {
-		
+
 		String[] sArray=line.split(" ");
-		
+
+		String id=sArray[0];
+
 		//board name=NAME gravity=FLOAT
 		//fire trigger=NAME action=NAME
-		String id=sArray[0];
-		
 		if (sArray.length==3) {
 			String word1=sArray[1];
 			String word2=sArray[2];
@@ -77,7 +115,7 @@ public class Board {
 				this.friction2=(float) 0.025;
 			}
 		}
-		
+
 		//squareBumper name=NAME x=INTEGER y=INTEGER
 		//circleBumper name=NAME x=INTEGER y=INTEGER
 		if (sArray.length==4) {
@@ -95,7 +133,7 @@ public class Board {
 				listofGadgets.put(cord, new CircleBumper(cord, bumpName));
 			}
 		}
-		
+
 		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
 		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
@@ -164,18 +202,19 @@ public class Board {
 				Float yBall=Float.parseFloat(word3);
 				Float xVel=Float.parseFloat(word4);
 				Float yVel=Float.parseFloat(word5);
+				balls.put(ballName,new Ball(ballName,xBall,yBall,xVel,yVel));
 				//do ball thingies
 			}
-			
 		}
 	}
+
 	
 	/**
 	 * Initializes a new Board and all the Gadgets in it from a .pb File.
 	 * @param file
 	 * @throws IOException
 	 */
-	public Board (File file) throws IOException { 
+	public Board (File file) throws IOException {
 		BufferedReader bfread=new BufferedReader(new FileReader (file));
 		String line;
 		while ((line=bfread.readLine())!=null) {
@@ -216,7 +255,7 @@ public class Board {
 	 * Update the list of balls that are on the board at the beginning of time step.
 	 * @param b list of balls 
 	 */
-	public void updateBalls(List<Ball> bls){
+	public void updateBalls(Map<String, Ball> bls){
 	    balls = bls;
 	}
 	
@@ -227,7 +266,7 @@ public class Board {
 	//this should be the method the client calls for each step
 	public String moveAllBalls(){
 	    //String message;
-	    for (Ball b: balls) {
+	    for (Ball b: balls.values()) {
             moveOneBall(b, 1.0); 
         }
 	    return "";
@@ -263,4 +302,21 @@ public class Board {
         }
         return message;
     }
+
+	/* may or maynot need this helper function....
+	/**
+	 * updates the position of the ball
+	 * first updates the velocity of the balls
+	 * then uses updated velocity in the move method to update the postion
+	 * of the ball
+	 */
+	/*public void collideGadget() { 
+		for (Ball b: balls) {
+			for (Geometry.DoublePair key: listofGadgets.keySet()) {
+				listofGadgets.get(key).collide(b);
+			}
+			b.move();
+		}
+	}
+*/
 }

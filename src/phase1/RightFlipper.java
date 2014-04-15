@@ -31,7 +31,7 @@ public class RightFlipper implements Gadget{
             this.isOn = true;
         }
     }
-    
+
     /**
      * Find out how much time is left until ball-gadget collision.
      * @param ball the ball that may collide
@@ -59,6 +59,16 @@ public class RightFlipper implements Gadget{
      * Add trigger-action hook to a gadget.
      * @param gadget the gadget whose action will be hooked
      */
+    public void collide(Ball ball){
+        if (!(Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity)>0)){
+            ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
+        }
+    }
+    
+    /**
+     * Add trigger-action hook to a gadget.
+     * @param gadget the gadget whose action will be hooked
+     */
     public void addTrigger(Gadget gadget){
         gadgetsToBeTriggered.add(gadget);
     }
@@ -75,7 +85,6 @@ public class RightFlipper implements Gadget{
             isOn = false;
         }
     }
-    
 
     /**
      * Trigger other gadget's actions.

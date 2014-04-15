@@ -8,108 +8,48 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 
-//each client has a board
+// each client has two threads within it
+// The first thread communicates with the server
+// The second thread plays the game.
+// The client will have a shared memory that gives information about
+// which ball hit which wall.
 
-//main method takes file argument and makes a board from it.
-//optionally take host and port, which means it should connect to the server
-//and the server will 
 
-//we need a helper method for reading a board file(.pb) 
-//and initializing a Board object from that
-public class PingballClient implements Runnable{
-	
-	private Socket client = null;
-	private Board myBoard = null;
-	private int id;
+public class PingballClient{
+
 	private boolean isSinglePlayerMode = true;
-	
-	
+	// key = ball, value = "invisible"|"visible". store whether the ball hit an invisible wall.
+	private ConcurrentHashMap<Ball, String> hitInvisibles = new ConcurrentHashMap<>();
+	private GamePlayer player;
+	private Communicator messenger;
+
+	// -1: no wall hit, 0: top wall hit,
+	// 1: bottom wall hit, 2: right wall hit
+	private int whichWallHit = -1;
+
 
 	//multiplayer constructor
 	PingballClient(Socket socket, Board board) {
-		this.client = socket;
-		this.myBoard = board;
+		this.player = new GamePlayer(board);
+		this.messenger = new Communicator(socket, board);
 		
+		new Thread(player).start();
+		new Thread(messenger).start();
 	}
-	
+
 	//singleplayer constructor
 	PingballClient(Board board) {
-		this.myBoard = board;
-	}
+		
+	}	
 	
-	
-	@Override
-	public void run() {
-		if (isSinglePlayerMode) {
-			singleRun();
-		} else {
-			// helper method -> call handleConnection and handleRequest
-			// meanwhile request id set from the server and put the ball in server hashmap
-		}		
-	}
-	
-	private void singleRun() {
-		//TODO: do things here
-	}
-	
-	private void multiRun() {
-		try{
-			//if connection successful
-			handleConnection(client);
-			
-			client.close();
-			
-		} catch (IOException e) {
-			System.out.println("in or out failed");
-			System.exit(-1);
-		}
-	}
-	
-	/**
-     * Handle a single client connection. Returns when client disconnects.
-     * 
-     * @param socket socket where the client is connected
-     * @throws IOException if connection has an error or terminates unexpectedly
-     */
-    private void handleConnection(Socket socket) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-        try{
-        	
-        	String hello = "Welcome to Pingball. Let the board just sit there, and you can stare at the board";
-        	out.println(hello);        	       	
-        	
-            for (String line = in.readLine(); line != null; line = in.readLine()) { //reading client lines
-//                String output = handleRequest(line);
-//                if (output != null) {
-//                	// writing messages from the server to the client
-//
-//                	if (output.equals("bye")) { // bye -> close connection
-//                		
-//                	}  	
-//                    
-//                }
-            }
-        } finally {
-            out.close();
-            in.close();
-        }
-    }
-	
-	public int getId() {
-		return id;
-	}
-	
-	//called by Server to assign clients id
-	public void setId(int id) {
-		this.id = id;
-	}
-    
+
 	public boolean isSinglePlayerMode() {
 		return isSinglePlayerMode;
 	}
@@ -117,7 +57,7 @@ public class PingballClient implements Runnable{
 	public void setSinglePlayerMode(boolean isSinglePlayerMode) {
 		this.isSinglePlayerMode = isSinglePlayerMode;
 	}
-	
+
 	public static void main(String[] args) {
 		int port = 10987; // default port
 		String host = ""; // if no host provided, go to single player mode
@@ -149,47 +89,46 @@ public class PingballClient implements Runnable{
 					throw new IllegalArgumentException("unable to parse number for " + flag);
 				}
 			}
-			
+
 		} catch (IllegalArgumentException iae) {
 			iae.printStackTrace();
 			System.err.println(iae.getMessage());
 			System.err.println("usage: PingballClient [--host HOST] [--port PORT] FILE");
 			return;
 		}
-		
+
 		System.out.println("port: " + port);
 		System.out.println("host: " + host);
 		System.out.println("file: " + file);
-		
-		
-		
+
+
+
 		//starting threads and shit
-		
+
 		//single player mode
 		if (host.equals("")) {
 			try {
 				System.out.println("single player");
 				Board board = new Board(file);
 				PingballClient player = new PingballClient(board);
-				player.setSinglePlayerMode(true);
-				new Thread(player).start();
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 		} else { //multiplayer mode
 			try {
 				System.out.println("multiplayer");
 				Board board = new Board(file);
-				Socket socket = new Socket("localhost", port);
+				Socket socket = new Socket(host, port);
 				PingballClient player = new PingballClient(socket, board);
-				new Thread(player).start();
+				
 			} catch (Exception e) {
 				e.printStackTrace();			
 			}
 		}				
 
-		
+
 	}
-    
+
 }
