@@ -13,10 +13,11 @@ import java.util.regex.Pattern;
 
 import physics.*;
 
-import physics.Geometry;
-
+/**
+ * Describes a board that is used for a pingball game. It is 20L x 20L in size.
+ *
+ */
 public class Board {
-	
 	private String name;
 	private Float gravity;
 	private Float friction1;
@@ -24,11 +25,19 @@ public class Board {
 	private Map <Geometry.DoublePair, Gadget> listofGadgets;
 	private List<Ball> balls;
 	
+	
+	/**
+	 * a helper function that returns whatever string is at the right of an equal sign.
+	 * @param equation
+	 * @return the right hand side of an equation
+	 */
 	public String equate(String equation) {
 		String [] sArray=equation.split("=");
 		return sArray[1];
 	}
 	
+	   //these are temporary methods we added to test our parser
+    /*
 	public static void main(String[] args) {
 		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
 	//	Board b= new Board("try", (float) 0,(float) 0,(float) 0);
@@ -38,7 +47,12 @@ public class Board {
 		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
 		this.matching(s);
 	}
+	*/
 	
+	/**
+	 * Reads the line and gets information about the board from it. 
+	 * @param line one line of String read from the file
+	 */
 	public void matching (String line) {
 		
 		String[] sArray=line.split(" ");
@@ -156,8 +170,12 @@ public class Board {
 		}
 	}
 	
-	public Board (File file) throws IOException {
-		
+	/**
+	 * Initializes a new Board and all the Gadgets in it from a .pb File.
+	 * @param file
+	 * @throws IOException
+	 */
+	public Board (File file) throws IOException { 
 		BufferedReader bfread=new BufferedReader(new FileReader (file));
 		String line;
 		while ((line=bfread.readLine())!=null) {
@@ -178,4 +196,71 @@ public class Board {
 		}
 		bfread.close();
 	}
+	
+	/**
+	 * Display the board! The rules are as follows:
+	 * Ball: "*"
+     * Square bumper: "#"
+     * Circle bumper: "O"
+     * Triangle bumper: "/" for orientation 0 or 180, "\" for orientation 90 or 270
+     * Flipper: "|" when vertical, "-" when horizontal
+     * Absorber: "="
+     * Outer wall: "."
+	 * @returns a String representation of the state of the board, including the ball's whereabouts. 
+	 */
+	public String display(){
+	    return "";
+	}
+	
+	/**
+	 * Update the list of balls that are on the board at the beginning of time step.
+	 * @param b list of balls 
+	 */
+	public void updateBalls(List<Ball> bls){
+	    balls = bls;
+	}
+	
+	/**
+	 * Simulates the movements of all balls in this board for one game step.
+	 * @returns a message for the client 
+	 */
+	//this should be the method the client calls for each step
+	public String moveAllBalls(){
+	    //String message;
+	    for (Ball b: balls) {
+            moveOneBall(b, 1.0); 
+        }
+	    return "";
+	    //hmm we should think about balls colliding with each other.
+	}
+	
+	/**
+	 * Moves one ball in this board for however much time is left in this one game step
+	 * @param b ball that is being moved
+	 * @param timetoGo time left in this one step for this one ball
+	 * @returns a message for the client
+	 */
+	public String moveOneBall(Ball b, double timetoGo) {
+        Gadget gadgetToCollideFirst = null;
+        String message = "";
+        double timeUntilCollision = timetoGo;
+        for (Gadget gad:listofGadgets.values()) {
+            if (gad.timeUntilCollision(b)<timeUntilCollision) {
+                gadgetToCollideFirst = gad;
+                timeUntilCollision = gad.timeUntilCollision(b);
+            }
+        }
+        if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
+         //  if it's going to collide with a wall, send a message to client with the name of the wall
+          // check if it's invisible or not, and react appropriately 
+            return "left";
+        }
+        if (timeUntilCollision < timetoGo) {
+            gadgetToCollideFirst.collide(b,timetoGo, this);
+        } else{
+            b.move(timetoGo);
+            //handles the case when you don't collide with any gadgets
+        }
+        return message;
+    }
 }

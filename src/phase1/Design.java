@@ -66,5 +66,53 @@ public class Design {
 	 * or a line segment
 	 */
 	
+    /*
+     *     //inside the board
+    public void ballsMove() {
+        for (Ball b: balls) {
+            ballMove(b,1.0); //time to go is 1
+        }
+    }
+    
+    //inside the board class, updates what's in the list of balls (representing
+    //what balls are in the board at the start of the time step)
+    public void (List<Ball> l) {
+        this.balls=l;
+    }
+    
+    //need to figure out where the ball will end up in a board after it passes
+    //through the wall
+    //inside the simulate method, just need to call neighbourBoard.ballMove(ball,timetoGo)
+    
+    //need to make the collide method of wall s.t handles simulation
+    //i.e if it leaves the board, needs to call simulate method inside the server
+    //to figure out where the ball will end up
+    
+    //just applies to colliding with gadget
+    public void ballMove(Ball b, double timetoGo) {
+        Gadget minGadget=null;
+        time=timetoGo;
+        for (Gadget gad:listofGadgets) {
+            if (time_until_collide_with_gad<time) {
+                minGadget=gad;
+                time=time_until_collide_with_gad;
+            }
+        }
+        if (!(time==timetoGo)) {
+            minGadget.collide(b,timetoGo);
+            //inside the collide method should:
+            //ball.move(time_until_collide)
+            //change the velocity of the ball (the "after" velocity)
+            //call board.ballMove(b,timetoGo-time_until_collide)
+        }
+        //handles the case when you don't collide with any gadgets whatsoever
+    }
+    
+    //timetoGo is passed around
+    
+    //colide method of the wall (is a gadget)
+}
+//if a client sends a message to server "a ball is leaving "
+     */
 	
 }
