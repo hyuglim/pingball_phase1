@@ -8,8 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import physics.*;
 
@@ -22,7 +20,7 @@ public class Board {
 	private Float friction1;
 	private Float friction2;
 	private Map <Geometry.DoublePair, Gadget> listofGadgets;
-	private List<Ball> balls;
+	private Map<String, Ball> balls;
 	
 	public String equate(String equation) {
 		String [] sArray=equation.split("=");
@@ -42,11 +40,11 @@ public class Board {
 	public void matching (String line) {
 		
 		String[] sArray=line.split(" ");
+
+		String id=sArray[0];
 		
 		//board name=NAME gravity=FLOAT
 		//fire trigger=NAME action=NAME
-		String id=sArray[0];
-		
 		if (sArray.length==3) {
 			String word1=sArray[1];
 			String word2=sArray[2];
@@ -150,9 +148,8 @@ public class Board {
 				Float yBall=Float.parseFloat(word3);
 				Float xVel=Float.parseFloat(word4);
 				Float yVel=Float.parseFloat(word5);
-				//do ball thingies
+				balls.put(ballName,new Ball(ballName,xBall,yBall,xVel,yVel));
 			}
-			
 		}
 	}
 	
@@ -177,5 +174,32 @@ public class Board {
 			}
 		}
 		bfread.close();
+	}
+	
+	public Map<String, Ball> getBlist() {
+		return this.balls;
+	}
+	
+	public void updateBall(List <Ball> listofBalls) {
+		
+	}
+
+	/**
+	 * updates the position of the ball
+	 * first updates the velocity of the balls
+	 * then uses updated velocity in the move method to update the postion
+	 * of the ball
+	 */
+	public void collideGadget() { 
+		for (Ball b: balls) {
+			for (Geometry.DoublePair key: listofGadgets.keySet()) {
+				listofGadgets.get(key).collide(b);
+			}
+			b.move();
+		}
+	}
+	
+	public List<(Ball,wall number)> collideWall() {
+		
 	}
 }

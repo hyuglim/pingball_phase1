@@ -25,16 +25,25 @@ public class RightFlipper implements Gadget{
         }
     }
     
+    /* (non-Javadoc)
+     * @see phase1.Gadget#collide(phase1.Ball)
+     */
     public void collide(Ball ball){
         if (!(Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity)>0)){
             ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
         }
     }
     
+    /* (non-Javadoc)
+     * @see phase1.Gadget#addTrigger(phase1.Gadget)
+     */
     public void addTrigger(Gadget gadget){
         gadgetsToBeTriggered.add(gadget);
     }
     
+    /* (non-Javadoc)
+     * @see phase1.Gadget#action()
+     */
     public void action(){
         if (!isOn){
             flip = Geometry.rotateAround(flip, new Vect(coord.d1, coord.d2), Angle.DEG_90);
