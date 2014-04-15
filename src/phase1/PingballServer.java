@@ -118,6 +118,10 @@ public class PingballServer {
 		}		
 	}
 
+	/**
+	 * @param socket
+	 * @throws IOException
+	 */
 	private void handleConnection(Socket socket) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
