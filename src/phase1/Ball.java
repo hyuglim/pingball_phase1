@@ -6,8 +6,7 @@ import java.util.List;
 import physics.*;
 
 /**
- * @author Harlin
- * Describes a ball that is used in a pingball game.
+ * Describes a ball that is used in a pingball game. It has a diameter of 1L.
  */
 public class Ball {
     public Vect velocity;
@@ -30,12 +29,13 @@ public class Ball {
 	}
 	
 	/**
-	 * Move the ball for one step. Returns nothing.
+	 * Move the ball for a certain amount of time.
+	 * @param time how long the ball should be moving for
 	 */
-	public void move(){
-	    double stepSize = 0.05;
-        double newX = circle.getCenter().x() + stepSize*velocity.x();
-        double newY = circle.getCenter().y() + stepSize*velocity.y();
+	public void move(double time){
+	    //double stepSize = 0.05;
+        double newX = circle.getCenter().x() + time*velocity.x();
+        double newY = circle.getCenter().y() + time*velocity.y();
         this.circle = new Circle(newX, newY, circle.getRadius());
 	}
 }

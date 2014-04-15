@@ -34,14 +34,24 @@ public class PingballServer {
 	// Tuple has a list of strings and a list of booleans
 	private ConcurrentHashMap<String, Triple> neighbors = new ConcurrentHashMap<String, Triple>();
 
-
+	
+	/**
+	 * 
+	 * @param port
+	 * @throws IOException
+	 */
 	public PingballServer(int port) throws IOException {
 		this.serverSocket = new ServerSocket(port);
 		
 	}
 	
 	
-	
+	/**
+	 * join boards horizontally
+	 * @param left
+	 * @param right
+	 * @throws IllegalArgumentException
+	 */
 	private void makeHorizNeighbors(String left, String right) throws IllegalArgumentException{
 		if (!neighbors.contains(left) || !neighbors.contains(right)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
@@ -49,7 +59,12 @@ public class PingballServer {
 				
 		
 	}
-
+	
+	/**
+	 * join boards vertically
+	 * @param top
+	 * @param bottom
+	 */
 	private void makeVerticNeighbors(String top, String bottom) {
 		if (!neighbors.contains(top) || !neighbors.contains(bottom)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
@@ -57,6 +72,10 @@ public class PingballServer {
 
 	}
 	
+	/**
+	 * the main joinBoards function
+	 * @param command
+	 */
 	private void joinBoards(String command) {
 		// sample input: h NAME_left NAME_right
 		//               v NAME_top NAME_bottom
@@ -117,8 +136,14 @@ public class PingballServer {
 			} 
 		}		
 	}
+<<<<<<< HEAD
 
 	/**
+=======
+	
+	/**
+	 * listen for messagees coming from the client
+>>>>>>> 08b7224585ca5231a073122f211da0918a9ed872
 	 * @param socket
 	 * @throws IOException
 	 */
@@ -156,13 +181,18 @@ public class PingballServer {
 			in.close();
 		}
 	}
-
+	
+	/**
+	 * do something with the client messages
+	 * such as choosing the neighbor clients to pass the ball to.
+	 * @param input
+	 * @return
+	 */
 	private String handleRequest(String input) {
 
 		String[] tokens = input.split(" ");
-		
-		
 
+		
 		// sample input: hit NAMEofBoard x y xVel yVel
 		if (tokens[0].equals("hit")) {
 			String name = tokens[1];
@@ -203,7 +233,10 @@ public class PingballServer {
 	
 
 
-	//Main method checks for port argument and handles connection
+	/**
+	 * Main method checks for port argument and handles connection
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		int port = 10987; // default port
 
@@ -238,7 +271,12 @@ public class PingballServer {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * starts the server
+	 * @param port
+	 * @throws IOException
+	 */
 	public static void runPingballServer(int port) throws IOException{
 		PingballServer s = new PingballServer(port);
 		s.serve();

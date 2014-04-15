@@ -16,7 +16,16 @@ public class Absorber implements Gadget {
     private List<LineSegment> walls;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     public List<Ball> heldBalls = new ArrayList<Ball>();
+    private LineSegment wallThatWillCollide;
+    private double countdown;
 
+    /**
+     * Creates an absorber.
+     * @param coord coordinate of the upper left corner
+     * @param name name of the absorber
+     * @param width width of the absorber 
+     * @param height height of the absorber
+     */
     public Absorber(Geometry.DoublePair coord, String name, int width, int height){
         this.coord = coord; //"center" coordinate is always the left top corner of the square.
         this.name = name;
@@ -27,19 +36,49 @@ public class Absorber implements Gadget {
         walls = Arrays.asList(left, top, right, bottom);
     }
     
+    /**
+     * Add trigger-action hook to a gadget.
+     * @param gadget the gadget whose action will be hooked
+     */
     public void addTrigger(Gadget gadget){
         gadgetsToBeTriggered.add(gadget);
     }
     
-    public void collide(Ball ball){
+    /**
+     * Find out how much time is left until ball-gadget collision.
+     * @param ball the ball that may collide
+     * @returns how much time is left until collision
+     */
+    public double timeUntilCollision(Ball ball){
+        double min = Integer.MAX_VALUE;
+        double time;
         for (LineSegment wall: walls){
-            if (!(Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity)>0)){
-                ball.velocity = new Vect(0, 0);
-                ball.circle = new Circle(coord.d1+bottom.length()-0.25, coord.d2+right.length()-0.25, 0.5);
+            time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
+            if (time < min) {
+                min = time;
+                wallThatWillCollide = wall;
             }
         }
+        countdown = min;
+        return min;
+    };
+    
+    /**
+     * Simulates a ball-gadget collision. 
+     * Move the ball to the lower right corner, and hold it there.
+     * @param ball the ball that will collide with the gadget
+     * @param timeToGo how much time is left in this step
+     * @param board needed for recursive calling
+     */
+    public void collide(Ball ball, double timeToGo, Board board){       
+        ball.move(countdown);
+        ball.velocity = new Vect(0, 0);
+        ball.circle = new Circle(coord.d1+bottom.length()-0.25, coord.d2+right.length()-0.25, 0.5);
     }
     
+    /**
+     * Shoots the balls out of the corner.
+     */
     public void action(){
         if (heldBalls.size()>0){
             for (Ball ball: heldBalls){
@@ -48,5 +87,13 @@ public class Absorber implements Gadget {
             heldBalls.clear();
         }
     }
-
+    
+    /**
+     * Trigger other gadget's actions.
+     */
+    public void trigger(){
+        for (Gadget gad : gadgetsToBeTriggered){
+            gad.action();
+        }
+    }
 }

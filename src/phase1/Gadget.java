@@ -13,13 +13,28 @@ public interface Gadget {
     public void addTrigger(Gadget gadget);
     
     /**
-     * Checks whether the ball will collide and updates ball's velocity accordingly if there is a collision.
-     * @param ball the ball which might collide with the gadget
+     * Find out how much time is left until ball-gadget collision.
+     * @param ball the ball that may collide
+     * @returns how much time is left until collision
      */
-    public void collide(Ball ball);
+    public double timeUntilCollision(Ball ball);
+    
+    /**
+     * Simulates a ball-gadget collision. 
+     * Moves the ball, updates the ball's velocity, and moves the ball again for however much time is left in that step.
+     * @param ball the ball that will collide with the gadget
+     * @param timeToGo how much time is left in this step
+     * @param board needed for recursive calling
+     */
+    public void collide(Ball ball, double timeToGo, Board board);
     
     /**
      * The gadget's action that can be triggered. It's specific to the type of each gadget.
      */
     public void action();
+
+    /**
+     * Trigger other gadget's actions.
+     */
+    public void trigger();
 }

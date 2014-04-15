@@ -16,12 +16,12 @@ import java.util.regex.Pattern;
  
 
 import physics.*;
- 
 /**
  * Describes a board that is used for a pingball game. It is 20L x 20L in size.
  *
  */
 public class Board {
+	
         private String name;
         private Float gravity;
         private Float friction1;
