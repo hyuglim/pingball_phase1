@@ -11,11 +11,17 @@ public class Communicator implements Runnable{
 	private Socket clientSocket = null;
 	private Board board = null;
 	
+	/**
+	 * Each communicator thread has a socket and a board
+	 * @param socket
+	 * @param board
+	 */
 	public Communicator(Socket socket, Board board) {
 		this.clientSocket = socket;
 		this.board = board;
 	}
 	
+
 	public void run() {
 		try{
 			//if connection successful
@@ -28,6 +34,11 @@ public class Communicator implements Runnable{
 		}
 	}
 	
+	/**
+	 * getting message from the server
+	 * @param socket
+	 * @throws IOException
+	 */
 	private void handleConnection(Socket socket) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -66,7 +77,12 @@ public class Communicator implements Runnable{
 			in.close();
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param input
+	 * @return a String telling the Client what to do
+	 */
 	private String handleRequest(String input) {
 
 		String[] tokens = input.split(" ");

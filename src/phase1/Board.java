@@ -7,8 +7,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import physics.*;
 
@@ -25,11 +28,11 @@ public class Board {
 	private Map<String, Ball> balls;
 
 
-    /**
-     * a helper function that returns whatever string is at the right of an equal sign.
-     * @param equation
-     * @return the right hand side of an equation
-     */
+	/**
+	 * a helper function that returns whatever string is at the right of an equal sign.
+	 * @param equation
+	 * @return the right hand side of an equation
+	 */
 	public String equate(String equation) {
 		String [] sArray=equation.split("=");
 		for (String s: sArray) {
@@ -37,178 +40,130 @@ public class Board {
 		}
 		return sArray[1];
 	}
-	
 
-	   //these are temporary methods we added to test our parser
-    /*
+
+	//these are temporary methods we added to test our parser
+	/*
 	public static void main(String[] args) {
 		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
 	//	Board b= new Board("try", (float) 0,(float) 0,(float) 0);
-*/
+	 */
 	/**
 	 * @returns the name of the board
 	 */
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
-     * @returns the gravity of the board
-     */
+	 * @returns the gravity of the board
+	 */
 	public Float getGravity() {
 		return gravity;
 	}
-	
-    /**
-     * @returns friction1 coeffcient of the board
-     */
+
+	/**
+	 * @returns friction1 coeffcient of the board
+	 */
 	public Float getFriction1() {
 		return friction1;
 	}
 
-	 /**
-     * @returns the friction2 coefficient of the board
-     */
+	/**
+	 * @returns the friction2 coefficient of the board
+	 */
 	public Float getFriction2() {
 		return friction2;
 	}
-	
-    /**
-     * @returns the list of gadgets in the board
-     */
+
+	/**
+	 * @returns the list of gadgets in the board
+	 */
 	public Map<Geometry.DoublePair, Gadget> getListofGadgets() {
 		return listofGadgets;
 	}
 
-	 /**
-     * @returns the balls in the board at this step
-     */
+	/**
+	 * @returns the balls in the board at this step
+	 */
 	public Map<String, Ball> getBalls() {
 		return balls;
 	}
 
-    /**
-     * Reads the line and gets information about the board from it. 
-     * @param line one line of String read from the file
-     */
+	/**
+	 * Reads the line and gets information about the board from it. 
+	 * @param line one line of String read from the file
+	 */
 	public void matching (String line) {
 
-		String[] sArray=line.split(" ");
-
-		String id=sArray[0];
-
-		//board name=NAME gravity=FLOAT
-		//fire trigger=NAME action=NAME
-		if (sArray.length==3) {
-			String word1=sArray[1];
-			String word2=sArray[2];
-			if (id.equals("fire")) {
-				String trigName=this.equate(word1);
-				String actName=this.equate(word2);
-			}
-			if (id.equals("board")) {
-				String boardName=this.equate(word1);
-				Float boardGravity=Float.parseFloat(this.equate(word2));
-				this.name=boardName;
-				this.gravity=boardGravity;
+		String id="";
+		String firstWord= "\\s*([a-zA-Z0-9]+)\\s+";
+		Pattern firstWordpat=Pattern.compile(firstWord);
+		Matcher firstMatcher = firstWordpat.matcher(line);
+		
+		int counter=0;
+		String word= "\\s*([a-zA-Z0-9]+\\s*=\\s*[a-zA-Z0-9\\.]+)\\s*";
+		Pattern wordpat=Pattern.compile(word);
+		Matcher matcher = wordpat.matcher(line);
+		List <String> names=new ArrayList<String>();
+		while(matcher.find()){
+		    int count = matcher.groupCount();
+		    counter+=count;
+		    for(int i=0;i<count;i++){
+		    	String s=matcher.group(i).replaceAll("\\s+", "").split("=")[1];
+		    	names.add(s);
+		    }
+		}	
+		if(firstMatcher.find()){
+			id=firstMatcher.group(1);
+		}
+		if (id.equals("board")) {
+			if (counter==2) {
+				this.name=names.get(0);
+				this.gravity=Float.parseFloat(names.get(1));
 				this.friction1=(float) 0.025;
 				this.friction2=(float) 0.025;
 			}
+			else {
+				this.name=names.get(0);
+				this.gravity=Float.parseFloat(names.get(1));
+				this.friction1=Float.parseFloat(names.get(2));
+				this.friction2=Float.parseFloat(names.get(3));
+			}
+			System.out.println("name " + name);
+			System.out.println("gravity " + gravity);
+			System.out.println("friction1 " + friction1);
+			System.out.println("friction2 " + friction2);
 		}
-
-		//squareBumper name=NAME x=INTEGER y=INTEGER
-		//circleBumper name=NAME x=INTEGER y=INTEGER
-		if (sArray.length==4) {
-			String word1=sArray[1];
-			String word2=sArray[2];
-			String word3=sArray[3];
-			String bumpName=this.equate(word1);
-			Integer xCord=Integer.parseInt(this.equate(word2));
-			Integer yCord=Integer.parseInt(this.equate(word3));
-			Geometry.DoublePair cord=new Geometry.DoublePair(xCord, yCord);
-			if (id.equals("squareBumper")) {
-				listofGadgets.put(cord, new SquareBumper(cord,bumpName));
-			}
-			if (id.equals("circleBumper")) {
-				listofGadgets.put(cord, new CircleBumper(cord, bumpName));
-			}
-		}
-
-		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
-		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-		//rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
-		if (sArray.length==5) {
-			String word1=this.equate(sArray[1]);
-			String word2=this.equate(sArray[2]);
-			String word3=this.equate(sArray[3]);
-			String word4=this.equate(sArray[4]);
-			if (id.equals("board")) {
-				String boardName=word1;
-				Float boardGravity=Float.parseFloat(word2);
-				Float friction1=Float.parseFloat(word3);
-				Float friction2=Float.parseFloat(word4);
-				this.name=boardName;
-				this.gravity=boardGravity;
-				this.friction1=friction1;
-				this.friction2=friction2;
-			}
-			if (id.equals("triangleBumper")) {
-				String triangName=word1;
-				Integer xTriang=Integer.parseInt(word2);
-				Integer yTriang=Integer.parseInt(word3);
-				Integer oTriang=Integer.parseInt(word4);
-				Geometry.DoublePair tCord=new Geometry.DoublePair(xTriang, yTriang);
-				listofGadgets.put(tCord, new TriangularBumper(tCord, new Angle((double) oTriang), triangName));
-			}
-			if (id.equals("leftFlipper")) {
-				String lflipperName=word1;
-				Integer xLfipper=Integer.parseInt(word2);
-				Integer yLflipper=Integer.parseInt(word3);
-				Integer oLflipper=Integer.parseInt(word4);
-				Geometry.DoublePair lfCord=new Geometry.DoublePair(xLfipper, yLflipper);
-				listofGadgets.put(lfCord, new LeftFlipper(lfCord,lflipperName, new Angle((double) oLflipper)));
-			}
-			if (id.equals("rightFlipper")) {
-				String rflipperName=word1;
-				Integer xRfipper=Integer.parseInt(word2);
-				Integer yRflipper=Integer.parseInt(word3);
-				Integer oRflipper=Integer.parseInt(word4);
-				Geometry.DoublePair rfCord=new Geometry.DoublePair(xRfipper, yRflipper);
-				listofGadgets.put(rfCord, new RightFlipper(rfCord,rflipperName, new Angle((double) oRflipper)));
-			}
+		/*
+		if (id.equals("ball")) {
 
 		}
-		//absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
-		//ball name=NAME x=FLOAT y=FLOAT xVelocity=FLOAT yVelocity=FLOAT
-		if (sArray.length==6) {
-			String word1=this.equate(sArray[1]);
-			String word2=this.equate(sArray[2]);
-			String word3=this.equate(sArray[3]);
-			String word4=this.equate(sArray[4]);
-			String word5=this.equate(sArray[5]);
-			if (id.equals("absorber")) {
-				String absorbName=word1;
-				Integer xAbsorb=Integer.parseInt(word2);
-				Integer yAbsorb=Integer.parseInt(word3);
-				Integer wAbsorb=Integer.parseInt(word4);
-				Integer hAbsorb=Integer.parseInt(word5);
-				Geometry.DoublePair aCord=new Geometry.DoublePair(xAbsorb,yAbsorb);
-				listofGadgets.put(aCord, new Absorber(aCord,absorbName,wAbsorb,hAbsorb));
-			}
-			if (id.equals("ball")) {
-				String ballName=word1;
-				Float xBall=Float.parseFloat(word2);
-				Float yBall=Float.parseFloat(word3);
-				Float xVel=Float.parseFloat(word4);
-				Float yVel=Float.parseFloat(word5);
-				balls.put(ballName,new Ball(ballName,xBall,yBall,xVel,yVel));
-				//do ball thingies
-			}
+		if (id.equals("squareBumper")) {
+
 		}
+		if (id.equals("circleBumper")) {
+
+		}
+		if (id.equals("triangleBumper")) {
+
+		}
+		if (id.equals("leftFlipper")) {
+
+		}
+		if (id.equals("rightFlipper")) {
+
+		}
+		if (id.equals("absorber")) {
+
+		}
+		if (id.equals("fire")) {
+
+		}*/
+
 	}
 
-	
+
 	/**
 	 * Initializes a new Board and all the Gadgets in it from a .pb File.
 	 * @param file
@@ -218,13 +173,8 @@ public class Board {
 		BufferedReader bfread=new BufferedReader(new FileReader (file));
 		String line;
 		while ((line=bfread.readLine())!=null) {
-			//may need to remove a number of spaces before all the words
-			while (line.substring(0, 1).equals(" ")) {
-				line=line.substring(1);
-			}
-			//may need to remove a number of spaces after all the words
-			while (line.substring(line.length()-1, line.length()).equals(" ")) {
-				line=line.substring(0, line.length()-1);
+			if (line.equals("")) {
+				continue;
 			}
 			if (line.startsWith("#")) { //ignores comments
 				continue;
@@ -235,44 +185,44 @@ public class Board {
 		}
 		bfread.close();
 	}
-	
+
 	/**
 	 * Display the board! The rules are as follows:
 	 * Ball: "*"
-     * Square bumper: "#"
-     * Circle bumper: "O"
-     * Triangle bumper: "/" for orientation 0 or 180, "\" for orientation 90 or 270
-     * Flipper: "|" when vertical, "-" when horizontal
-     * Absorber: "="
-     * Outer wall: "."
+	 * Square bumper: "#"
+	 * Circle bumper: "O"
+	 * Triangle bumper: "/" for orientation 0 or 180, "\" for orientation 90 or 270
+	 * Flipper: "|" when vertical, "-" when horizontal
+	 * Absorber: "="
+	 * Outer wall: "."
 	 * @returns a String representation of the state of the board, including the ball's whereabouts. 
 	 */
 	public String display(){
-	    return "";
+		return "";
 	}
-	
+
 	/**
 	 * Update the list of balls that are on the board at the beginning of time step.
 	 * @param b list of balls 
 	 */
 	public void updateBalls(Map<String, Ball> bls){
-	    balls = bls;
+		balls = bls;
 	}
-	
+
 	/**
 	 * Simulates the movements of all balls in this board for one game step.
 	 * @returns a message for the client 
 	 */
 	//this should be the method the client calls for each step
 	public String moveAllBalls(){
-	    //String message;
-	    for (Ball b: balls.values()) {
-            moveOneBall(b, 1.0); 
-        }
-	    return "";
-	    //hmm we should think about balls colliding with each other.
+		//String message;
+		for (Ball b: balls.values()) {
+			moveOneBall(b, 1.0); 
+		}
+		return "";
+		//hmm we should think about balls colliding with each other.
 	}
-	
+
 	/**
 	 * Moves one ball in this board for however much time is left in this one game step
 	 * @param b ball that is being moved
@@ -280,28 +230,28 @@ public class Board {
 	 * @returns a message for the client
 	 */
 	public String moveOneBall(Ball b, double timetoGo) {
-        Gadget gadgetToCollideFirst = null;
-        String message = "";
-        double timeUntilCollision = timetoGo;
-        for (Gadget gad:listofGadgets.values()) {
-            if (gad.timeUntilCollision(b)<timeUntilCollision) {
-                gadgetToCollideFirst = gad;
-                timeUntilCollision = gad.timeUntilCollision(b);
-            }
-        }
-        if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
-         //  if it's going to collide with a wall, send a message to client with the name of the wall
-          // check if it's invisible or not, and react appropriately 
-            return "left";
-        }
-        if (timeUntilCollision < timetoGo) {
-            gadgetToCollideFirst.collide(b,timetoGo, this);
-        } else{
-            b.move(timetoGo);
-            //handles the case when you don't collide with any gadgets
-        }
-        return message;
-    }
+		Gadget gadgetToCollideFirst = null;
+		String message = "";
+		double timeUntilCollision = timetoGo;
+		for (Gadget gad:listofGadgets.values()) {
+			if (gad.timeUntilCollision(b)<timeUntilCollision) {
+				gadgetToCollideFirst = gad;
+				timeUntilCollision = gad.timeUntilCollision(b);
+			}
+		}
+		if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
+			//  if it's going to collide with a wall, send a message to client with the name of the wall
+			// check if it's invisible or not, and react appropriately 
+			return "left";
+		}
+		if (timeUntilCollision < timetoGo) {
+			gadgetToCollideFirst.collide(b,timetoGo, this);
+		} else{
+			b.move(timetoGo);
+			//handles the case when you don't collide with any gadgets
+		}
+		return message;
+	}
 
 	/* may or maynot need this helper function....
 	/**
@@ -318,5 +268,14 @@ public class Board {
 			b.move();
 		}
 	}
-*/
+	 */
+	
+	public static void main(String[] args) {
+		try {
+			Board b = new Board(new File("/home/jonathan/Documents/Sophomore_Spring/6.005/workspace/pingball-phase1/src/phase1/testboard.pb"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
