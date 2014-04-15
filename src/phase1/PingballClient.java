@@ -38,6 +38,7 @@ public class PingballClient{
 	PingballClient(Socket socket, Board board) {
 		this.player = new GamePlayer(board);
 		this.messenger = new Communicator(socket, board);
+		
 		new Thread(player).start();
 		new Thread(messenger).start();
 	}

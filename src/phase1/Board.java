@@ -32,6 +32,8 @@ public class Board {
 	public void setBalls(List<Ball> balls) {
 		this.balls = balls;
 	}
+	
+	public String getName(){return name;}
 
 
 
