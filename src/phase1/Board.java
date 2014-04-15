@@ -1,5 +1,6 @@
 package phase1;
 
+
 import java.lang.Float;
 import java.lang.Integer;
 import java.io.BufferedReader;
@@ -14,35 +15,54 @@ import physics.*;
 import physics.Geometry;
 
 public class Board {
-	
+
 	private String name;
 	private Float gravity;
 	private Float friction1;
 	private Float friction2;
 	private Map <Geometry.DoublePair, Gadget> listofGadgets;
 	private Map<String, Ball> balls;
-	
+
+
 	public String equate(String equation) {
 		String [] sArray=equation.split("=");
+		for (String s: sArray) {
+			System.out.println(s);
+		}
 		return sArray[1];
 	}
 	
-	public static void main(String[] args) {
-		String s="  absorber name=Abs x=0 y=19 width=20 height=1";
-	//	Board b= new Board("try", (float) 0,(float) 0,(float) 0);
+	public String getName() {
+		return name;
 	}
 	
-	public void test() {
-		String s="board name=sampleBoard2_2 gravity=20.0 friction1=0.020 friction2=0.020";
-		this.matching(s);
+	public Float getGravity() {
+		return gravity;
 	}
-	
+
+
+	public Float getFriction1() {
+		return friction1;
+	}
+
+	public Float getFriction2() {
+		return friction2;
+	}
+
+	public Map<Geometry.DoublePair, Gadget> getListofGadgets() {
+		return listofGadgets;
+	}
+
+	public Map<String, Ball> getBalls() {
+		return balls;
+	}
+
 	public void matching (String line) {
-		
+
 		String[] sArray=line.split(" ");
 
 		String id=sArray[0];
-		
+
 		//board name=NAME gravity=FLOAT
 		//fire trigger=NAME action=NAME
 		if (sArray.length==3) {
@@ -61,7 +81,7 @@ public class Board {
 				this.friction2=(float) 0.025;
 			}
 		}
-		
+
 		//squareBumper name=NAME x=INTEGER y=INTEGER
 		//circleBumper name=NAME x=INTEGER y=INTEGER
 		if (sArray.length==4) {
@@ -79,7 +99,7 @@ public class Board {
 				listofGadgets.put(cord, new CircleBumper(cord, bumpName));
 			}
 		}
-		
+
 		//board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT
 		//triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
 		//leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
@@ -149,12 +169,12 @@ public class Board {
 				Float xVel=Float.parseFloat(word4);
 				Float yVel=Float.parseFloat(word5);
 				balls.put(ballName,new Ball(ballName,xBall,yBall,xVel,yVel));
+				//do ball thingies
 			}
 		}
 	}
-	
 	public Board (File file) throws IOException {
-		
+
 		BufferedReader bfread=new BufferedReader(new FileReader (file));
 		String line;
 		while ((line=bfread.readLine())!=null) {
@@ -190,7 +210,7 @@ public class Board {
 	 * then uses updated velocity in the move method to update the postion
 	 * of the ball
 	 */
-	public void collideGadget() { 
+	/*public void collideGadget() { 
 		for (Ball b: balls) {
 			for (Geometry.DoublePair key: listofGadgets.keySet()) {
 				listofGadgets.get(key).collide(b);
@@ -201,5 +221,6 @@ public class Board {
 	
 	public List<(Ball,wall number)> collideWall() {
 		
-	}
+	}*/
+
 }
