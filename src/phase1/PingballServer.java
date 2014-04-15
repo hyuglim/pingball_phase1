@@ -156,9 +156,8 @@ public class PingballServer {
 	private String handleRequest(String input) {
 
 		String[] tokens = input.split(" ");
-		
-		
 
+		
 		// sample input: hit NAMEofBoard x y xVel yVel
 		if (tokens[0].equals("hit")) {
 			String name = tokens[1];
