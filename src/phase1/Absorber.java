@@ -96,4 +96,8 @@ public class Absorber implements Gadget {
             gad.action();
         }
     }
+
+	public String getName() {
+		return name;
+	}
 }

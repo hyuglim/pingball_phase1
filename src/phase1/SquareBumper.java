@@ -19,6 +19,10 @@ public class SquareBumper implements Gadget {
     private LineSegment wallThatWillCollide;
     private double countdown;
     
+    public String getName() {
+		return name;
+	}
+    
     /**
      * Creates a square bumper
      * @param coord coordinate of the upper left corner

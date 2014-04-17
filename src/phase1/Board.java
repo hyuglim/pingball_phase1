@@ -83,7 +83,7 @@ public class Board {
                 Matcher firstMatcher = firstWordpat.matcher(line);
                
                 int counter=0;
-                String word= "\\s*([a-zA-Z0-9]+\\s*=\\s*[a-zA-Z0-9\\.]+)\\s*";
+                String word= "\\s*([a-zA-Z0-9_-]+\\s*=\\s*[a-zA-Z0-9\\._-]+)\\s*"; //missing negative sign, underscore
                 Pattern wordpat=Pattern.compile(word);
                 Matcher matcher = wordpat.matcher(line);
                 List <String> names=new ArrayList<String>();
@@ -105,6 +105,7 @@ public class Board {
                                 this.gravity=Float.parseFloat(names.get(1));
                                 this.friction1=(float) 0.025;
                                 this.friction2=(float) 0.025;
+                                
                         }
                         else {
                                 this.name=names.get(0);
@@ -121,10 +122,6 @@ public class Board {
                 	Float yBall=Float.parseFloat(names.get(2));
                 	Float xVel=Float.parseFloat(names.get(3));
                 	Float yVel=Float.parseFloat(names.get(4));
-                	System.out.println(xBall);
-                	System.out.println(yBall);
-                	System.out.println(xVel);
-                	System.out.println(yVel);
                 	balls.put(ballName, new Ball(ballName,xBall,yBall,xVel,yVel));
                 }
                 //squareBumper name=NAME x=INTEGER y=INTEGER
@@ -287,21 +284,6 @@ public class Board {
                         //handles the case when you don't collide with any gadgets
                 }
                 return message;
-        }
-        
-        public static void main(String[] args) throws IOException {
-        	try {
-        		Board b=new Board(new File("C:\\Users\\Tom\\Desktop\\6.005\\pingball-phase1\\txtboard.pb"));
-        		System.out.println(b.getFriction1().equals((float) 0.020)); 
-        		System.out.println(b.getFriction2().equals((float) 0.020));
-        		System.out.println(b.getName().equals("sampleBoard1"));
-        		System.out.println(b.getGravity().equals((float) 20.0));
-      
-        	}
-        	catch (IOException e) {
-    			e.printStackTrace();
-    		}		
-        	
         }
  
         /* may or maynot need this helper function....

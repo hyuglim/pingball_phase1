@@ -12,6 +12,10 @@ public class RightFlipper implements Gadget{
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     private boolean isOn;
     private double countdown;
+    
+    public String getName() {
+		return name;
+	}
    
     /**
      * Creates a rightflipper

@@ -6,6 +6,8 @@ package phase1;
  * An abstract data type to represent gadgets in a pingball board.
  */
 public interface Gadget {
+	
+	public String getName();
     /**
      * Add trigger-action hook to a gadget.
      * @param gadget the gadget whose action will be hooked

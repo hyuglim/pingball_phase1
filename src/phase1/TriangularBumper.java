@@ -18,6 +18,10 @@ public class TriangularBumper implements Gadget {
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     private double countdown;
     private LineSegment wallThatWillCollide;
+    
+    public String getName() {
+		return name;
+	}
 
     /**
      * Creates a triangular bumper.

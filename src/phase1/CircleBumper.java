@@ -12,6 +12,10 @@ public class CircleBumper implements Gadget {
     private final double reflectionCoeff = 1.0;
     private double countdown;
     
+    public String getName() {
+		return name;
+	}
+    
     /**
      * Creates a circular bumper
      * @param coord coordinate of the upper left corner

@@ -13,6 +13,10 @@ public class LeftFlipper implements Gadget{
     private boolean isOn;
     private double countdown;
     
+    public String getName() {
+		return name;
+	}
+    
     /**
      * Creates a leftflipper
      * @param coord coordinate of the upper left corner
