@@ -29,7 +29,7 @@ public class RightFlipper implements Gadget{
         this.coord = coord;
         this.name = name;
         initflip = new LineSegment(coord.x+2, coord.y, coord.x+2, coord.y+2);
-        this.flip = Geometry.rotateAround(initflip, new Vect(coord.x+1, coord.y+1), Angle.ZERO.minus(orientation));
+        this.flip = Geometry.rotateAround(initflip, new Vect(coord.x+1, coord.y+1), orientation);
         this.pivot = flip.p1();
         this.isOn = false;
      }
@@ -55,6 +55,7 @@ public class RightFlipper implements Gadget{
         ball.move(countdown);
         ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
         board.moveOneBall(ball, timeToGo-countdown);
+        trigger();
     }
     
     /**
@@ -80,10 +81,10 @@ public class RightFlipper implements Gadget{
      */
     public void action(){
         if (!isOn){
-            flip = Geometry.rotateAround(flip, pivot, Angle.DEG_270);
+            flip = Geometry.rotateAround(flip, pivot, Angle.DEG_90);
             isOn = true;
         } else {
-            flip = Geometry.rotateAround(flip, pivot, Angle.DEG_90);
+            flip = Geometry.rotateAround(flip, pivot, Angle.DEG_270);
             isOn = false;
         }
     }
@@ -121,6 +122,7 @@ public class RightFlipper implements Gadget{
             result[3] = " ";
         }
         //System.out.println(name);
+        //System.out.println(flip);
         //System.out.println(result[0]+result[1]+"\n"+result[2]+result[3]);
         return result;
     }

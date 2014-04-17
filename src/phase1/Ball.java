@@ -12,6 +12,7 @@ public class Ball {
     public Vect velocity;
     public Circle circle;
     public final String name;
+    public boolean inAbsorber = false;
     //private final Vect gravity = new Vect(0, -25); //will worry about gravity and friction at the end
     
     /**
