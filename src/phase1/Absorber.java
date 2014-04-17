@@ -51,6 +51,7 @@ public class Absorber implements Gadget {
      */
     public double timeUntilCollision(Ball ball){
         double min = Integer.MAX_VALUE;
+        if (ball.inAbsorber){return min;}
         double time;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
@@ -72,8 +73,11 @@ public class Absorber implements Gadget {
      */
     public void collide(Ball ball, double timeToGo, Board board){       
         ball.move(countdown);
+        ball.inAbsorber = true;
         ball.velocity = new Vect(0, 0);
         ball.circle = new Circle(coord.x+bottom.length()-0.25, coord.y+right.length()-0.25, 0.5);
+        //System.out.println(">>>>>>>>>>>>>>>...<<<<<<<<<<<<<");
+        //board.display();
         heldBalls.add(ball);
         trigger();
     }
@@ -82,12 +86,12 @@ public class Absorber implements Gadget {
      * Shoots the balls out of the corner.
      */
     public void action(){
-        System.out.println("in action");
-        if (heldBalls.size()>0){
+        System.out.println(">>>>>>in Absorber action");
+        if (heldBalls.size() > 0){
             for (Ball ball: heldBalls){
                 ball.velocity = new Vect(0, 50);
             }
-            heldBalls.clear();
+            //heldBalls.clear();
         }
     }
     
@@ -95,6 +99,7 @@ public class Absorber implements Gadget {
      * Trigger other gadget's actions.
      */
     public void trigger(){
+        System.out.println(">>>>>>in Absorber trigger");
         for (Gadget gad : gadgetsToBeTriggered){
             gad.action();
         }

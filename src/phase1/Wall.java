@@ -63,7 +63,6 @@ public class Wall implements Gadget{
     public void action() {
         
     }
-    
 
     /**
      * Trigger other gadget's actions.

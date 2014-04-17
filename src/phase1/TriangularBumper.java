@@ -38,9 +38,9 @@ public class TriangularBumper implements Gadget {
         LineSegment initleg2 = new LineSegment(coord.x, coord.y, coord.x+1, coord.y);
         LineSegment inithyp = new LineSegment(coord.x+1, coord.y, coord.x, coord.y+1);
         Vect roationCenter= new Vect(coord.x+0.5, coord.y+0.5);
-        this.leg1 = Geometry.rotateAround(initleg1, roationCenter, Angle.ZERO.minus(angle));
-        this.leg2 = Geometry.rotateAround(initleg2, roationCenter, Angle.ZERO.minus(angle));
-        this.hypotenuse = Geometry.rotateAround(inithyp, roationCenter, Angle.ZERO.minus(angle));
+        this.leg1 = Geometry.rotateAround(initleg1, roationCenter, angle);
+        this.leg2 = Geometry.rotateAround(initleg2, roationCenter, angle);
+        this.hypotenuse = Geometry.rotateAround(inithyp, roationCenter, angle);
         
         walls = Arrays.asList(leg1, leg2, hypotenuse);
     }

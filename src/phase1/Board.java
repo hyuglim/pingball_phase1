@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 
 
+
 import physics.*;
 /**
  * Describes a board that is used for a pingball game. It is 20L x 20L in size.
@@ -351,8 +352,12 @@ public class Board {
          * Update the list of balls that are on the board at the beginning of time step.
          * @param b list of balls
          */
-        public void updateBalls(Map<String, Ball> bls){
-                balls = bls;
+        public void deleteBall(String ballname){
+            balls.remove(ballname);
+        }
+        
+        public void insertBall(String ballname, Float x, Float y, Float xVel, Float yVel){
+            balls.put(ballname, new Ball(ballname, x, y, xVel, yVel));
         }
  
         /**
@@ -360,13 +365,13 @@ public class Board {
          * @returns a message for the client
          */
         //this should be the method the client calls for each step
-        public String moveAllBalls(){
+        public void moveAllBalls(){
                 //String message;
             System.out.println("in moveallballs");
             for (Ball b: balls.values()) {
                 moveOneBall(b, 1.0);
             }
-            return "";
+            //return "";
                 //hmm we should think about balls colliding with each other.
         }
         
@@ -424,7 +429,7 @@ public class Board {
             String message ="";
             for (Ball b: balls.values()){
                 for (Wall w: walls){
-                    if (!(w.timeUntilCollision(b)>0)){
+                    if (!(w.timeUntilCollision(b) >0)){
                         message += "hit "+ name+ " "+ w.getWallNum()+ " " + b.name+ " " + 
                     + b.getPosition().x+ " "+ b.getPosition().y+ " " +b.velocity.x()+ " "+ b.velocity.y()+ "\n"; 
                     }
