@@ -74,12 +74,15 @@ public class Absorber implements Gadget {
         ball.move(countdown);
         ball.velocity = new Vect(0, 0);
         ball.circle = new Circle(coord.x+bottom.length()-0.25, coord.y+right.length()-0.25, 0.5);
+        heldBalls.add(ball);
+        trigger();
     }
     
     /**
      * Shoots the balls out of the corner.
      */
     public void action(){
+        System.out.println("in action");
         if (heldBalls.size()>0){
             for (Ball ball: heldBalls){
                 ball.velocity = new Vect(0, 50);

@@ -64,6 +64,7 @@ public class LeftFlipper implements Gadget{
         //need to add reflect rotating wall later.
         ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
         board.moveOneBall(ball, timeToGo-countdown);
+        trigger();
     }
     
     /**

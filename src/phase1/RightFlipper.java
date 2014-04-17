@@ -55,6 +55,7 @@ public class RightFlipper implements Gadget{
         ball.move(countdown);
         ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
         board.moveOneBall(ball, timeToGo-countdown);
+        trigger();
     }
     
     /**

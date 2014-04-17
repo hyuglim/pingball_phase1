@@ -5,26 +5,24 @@ import java.util.List;
 import physics.*;
 
 public class Wall implements Gadget{
-    private final LineSegment wall;
+    private LineSegment wall;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     private double countdown;
     private final double reflectCoeff = 1.0;
-    public String side;
+    public String name;
+    private int wallNum;
     
     /**
      * Creates an outer wall.
      * @param name indicates which wall it will be. has to be one of "left", "top", "right", or "bottom"
      */
-    public Wall(String name){
-        this.side = name;
-        if (name.equals("left")){
-            wall = new LineSegment(-0.05,20.05,-0.05,-0.05); 
-        } else if (name.equals("top")){
-            wall = new LineSegment(-0.05,-0.05,20.05,-0.05);
-        } else if (name.equals("right")){
-            wall = new LineSegment(20.05,-0.05,20.05,20.05);
-        } else {
-            wall= new LineSegment(20.05,20.05,-0.05,20.05);
+    public Wall(int wallNum){
+        this.wallNum = wallNum;
+        switch(wallNum){
+            case 0: name = "top"; wall = new LineSegment(-0.05,-0.05,20.05,-0.05); break;
+            case 1: name = "bottom"; wall= new LineSegment(20.05,20.05,-0.05,20.05); break;
+            case 2: name = "left"; wall = new LineSegment(-0.05,20.05,-0.05,-0.05); break;
+            case 3: name = "right"; wall = new LineSegment(20.05,-0.05,20.05,20.05); break;
         }
     }
     
@@ -77,6 +75,10 @@ public class Wall implements Gadget{
     }
     
     public String getName(){
-        return side;
+        return name;
+    }
+    
+    public int getWallNum(){
+        return wallNum;
     }
 }

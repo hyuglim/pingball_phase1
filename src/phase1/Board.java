@@ -9,12 +9,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
  
+
 
 
 import physics.*;
@@ -32,6 +34,8 @@ public class Board {
         private Map<String, Gadget> nameofGadgets = new HashMap <String, Gadget>();
         private Map<String, Ball> balls;
         private String[][] state = new String[22][22];
+        List<Wall> walls = Arrays.asList(new Wall(0),new Wall(1),new Wall(2),new Wall(3));
+        
 
         /**
          * @returns the name of the board
@@ -245,6 +249,7 @@ public class Board {
                 	//what to do with fire trigger
                     String trigName = names.get(0);
                     String actName = names.get(1);
+                    System.out.println(trigName + " " + actName);
                     Gadget trigGad = nameofGadgets.get(trigName);
                     Gadget actGad = nameofGadgets.get(actName);
                     trigGad.addTrigger(actGad);
@@ -271,10 +276,10 @@ public class Board {
                 }
                 //initiate balls and gadgets
                 balls=new HashMap <String, Ball>();
-                positionofGadgets.put(new Tuple(-1, 21), new Wall("left"));
-                positionofGadgets.put(new Tuple(-1, -1), new Wall("top"));
-                positionofGadgets.put(new Tuple(21, -1), new Wall("right"));
-                positionofGadgets.put(new Tuple(21, 21), new Wall("bottom"));
+                positionofGadgets.put(new Tuple(-1, 21), walls.get(0));
+                positionofGadgets.put(new Tuple(-1, -1), walls.get(1));
+                positionofGadgets.put(new Tuple(21, -1), walls.get(2));
+                positionofGadgets.put(new Tuple(21, 21), walls.get(3));
                 while ((line=bfread.readLine())!=null) {
                 	
                         if (line.equals("")) {
@@ -358,10 +363,10 @@ public class Board {
         public String moveAllBalls(){
                 //String message;
             System.out.println("in moveallballs");
-                for (Ball b: balls.values()) {
-                        moveOneBall(b, 1.0);
-                }
-                return "";
+            for (Ball b: balls.values()) {
+                moveOneBall(b, 1.0);
+            }
+            return "";
                 //hmm we should think about balls colliding with each other.
         }
         
@@ -381,31 +386,52 @@ public class Board {
          */
         public String moveOneBall(Ball b, double timetoGo) {
             System.out.println("in moveoneball "+b.name+" "+timetoGo);
+            
             Tuple pos = b.getPosition();
             state[pos.x+1][pos.y+1] = " ";
-                Gadget gadgetToCollideFirst = null;
-                String message = "";
-                double timeUntilCollision = timetoGo;
-                for (Gadget gad:positionofGadgets.values()) {
-                        if (gad.timeUntilCollision(b)<timeUntilCollision) {
-                                gadgetToCollideFirst = gad;
-                                timeUntilCollision = gad.timeUntilCollision(b);
-                        }
+            
+            Gadget gadgetToCollideFirst = null;
+            String message = "";
+            double timeUntilCollision = timetoGo;
+            
+            for (Gadget gad:positionofGadgets.values()) {
+                if (gad.timeUntilCollision(b) < timeUntilCollision) {
+                    gadgetToCollideFirst = gad;
+                    timeUntilCollision = gad.timeUntilCollision(b);
                 }
+            }
 //                if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
 //                        //  if it's going to collide with a wall, send a message to client with the name of the wall
 //                        // check if it's invisible or not, and react appropriately
 //                        return "left";
 //                }
-                if (timeUntilCollision < timetoGo) {
-                        gadgetToCollideFirst.collide(b,timetoGo, this);
-                } else{
-                        b.move(timetoGo);
-                        //handles the case when you don't collide with any gadgets
-                }
-                return message;
+            if (timeUntilCollision < timetoGo){
+                gadgetToCollideFirst.collide(b, timetoGo, this);
+            } else{
+                //when the ball doesn't collide with any gadgets
+                b.move(timetoGo);
+            }
+            System.out.println(display());
+            return message;
         }
  
+        /**
+         *  format: hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel
+         *  wallNum is either 0,1,2,3 -> top, bottom, left, right
+         * @return output message
+         */
+        public String whichWallGotHit(){
+            String message ="";
+            for (Ball b: balls.values()){
+                for (Wall w: walls){
+                    if (!(w.timeUntilCollision(b)>0)){
+                        message += "hit "+ name+ " "+ w.getWallNum()+ " " + b.name+ " " + 
+                    + b.getPosition().x+ " "+ b.getPosition().y+ " " +b.velocity.x()+ " "+ b.velocity.y()+ "\n"; 
+                    }
+                }
+            }            
+            return message;     
+        }
         /* may or maynot need this helper function....
         /**
          * updates the position of the ball
