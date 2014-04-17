@@ -8,7 +8,7 @@ import physics.*;
 
 public class SquareBumper implements Gadget {
     public final String name;
-    private final Geometry.DoublePair coord; //should be only integers
+    private final Tuple coord; //should be only integers
     public final LineSegment left;
     public final LineSegment top;
     public final LineSegment right;
@@ -28,13 +28,13 @@ public class SquareBumper implements Gadget {
      * @param coord coordinate of the upper left corner
      * @param name
      */
-    public SquareBumper(Geometry.DoublePair coord, String name){
+    public SquareBumper(Tuple coord, String name){
         this.coord = coord; //"center" coordinate is always the left top corner of the square.
         this.name = name;
-        this.left = new LineSegment(coord.d1, coord.d2, coord.d1, coord.d2 + 1);
-        this.top = new LineSegment(coord.d1, coord.d2, coord.d1 + 1, coord.d2);
-        this.right = new LineSegment(coord.d1 + 1, coord.d2, coord.d1 + 1, coord.d2 + 1);
-        this.bottom = new LineSegment(coord.d1 + 1, coord.d2 + 1, coord.d1, coord.d2 + 1);
+        this.left = new LineSegment(coord.x, coord.y, coord.x, coord.y + 1);
+        this.top = new LineSegment(coord.x, coord.y, coord.x + 1, coord.y);
+        this.right = new LineSegment(coord.x + 1, coord.y, coord.x + 1, coord.y + 1);
+        this.bottom = new LineSegment(coord.x + 1, coord.y + 1, coord.x, coord.y + 1);
         walls = Arrays.asList(left, top, right, bottom);
     }
     

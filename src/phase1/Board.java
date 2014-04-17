@@ -3,6 +3,7 @@ package phase1;
  
 import java.lang.Float;
 import java.lang.Integer;
+import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
  
 
+
 import physics.*;
 /**
  * Describes a board that is used for a pingball game. It is 20L x 20L in size.
@@ -26,8 +28,10 @@ public class Board {
         private Float gravity;
         private Float friction1;
         private Float friction2;
-        private Map <Geometry.DoublePair, Gadget> listofGadgets;
+        private Map<Tuple, Gadget> positionofGadgets=new HashMap <Tuple, Gadget>();
+        private Map<String, Gadget> nameofGadgets = new HashMap <String, Gadget>();
         private Map<String, Ball> balls;
+        private String[][] state = new String[22][22];
 
         /**
          * @returns the name of the board
@@ -60,8 +64,8 @@ public class Board {
         /**
          * @returns the list of gadgets in the board
          */
-        public Map<Geometry.DoublePair, Gadget> getListofGadgets() {
-                return listofGadgets;
+        public Map<Tuple, Gadget> getPositionofGadgets() {
+                return positionofGadgets;
         }
  
         /**
@@ -129,16 +133,26 @@ public class Board {
                 	String sName=names.get(0);
                 	Integer xSquare=Integer.parseInt(names.get(1));
                 	Integer ySquare=Integer.parseInt(names.get(2));
-                	Geometry.DoublePair sCord=new Geometry.DoublePair((float) xSquare,(float) ySquare);
-                	listofGadgets.put(sCord, new SquareBumper(sCord,sName));
+                	//Geometry.DoublePair sCord=new Geometry.DoublePair((float) xSquare,(float) ySquare);
+                	//positionofGadgets.put(sCord, new SquareBumper(sCord,sName));
+                	Tuple sCord =new Tuple(xSquare, ySquare);
+                	SquareBumper sBump= new SquareBumper(sCord,sName);
+                	positionofGadgets.put(sCord, sBump);
+                	nameofGadgets.put(sName, sBump);
+                    state[xSquare+1][ySquare+1] = "#";
                 }
                 //circleBumper name=NAME x=INTEGER y=INTEGER
                 if (id.equals("circleBumper")) {
                 	String cName=names.get(0);
                 	Integer xCircle=Integer.parseInt(names.get(1));
                 	Integer yCircle=Integer.parseInt(names.get(2));
-                	Geometry.DoublePair cCord=new Geometry.DoublePair((float) xCircle,(float) yCircle);
-                	listofGadgets.put(cCord, new CircleBumper(cCord,cName));
+                	//Geometry.DoublePair cCord=new Geometry.DoublePair((float) xCircle,(float) yCircle);
+                	//positionofGadgets.put(cCord, new CircleBumper(cCord,cName));
+                	Tuple cCord =new Tuple(xCircle, yCircle);
+                	CircleBumper cBump = new CircleBumper(cCord,cName); 
+                    positionofGadgets.put(cCord, cBump);
+                    nameofGadgets.put(cName, cBump);
+                    state[xCircle+1][yCircle+1] = "O";
                 }
                 //triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("triangleBumper")) {
@@ -146,8 +160,17 @@ public class Board {
                 	Integer xTriang=Integer.parseInt(names.get(1));
                 	Integer yTriang=Integer.parseInt(names.get(2));
                 	Integer oTriang=Integer.parseInt(names.get(3));
-                	Geometry.DoublePair tCord=new Geometry.DoublePair((float) xTriang, (float) yTriang);
-                	listofGadgets.put(tCord, new TriangularBumper(tCord, new Angle((float) oTriang), tName));
+                	//Geometry.DoublePair tCord=new Geometry.DoublePair((float) xTriang, (float) yTriang);
+                	//positionofGadgets.put(tCord, new TriangularBumper(tCord, new Angle((float) oTriang), tName));
+                	Tuple tCord =new Tuple(xTriang, yTriang);
+                	TriangularBumper tBump = new TriangularBumper(tCord, new Angle((float) oTriang), tName);
+                    positionofGadgets.put(tCord, tBump);
+                    nameofGadgets.put(tName, tBump);
+                    if (oTriang.equals(0)||oTriang.equals(180)){
+                        state[xTriang+1][yTriang+1] = "/";
+                    } else {
+                        state[xTriang+1][yTriang+1] = "\\";
+                    }
                 }
                 //leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("leftFlipper")) {
@@ -155,8 +178,24 @@ public class Board {
                 	Integer xLF=Integer.parseInt(names.get(1));
                 	Integer yLF=Integer.parseInt(names.get(2));
                 	Integer oLF=Integer.parseInt(names.get(3));
-                	Geometry.DoublePair lfCord=new Geometry.DoublePair((float) xLF, (float) yLF);
-                	listofGadgets.put(lfCord, new LeftFlipper(lfCord, lfName, new Angle((float) oLF)));
+                	//Geometry.DoublePair lfCord=new Geometry.DoublePair((float) xLF, (float) yLF);
+                	Tuple lfCord =new Tuple(xLF, yLF);
+                	LeftFlipper lfBump = new LeftFlipper(lfCord, lfName, new Angle((float) oLF));
+                    positionofGadgets.put(lfCord, lfBump);
+                    nameofGadgets.put(lfName, lfBump);
+                    if (oLF.equals(0)){
+                        state[xLF+1][yLF+1] = "|";
+                        state[xLF+1][yLF+2] = "|";
+                    } else if(oLF.equals(90)){
+                        state[xLF+1][yLF+1] = "-";
+                        state[xLF+2][yLF+1] = "-";
+                    } else if(oLF.equals(180)){
+                        state[xLF+2][yLF+1] = "|";
+                        state[xLF+2][yLF+2] = "|";
+                    } else{
+                        state[xLF+1][yLF+2] = "-";
+                        state[xLF+2][yLF+2] = "-";
+                    }
                 }
                 //rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("rightFlipper")) {
@@ -164,8 +203,24 @@ public class Board {
                 	Integer xRF=Integer.parseInt(names.get(1));
                 	Integer yRF=Integer.parseInt(names.get(2));
                 	Integer oRF=Integer.parseInt(names.get(3));
-                	Geometry.DoublePair rfCord=new Geometry.DoublePair((float) xRF, (float) yRF);
-                	listofGadgets.put(rfCord, new RightFlipper(rfCord, rfName, new Angle((float) oRF)));
+                	//Geometry.DoublePair rfCord=new Geometry.DoublePair((float) xRF, (float) yRF);
+                    Tuple rfCord =new Tuple(xRF, yRF);
+                    RightFlipper rfBump = new RightFlipper(rfCord, rfName, new Angle((float) oRF));
+                	positionofGadgets.put(rfCord, rfBump);
+                	nameofGadgets.put(rfName, rfBump);
+                    if (oRF.equals(0)){
+                        state[xRF+2][yRF+1] = "|";
+                        state[xRF+2][yRF+2] = "|";
+                    } else if(oRF.equals(90)){
+                        state[xRF+1][yRF+2] = "-";
+                        state[xRF+2][yRF+2] = "-";
+                    } else if(oRF.equals(180)){
+                        state[xRF+1][yRF+1] = "|";
+                        state[xRF+1][yRF+2] = "|";
+                    } else{
+                        state[xRF+1][yRF+1] = "-";
+                        state[xRF+2][yRF+1] = "-";
+                    }
                 }
                 //absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
                 if (id.equals("absorber")) {
@@ -174,14 +229,26 @@ public class Board {
                 	Integer yAbsorb=Integer.parseInt(names.get(2));
                 	Integer wAbsorb=Integer.parseInt(names.get(3));
                 	Integer hAbsorb=Integer.parseInt(names.get(4));
-                	Geometry.DoublePair aCord=new Geometry.DoublePair((float) xAbsorb,(float) yAbsorb);
-                	listofGadgets.put(aCord, new Absorber(aCord,aName,wAbsorb,hAbsorb));
+                	//Geometry.DoublePair aCord=new Geometry.DoublePair((float) xAbsorb,(float) yAbsorb);
+                    Tuple aCord =new Tuple(xAbsorb, yAbsorb);
+                    Absorber aBump = new Absorber(aCord,aName,wAbsorb,hAbsorb);
+                	positionofGadgets.put(aCord, aBump);
+                	nameofGadgets.put(aName, aBump);
+                	for(int w = 0; w <wAbsorb; w++){
+                	    for (int h = 0; h < hAbsorb; h++){
+                	        state[xAbsorb+1+w][yAbsorb+1+h] = "=";        
+                	    }
+                	}
                 }
                 //fire trigger=NAME action=NAME
                 if (id.equals("fire")) {
                 	//what to do with fire trigger
+                    String trigName = names.get(0);
+                    String actName = names.get(1);
+                    Gadget trigGad = nameofGadgets.get(trigName);
+                    Gadget actGad = nameofGadgets.get(actName);
+                    trigGad.addTrigger(actGad);
                 }
- 
         }
  
  
@@ -193,9 +260,21 @@ public class Board {
         public Board (File file) throws IOException {
                 BufferedReader bfread=new BufferedReader(new FileReader (file));
                 String line;
+                for (int j =-1; j<21; j++){
+                    for(int i=-1; i<21; i++){
+                        if (i==-1 || j==-1 || i==20 || j==20){
+                            state[i+1][j+1] = ".";
+                        } else {
+                            state[i+1][j+1]=" ";
+                        }
+                    }
+                }
                 //initiate balls and gadgets
                 balls=new HashMap <String, Ball>();
-                listofGadgets=new HashMap <Geometry.DoublePair, Gadget>();
+                positionofGadgets.put(new Tuple(-1, 21), new Wall("left"));
+                positionofGadgets.put(new Tuple(-1, -1), new Wall("top"));
+                positionofGadgets.put(new Tuple(21, -1), new Wall("right"));
+                positionofGadgets.put(new Tuple(21, 21), new Wall("bottom"));
                 while ((line=bfread.readLine())!=null) {
                 	
                         if (line.equals("")) {
@@ -211,6 +290,34 @@ public class Board {
                 bfread.close();
         }
  
+        public void updateState(){
+            //System.out.println("in updatestate");
+            for (Ball b: balls.values()){
+                Tuple pos = b.getPosition();
+                state[pos.x+1][pos.y+1] = "*";
+            }
+            
+            for (Gadget gad: positionofGadgets.values()){
+                Tuple coord =null;
+                String[] box = null;
+                if (gad.getClass().equals(LeftFlipper.class)){
+                    LeftFlipper LFgad = (LeftFlipper) gad;
+                    coord = LFgad.coord;
+                    box = LFgad.showOrientation();
+                } else if (gad.getClass().equals(RightFlipper.class)){
+                    RightFlipper RFgad = (RightFlipper) gad;
+                    coord = RFgad.coord;
+                    box = RFgad.showOrientation();
+                }
+                if (coord != null && box!=null){
+                    state[coord.x+1][coord.y+1] = box[0];
+                    state[coord.x+2][coord.y+1] = box[1];
+                    state[coord.x+1][coord.y+2] = box[2];
+                    state[coord.x+2][coord.y+2] = box[3];
+                }
+            }
+        }
+        
         /**
          * Display the board! The rules are as follows:
          * Ball: "*"
@@ -223,7 +330,16 @@ public class Board {
          * @returns a String representation of the state of the board, including the ball's whereabouts.
          */
         public String display(){
-                return "";
+            //System.out.println("in display");
+            String result ="";
+            updateState();
+            for (int j =-1; j<21; j++){
+                for(int i=-1; i<21; i++){
+                    result += state[i+1][j+1];
+                }
+                result += "\r\n";
+            }
+                return result;
         }
  
         /**
@@ -241,6 +357,7 @@ public class Board {
         //this should be the method the client calls for each step
         public String moveAllBalls(){
                 //String message;
+            System.out.println("in moveallballs");
                 for (Ball b: balls.values()) {
                         moveOneBall(b, 1.0);
                 }
@@ -263,20 +380,23 @@ public class Board {
          * @returns a message for the client
          */
         public String moveOneBall(Ball b, double timetoGo) {
+            System.out.println("in moveoneball "+b.name+" "+timetoGo);
+            Tuple pos = b.getPosition();
+            state[pos.x+1][pos.y+1] = " ";
                 Gadget gadgetToCollideFirst = null;
                 String message = "";
                 double timeUntilCollision = timetoGo;
-                for (Gadget gad:listofGadgets.values()) {
+                for (Gadget gad:positionofGadgets.values()) {
                         if (gad.timeUntilCollision(b)<timeUntilCollision) {
                                 gadgetToCollideFirst = gad;
                                 timeUntilCollision = gad.timeUntilCollision(b);
                         }
                 }
-                if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
-                        //  if it's going to collide with a wall, send a message to client with the name of the wall
-                        // check if it's invisible or not, and react appropriately
-                        return "left";
-                }
+//                if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
+//                        //  if it's going to collide with a wall, send a message to client with the name of the wall
+//                        // check if it's invisible or not, and react appropriately
+//                        return "left";
+//                }
                 if (timeUntilCollision < timetoGo) {
                         gadgetToCollideFirst.collide(b,timetoGo, this);
                 } else{
@@ -295,8 +415,8 @@ public class Board {
          */
         /*public void collideGadget() {
                 for (Ball b: balls) {
-                        for (Geometry.DoublePair key: listofGadgets.keySet()) {
-                                listofGadgets.get(key).collide(b);
+                        for (Geometry.DoublePair key: positionofGadgets.keySet()) {
+                                positionofGadgets.get(key).collide(b);
                         }
                         b.move();
                 }

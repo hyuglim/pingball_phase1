@@ -8,7 +8,7 @@ import physics.*;
 
 public class TriangularBumper implements Gadget {
     public final String name;
-    private final Geometry.DoublePair coord; //should be only integers
+    private final Tuple coord; //should be only integers
     public final LineSegment leg1;
     public final LineSegment leg2;
     public final LineSegment hypotenuse;
@@ -29,18 +29,19 @@ public class TriangularBumper implements Gadget {
      * @param angle orientation of the bumper. 0, 90, 180 or 270
      * @param name 
      */
-    public TriangularBumper(Geometry.DoublePair coord, Angle angle, String name){
+    public TriangularBumper(Tuple coord, Angle angle, String name){
         this.coord = coord; //always upper-left corner.
         this.name = name;
-        
-        LineSegment initleg1 = new LineSegment(coord.d1, coord.d2, coord.d1, coord.d2+1);
-        LineSegment initleg2 = new LineSegment(coord.d1, coord.d2, coord.d1+1, coord.d2);
-        LineSegment inithyp = new LineSegment(coord.d1+1, coord.d2, coord.d1, coord.d2+1);
-        
-        this.leg1 = Geometry.rotateAround(initleg1, new Vect(coord.d1+0.5, coord.d2+0.5), angle);
-        this.leg2 = Geometry.rotateAround(initleg2, new Vect(coord.d1+0.5, coord.d2+0.5), angle);
-        this.hypotenuse = Geometry.rotateAround(inithyp, new Vect(coord.d1+0.5, coord.d2+0.5), angle);
         this.orientation = angle;
+        
+        LineSegment initleg1 = new LineSegment(coord.x, coord.y, coord.x, coord.y+1);
+        LineSegment initleg2 = new LineSegment(coord.x, coord.y, coord.x+1, coord.y);
+        LineSegment inithyp = new LineSegment(coord.x+1, coord.y, coord.x, coord.y+1);
+        Vect roationCenter= new Vect(coord.x+0.5, coord.y+0.5);
+        this.leg1 = Geometry.rotateAround(initleg1, roationCenter, Angle.ZERO.minus(angle));
+        this.leg2 = Geometry.rotateAround(initleg2, roationCenter, Angle.ZERO.minus(angle));
+        this.hypotenuse = Geometry.rotateAround(inithyp, roationCenter, Angle.ZERO.minus(angle));
+        
         walls = Arrays.asList(leg1, leg2, hypotenuse);
     }
     

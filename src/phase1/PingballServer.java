@@ -136,14 +136,10 @@ public class PingballServer {
 			} 
 		}		
 	}
-<<<<<<< HEAD
+
 
 	/**
-=======
-	
-	/**
 	 * listen for messagees coming from the client
->>>>>>> 08b7224585ca5231a073122f211da0918a9ed872
 	 * @param socket
 	 * @throws IOException
 	 */

@@ -18,7 +18,7 @@ public class TestingParser {
 	@Test
 	public void testBoard1() {
 		try {
-			Board b = new Board(new File("C:\\Users\\Tom\\Desktop\\6.005\\pingball-phase1\\sampleBoard1.pb"));
+			Board b = new Board(new File("C:\\Users\\Harlin\\pingball-phase1\\sampleBoard1.pb"));
 			assertTrue(b.getFriction1().equals((float) 0.020)); 
 			assertTrue(b.getFriction2().equals((float) 0.020));
 			assertTrue(b.getName().equals("sampleBoard1"));
@@ -30,7 +30,7 @@ public class TestingParser {
 			String tag5="Abs";
 			String s="";
 			//checks for all the right tags
-			for (Gadget g: b.getListofGadgets().values()) {
+			for (Gadget g: b.getPositionofGadgets().values()) {
 				s=s.concat(g.getName());
 				assertTrue(g.getName().contains(tag1)||g.getName().contains(tag2)||g.getName().contains(tag3)||g.getName().contains(tag4)||g.getName().contains(tag5));
 			}
@@ -46,7 +46,7 @@ public class TestingParser {
 	@Test
 	public void testBoard2() {
 		try {
-			Board b = new Board(new File("C:\\Users\\Tom\\Desktop\\6.005\\pingball-phase1\\sampleBoard2-1.pb"));
+			Board b = new Board(new File("C:\\Users\\Harlin\\pingball-phase1\\sampleBoard2-1.pb"));
 			assertTrue(b.getFriction1().equals((float) 0.020)); 
 			assertTrue(b.getFriction2().equals((float) 0.020));
 			assertTrue(b.getName().equals("sampleBoard2_1"));
@@ -56,7 +56,7 @@ public class TestingParser {
 			String tag3="Tri";
 			String tag4="Flip";
 			String tag5="Abs";
-			for (Gadget g: b.getListofGadgets().values()) {
+			for (Gadget g: b.getPositionofGadgets().values()) {
 				assertTrue(g.getName().contains(tag1)||g.getName().contains(tag2)||g.getName().contains(tag3)||g.getName().contains(tag4)||g.getName().contains(tag5));
 			}
 		} catch (IOException e) {
@@ -67,7 +67,7 @@ public class TestingParser {
 	@Test
 	public void testBoard22() {
 		try {
-			Board b = new Board(new File("C:\\Users\\Tom\\Desktop\\6.005\\pingball-phase1\\sampleBoard2-2.pb"));
+			Board b = new Board(new File("C:\\Users\\Harlin\\pingball-phase1\\sampleBoard2-2.pb"));
 			assertTrue(b.getFriction1().equals((float) 0.020)); 
 			assertTrue(b.getFriction2().equals((float) 0.020));
 			assertTrue(b.getName().equals("sampleBoard2_2"));
@@ -77,7 +77,7 @@ public class TestingParser {
 			String tag3="Tri";
 			String tag4="Flip";
 			String tag5="Abs";
-			for (Gadget g: b.getListofGadgets().values()) {
+			for (Gadget g: b.getPositionofGadgets().values()) {
 				assertTrue(g.getName().contains(tag1)||g.getName().contains(tag2)||g.getName().contains(tag3)||g.getName().contains(tag4)||g.getName().contains(tag5));
 			}
 		} catch (IOException e) {
@@ -88,7 +88,7 @@ public class TestingParser {
 	@Test
 	public void testBoard3() {
 		try {
-			Board b = new Board(new File("C:\\Users\\Tom\\Desktop\\6.005\\pingball-phase1\\sampleBoard3.pb"));
+			Board b = new Board(new File("C:\\Users\\Harlin\\pingball-phase1\\sampleBoard3.pb"));
 			assertTrue(b.getFriction1().equals((float) 0.025)); 
 			assertTrue(b.getFriction2().equals((float) 0.025));
 			assertTrue(b.getName().equals("ExampleB"));
@@ -98,7 +98,7 @@ public class TestingParser {
 			String tag3="Tri";
 			String tag4="Flip";
 			String tag5="Abs";
-			for (Gadget g: b.getListofGadgets().values()) {
+			for (Gadget g: b.getPositionofGadgets().values()) {
 				assertTrue(g.getName().contains(tag1)||g.getName().contains(tag2)||g.getName().contains(tag3)||g.getName().contains(tag4)||g.getName().contains(tag5));
 			}
 		} catch (IOException e) {
@@ -109,7 +109,7 @@ public class TestingParser {
 	@Test
 	public void testBoard4() {
 		try {
-			Board b = new Board(new File("C:\\Users\\Tom\\Desktop\\6.005\\pingball-phase1\\sampleBoard4.pb"));
+			Board b = new Board(new File("C:\\Users\\Harlin\\pingball-phase1\\sampleBoard4.pb"));
 			assertTrue(b.getFriction1().equals((float) 0.025)); 
 			assertTrue(b.getFriction2().equals((float) 0.025));
 			assertTrue(b.getName().equals("ExampleA"));
@@ -119,7 +119,7 @@ public class TestingParser {
 			String tag3="Tri";
 			String tag4="Flip";
 			String tag5="Abs";
-			for (Gadget g: b.getListofGadgets().values()) {
+			for (Gadget g: b.getPositionofGadgets().values()) {
 				assertTrue(g.getName().contains(tag1)||g.getName().contains(tag2)||g.getName().contains(tag3)||g.getName().contains(tag4)||g.getName().contains(tag5));
 			}
 		} catch (IOException e) {

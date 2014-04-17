@@ -14,31 +14,38 @@ public class Main {
      * else, collision, instantly change the position of the ball
      */
     public static void main(String[] args) {
-        Ball ball = new Ball(1.0);
-        Board board = new Board();
-        double maxX = -100;
-        double maxY = -100;
-        while(true){
-            while (board.collideWith(ball)==null){
-                try{Thread.sleep(80);} //delay in between frames
-                catch(Exception e){e.printStackTrace();}
-                
-                ball.move(board.getWidth(),board.getHeight()); //gets the ball moving
-                
-                System.out.println(board.getBoardPic(ball));
-                System.out.println("position: "+ball.circle.getCenter().x()+" , "+ball.circle.getCenter().y());
-                //System.out.println("velocity: "+ball.velocity);
-                
-                if(ball.getPosX() > maxX) maxX = ball.getPosX();
-                if(ball.getPosY() > maxY) maxY = ball.getPosY();
-                System.out.println("max pos: " + maxX + "," + maxY);
-                
-            }
-            
-            // this means a collision happened!! change the position AND the velocity of the ball
-            ball.velocity = Geometry.reflectWall(board.collideWith(ball), ball.velocity);
-            ball.move(board.getWidth(),board.getHeight());
-        }
+        LineSegment a = new LineSegment(0,0,0,2);
+        System.out.println(a.p1()+" "+ a.p2());
+        a= Geometry.rotateAround(a, new Vect(1,1), Angle.DEG_90);
+        System.out.println(a.p1()+" "+ a.p2());
+        a= Geometry.rotateAround(a, new Vect(1,1), Angle.DEG_90);
+        System.out.println(a.p1()+" "+ a.p2());
+
+//        Ball ball = new Ball(1.0);
+//        Board board = new Board();
+//        double maxX = -100;
+//        double maxY = -100;
+//        while(true){
+//            while (board.collideWith(ball)==null){
+//                try{Thread.sleep(80);} //delay in between frames
+//                catch(Exception e){e.printStackTrace();}
+//                
+//                ball.move(board.getWidth(),board.getHeight()); //gets the ball moving
+//                
+//                System.out.println(board.getBoardPic(ball));
+//                System.out.println("position: "+ball.circle.getCenter().x()+" , "+ball.circle.getCenter().y());
+//                //System.out.println("velocity: "+ball.velocity);
+//                
+//                if(ball.getPosX() > maxX) maxX = ball.getPosX();
+//                if(ball.getPosY() > maxY) maxY = ball.getPosY();
+//                System.out.println("max pos: " + maxX + "," + maxY);
+//                
+//            }
+//            
+//            // this means a collision happened!! change the position AND the velocity of the ball
+//            ball.velocity = Geometry.reflectWall(board.collideWith(ball), ball.velocity);
+//            ball.move(board.getWidth(),board.getHeight());
+//        }
     }
     
     
