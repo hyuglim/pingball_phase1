@@ -5,13 +5,19 @@ import java.util.List;
 import physics.*;
 
 public class RightFlipper implements Gadget{
-    private final Geometry.DoublePair coord;
+    public final Tuple coord;
+    private final Vect pivot;
     public LineSegment flip;
+    LineSegment initflip;
     public final String name;
     private final double reflectCoeff = 0.95;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
-    private boolean isOn;
+    public boolean isOn;
     private double countdown;
+    
+    public String getName() {
+		return name;
+	}
    
     /**
      * Creates a rightflipper
@@ -19,18 +25,14 @@ public class RightFlipper implements Gadget{
      * @param name 
      * @param orientation angle of 0, 90, 180, or 270
      */
-    public RightFlipper(Geometry.DoublePair coord, String name, Angle orientation){
+    public RightFlipper(Tuple coord, String name, Angle orientation){
         this.coord = coord;
         this.name = name;
-        //LineSegment initflip = new LineSegment(coord.d1, coord.d2, coord.d1, coord.d2+2);
-        if (orientation.equals(Angle.ZERO)){
-            this.flip = new LineSegment(coord.d1+2, coord.d2, coord.d1+2, coord.d2+2);
-            this.isOn = false;
-        } else{
-            this.flip = new LineSegment(coord.d1+2, coord.d2, coord.d1, coord.d2);
-            this.isOn = true;
-        }
-    }
+        initflip = new LineSegment(coord.x+2, coord.y, coord.x+2, coord.y+2);
+        this.flip = Geometry.rotateAround(initflip, new Vect(coord.x+1, coord.y+1), Angle.ZERO.minus(orientation));
+        this.pivot = flip.p1();
+        this.isOn = false;
+     }
 
     /**
      * Find out how much time is left until ball-gadget collision.
@@ -78,10 +80,10 @@ public class RightFlipper implements Gadget{
      */
     public void action(){
         if (!isOn){
-            flip = Geometry.rotateAround(flip, new Vect(coord.d1, coord.d2), Angle.DEG_90);
+            flip = Geometry.rotateAround(flip, pivot, Angle.DEG_270);
             isOn = true;
         } else {
-            flip = Geometry.rotateAround(flip, new Vect(coord.d1, coord.d2), Angle.DEG_270);
+            flip = Geometry.rotateAround(flip, pivot, Angle.DEG_90);
             isOn = false;
         }
     }
@@ -93,5 +95,33 @@ public class RightFlipper implements Gadget{
         for (Gadget gad : gadgetsToBeTriggered){
             gad.action();
         }
+    }
+    
+    public String[] showOrientation(){
+        String[] result = new String[4];
+        if (flip.toLine2D().ptSegDist(coord.x, coord.y+1.0)<=0.1){
+            result[0] = "|";
+            result[1] = " ";
+            result[2] = "|";
+            result[3] = " ";
+        } else if (flip.toLine2D().ptSegDist(coord.x+1.0, coord.y+2.0)<=0.1){
+            result[0] = " ";
+            result[1] = " ";
+            result[2] = "-";
+            result[3] = "-";
+        } else if (flip.toLine2D().ptSegDist(coord.x+2.0, coord.y+1.0)<=0.1){
+            result[0] = " ";
+            result[1] = "|";
+            result[2] = " ";
+            result[3] = "|";
+        } else if (flip.toLine2D().ptSegDist(coord.x+1.0, coord.y)<=0.1){
+            result[0] = "-";
+            result[1] = "-";
+            result[2] = " ";
+            result[3] = " ";
+        }
+        //System.out.println(name);
+        //System.out.println(result[0]+result[1]+"\n"+result[2]+result[3]);
+        return result;
     }
 }

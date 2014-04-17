@@ -75,4 +75,8 @@ public class Wall implements Gadget{
             gad.action();
         }
     }
+    
+    public String getName(){
+        return side;
+    }
 }

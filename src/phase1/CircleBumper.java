@@ -5,22 +5,26 @@ import java.util.List;
 import physics.*;
 
 public class CircleBumper implements Gadget {
-    private final Geometry.DoublePair coord;
+    private final Tuple coord;
     private final Circle circle;
     public final String name;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     private final double reflectionCoeff = 1.0;
     private double countdown;
     
+    public String getName() {
+		return name;
+	}
+    
     /**
      * Creates a circular bumper
      * @param coord coordinate of the upper left corner
      * @param name
      */
-    public CircleBumper(Geometry.DoublePair coord, String name){
+    public CircleBumper(Tuple coord, String name){
         this.coord = coord;
         this.name = name;
-        this.circle = new Circle(coord.d1+0.5, coord.d2+0.5, 0.5);
+        this.circle = new Circle(coord.x+0.5, coord.y+0.5, 0.5);
     }
     
     /**
