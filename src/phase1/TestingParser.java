@@ -28,9 +28,15 @@ public class TestingParser {
 			String tag3="Tri";
 			String tag4="Flip";
 			String tag5="Abs";
+			String s="";
+			//checks for all the right tags
 			for (Gadget g: b.getListofGadgets().values()) {
-				System.out.println(g.getName());
+				s=s.concat(g.getName());
 				assertTrue(g.getName().contains(tag1)||g.getName().contains(tag2)||g.getName().contains(tag3)||g.getName().contains(tag4)||g.getName().contains(tag5));
+			}
+			for (int i=0;i<8;i++) {
+				String temp="Square".concat(Integer.toString(i));
+				assertTrue(s.contains(temp));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
