@@ -12,6 +12,7 @@ public class GamePlayer implements Runnable{
 		
 		while(true) {
 			// TODO: run the game here
+			//System.out.println("game player is running");
 		}
 	}
 }

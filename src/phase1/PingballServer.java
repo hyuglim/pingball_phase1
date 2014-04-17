@@ -27,12 +27,13 @@ public class PingballServer {
 	//HashMap<String, Tuple> created when joining the boards is as follows:
 	//
 	//                 top      bot  left right   top   bot   left right
-	//{ "board1" : ([neighbor1, n2, n3,   n4] , [true, true, true, true]
-	//  "neighbor1": ([null, client1, null, null],[false, true, false, false])
-	//  "board3" : ([n1,  null,   null, n4]   , [true, false, true, false])
+	//{ "board1" : ([neighbor1, n2, n3,   n4] , [true, true, true, true], board1's socket)
+	//  "neighbor1": ([null, client1, null, null],[false, true, false, false], neighbor1's socket)
+	//  "board3" : ([n1,  null,   null, n4]   , [true, false, true, false], board3's socket)
 	//   ... }
 	// Tuple has a list of strings and a list of booleans
-	private ConcurrentHashMap<String, Triple> neighbors = new ConcurrentHashMap<String, Triple>();
+	private ConcurrentHashMap<String, Triple<List<String>,List<Boolean>,Socket>> neighbors 
+			= new ConcurrentHashMap<String, Triple<List<String>,List<Boolean>,Socket>>();
 
 	
 	/**
@@ -56,9 +57,21 @@ public class PingballServer {
 		if (!neighbors.contains(left) || !neighbors.contains(right)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
 		}
-				
+		
+		try {
+			// send message to the left board
+			setNeighborBoards(left, right);
+			
+			// send message to the right board
+			setNeighborBoards(right, left);
+					
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
+	
 	
 	/**
 	 * join boards vertically
@@ -69,7 +82,27 @@ public class PingballServer {
 		if (!neighbors.contains(top) || !neighbors.contains(bottom)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
 		}
+		
+		try {
+			// send message to the top board
+			setNeighborBoards(top, bottom);
+			
+			// send message to the right board
+			setNeighborBoards(bottom, top);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
+	}
+	
+	private void setNeighborBoards(String s1, String s2) throws IOException {
+		List<String> adjBoardNames = neighbors.get(s1).getOne();
+		List<Boolean> isInvisible = neighbors.get(s1).getTwo();
+		adjBoardNames.set(3, s2);
+		isInvisible.set(3, true);
+
+		
 	}
 	
 	/**
@@ -136,8 +169,7 @@ public class PingballServer {
 			} 
 		}		
 	}
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 	
 	/**
 	 * listen for messagees coming from the client
@@ -178,8 +210,7 @@ public class PingballServer {
 								
 						neighbors.put(name, triple);
 					}
-				}
-				
+				}				
 				
 				String output = handleRequest(line); 
 				if (output != null) {
@@ -199,49 +230,63 @@ public class PingballServer {
 	 * @return
 	 */
 	private String handleRequest(String input) {
-
-		String[] tokens = input.split(" ");
-
 		
-		// sample input: hit NAMEofBoard x y xVel yVel
+		System.out.println("input from the client: " + input);
+		String[] tokens = input.split(" ");
+		
+		//sample input: name 
+		if(tokens[0].equals("name")) {
+			return input;
+		}
+		
+		// sample input: hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel
+		// wallNum is either 0,1,2,3 -> top, bottom, left, right
 		if (tokens[0].equals("hit")) {
-			String name = tokens[1];
-			
-			double x = Double.parseDouble(tokens[2]);
-			double y = Double.parseDouble(tokens[3]);
-			double xVel = Double.parseDouble(tokens[4]);
-			double yVel = Double.parseDouble(tokens[5]); 
-			
-			
+			String nameOfBoard = tokens[1];
+			int wallNum = Integer.parseInt(tokens[2]);
+			String nameOfBall = tokens[3];
+					
+			double x = Double.parseDouble(tokens[4]);
+			double y = Double.parseDouble(tokens[5]);
+			double xVel = Double.parseDouble(tokens[6]);
+			double yVel = Double.parseDouble(tokens[7]); 	
 
 			// TODO: 
 			// first, find the adjacent neighbor
 			// second, see if the wall that is hit is invisible
 			// third, if so, change the coordinate and send message to the adjacent neighbor
-			// sample output: 
-
+			// sample output: "invisible NAMEofBall x y xVel yVel" or "visible"
+			
+			String neighbor = neighbors.get(nameOfBoard).getOne().get(wallNum);
+			boolean hitInvisible= neighbors.get(nameOfBoard).getTwo().get(wallNum);
+			Socket socketSender = neighbors.get(nameOfBoard).getThree();	
+			Socket socketReceiver = neighbors.get(neighbor).getThree();
+			PrintWriter outSender;
+			PrintWriter outReceiver;
+			try {
+				outSender = new PrintWriter(socketSender.getOutputStream(), true);
+				outReceiver = new PrintWriter(socketReceiver.getOutputStream(), true);
+				if (hitInvisible) {
+					String msgToSender = "delete " + nameOfBall + " " + x + " " + y + " " + xVel + " " + yVel;
+					String msgToReceiver = "create " + nameOfBall + " " + x + " " + y + " " + xVel + " " + yVel;
+					outSender.println(msgToSender);
+					outReceiver.println(msgToReceiver);
+				} else {
+					outSender.println("visible");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 		} 
 
 		// Should never get here--make sure to return in each of the valid cases above.
 		throw new UnsupportedOperationException();
 	}
 
-	//HashMap<String, Tuple> created when joining the boards is as follows:
-	//
-	//                 top      bot  left right   top   bot   left right
-	//{ "board1" : ([neighbor1, n2, n3,   n4] , [true, true, true, true]
-	//  "neighbor1": ([null, client1, null, null],[false, true, false, false])
-	//  "board3" : ([n1,  null,   null, n4]   , [true, false, true, false])
-	//   ... }
-	// 
-	// for example, client1 has a neighbor1 bordering at the top; client1's top wall
-	// is now invisible, and neighbor1's bottom wall is also invisible
-	//
 	
-	
-	
-	
-
 
 	/**
 	 * Main method checks for port argument and handles connection

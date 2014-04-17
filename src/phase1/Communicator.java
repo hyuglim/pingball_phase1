@@ -41,11 +41,21 @@ public class Communicator implements Runnable{
 	 */
 	private void handleConnection(Socket socket) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+		final PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
 		try{      	
 			//tell the server name of the board
 			out.println("name " + board.getName());
+			
+			new Thread(){
+				public void run() {
+					if(true)//if ball hits a wall
+						synchronized(out){
+							// sample output: hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel
+							out.println("hit NAMEOFBOARD 0 BALL 1 2 1 2 ");
+						}						
+				}
+			}.start();
 			
 			//while server inputstream isn't closed
 			for (String line = in.readLine(); line != null; line = in.readLine()) { 
@@ -57,7 +67,9 @@ public class Communicator implements Runnable{
 					}
 					
 					if(output.equals("hello")) {
-						out.println("client!");
+						synchronized(out) {
+							out.println("client!");
+						}						
 					}
 				}
 				
@@ -88,9 +100,13 @@ public class Communicator implements Runnable{
 		String[] tokens = input.split(" ");
 
 		//CONFIRMING IF BALL HIT AN INVISIBLE WALL
-		if(tokens[0].equals("invisible")) {
-			// sample input: invisible NAME
+		if(tokens[0].equals("delete")) {
+			// sample input: invisible NAMEofBALL x y xVel yVel
 			String nameOfBall = tokens[1];
+			double x = Double.parseDouble(tokens[2]);
+			double y = Double.parseDouble(tokens[3]);
+			double xVel = Double.parseDouble(tokens[4]);
+			double yVel = Double.parseDouble(tokens[5]);
 			// TODO: get rid of the ball with that name     
 			
 			

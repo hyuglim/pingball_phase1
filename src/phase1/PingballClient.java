@@ -52,7 +52,9 @@ public class PingballClient{
 	 * @param board
 	 */
 	PingballClient(Board board) {
+		this.player = new GamePlayer(board);
 		
+		new Thread(player).start();
 	}	
 	
 
@@ -80,12 +82,13 @@ public class PingballClient{
 		int port = 10987; // default port
 		String host = ""; // if no host provided, go to single player mode
 		File file = null;
-
+	
 		Queue<String> arguments = new LinkedList<String>(Arrays.asList(args));
 		try {
 			//command line parsing
 			while ( ! arguments.isEmpty()) {
 				String flag = arguments.remove();
+				System.out.println("flag: "+ flag);
 				try {
 					if (flag.equals("--host")) {
 						host = arguments.remove();
@@ -93,10 +96,12 @@ public class PingballClient{
 					}
 					if (flag.equals("--port")) {
 						port = Integer.parseInt(arguments.remove());
-						System.out.println("port: " + port);
+						System.out.println("port: " + flag);
 					}
-					if (arguments.size()==1) { //the last argument must be file
-						file = new File(arguments.remove());
+					if (arguments.size()==0) { //the last argument must be file
+						//String filePath = arguments.remove();
+						file = new File(flag);
+						
 						if ( ! file.isFile()) {
 							throw new IllegalArgumentException("file not found: \"" + file + "\"");
 						}
@@ -126,6 +131,7 @@ public class PingballClient{
 		//single player mode
 		if (host.equals("")) {
 			try {
+				
 				System.out.println("single player");
 				Board board = new Board(file);
 				PingballClient player = new PingballClient(board);
