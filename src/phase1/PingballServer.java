@@ -173,19 +173,6 @@ public class PingballServer {
 	
 	/**
 	 * listen for messagees coming from the client
-=======
-<<<<<<< HEAD
-=======
->>>>>>> 3e8b1c355c9e4358c09a0e9fe25a7d46a3fd0cd5
-
-
-	/**
-	 * listen for messagees coming from the client
-<<<<<<< HEAD
->>>>>>> 08b7224585ca5231a073122f211da0918a9ed872
->>>>>>> 08567e14651fa91f82db6f0cc6e26ddcda58bfd7
-=======
->>>>>>> 3e8b1c355c9e4358c09a0e9fe25a7d46a3fd0cd5
 	 * @param socket
 	 * @throws IOException
 	 */
