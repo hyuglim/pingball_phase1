@@ -47,7 +47,9 @@ public class CircleBumper implements Gadget {
     public void collide(Ball ball, double timeToGo, Board board){       
         ball.move(countdown);
         ball.velocity = Geometry.reflectCircle(circle.getCenter(), ball.circle.getCenter(), ball.velocity, reflectionCoeff);
-        board.moveOneBall(ball, timeToGo-countdown);
+        if (timeToGo-countdown >0){
+            board.moveOneBall(ball, timeToGo-countdown);
+        }
         trigger();
     }
     

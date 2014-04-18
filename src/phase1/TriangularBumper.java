@@ -82,7 +82,9 @@ public class TriangularBumper implements Gadget {
     public void collide(Ball ball, double timeToGo, Board board){       
         ball.move(countdown);
         ball.velocity = Geometry.reflectWall(wallThatWillCollide, ball.velocity, reflectCoeff);
-        board.moveOneBall(ball, timeToGo-countdown);
+        if (timeToGo-countdown >0){
+            board.moveOneBall(ball, timeToGo-countdown);
+        }
         trigger();
     }
     

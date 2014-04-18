@@ -296,12 +296,7 @@ public class Board {
         }
  
         public void updateState(){
-            //System.out.println("in updatestate");
-            for (Ball b: balls.values()){
-                Tuple pos = b.getPosition();
-                state[pos.x+1][pos.y+1] = "*";
-            }
-           
+            //System.out.println("in updatestate");           
             for (Gadget gad: positionofGadgets.values()){
                 Tuple coord =null;
                 String[] box = null;
@@ -320,6 +315,11 @@ public class Board {
                     state[coord.x+1][coord.y+2] = box[2];
                     state[coord.x+2][coord.y+2] = box[3];
                 }
+            }
+            
+            for (Ball b: balls.values()){
+                Tuple pos = b.getPosition();
+                state[pos.x+1][pos.y+1] = "*";
             }
         }
        
@@ -389,11 +389,12 @@ public class Board {
          * @returns a message for the client
          */
         public void moveOneBall(Ball b, double timetoGo) {
-            if (timetoGo<=0) return;
             System.out.println("in moveoneball "+b.name+" "+timetoGo);
-            
             Tuple pos = b.getPosition();
             state[pos.x+1][pos.y+1] = " ";
+            
+            if (timetoGo<=0) return;
+           
             
             Gadget gadgetToCollideFirst = null;
             String message = "";
@@ -405,6 +406,8 @@ public class Board {
                     timeUntilCollision = gad.timeUntilCollision(b);
                 }
             }
+            System.out.println("Closest gadget: "+gadgetToCollideFirst);
+            System.out.println("time until collsion: "+timeUntilCollision);
 //                if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
 //                        //  if it's going to collide with a wall, send a message to client with the name of the wall
 //                        // check if it's invisible or not, and react appropriately

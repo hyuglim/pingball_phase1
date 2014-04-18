@@ -26,7 +26,7 @@ public class Ball {
 	public Ball (String name, Float x, Float y, Float xVel, Float yVel) {
 	    this.name = name;
 	    this.circle = new Circle(x, y, 0.5);
-	    this.velocity = new Vect(xVel, yVel);
+	    this.velocity = new Vect(0.05*xVel, 0.05*yVel);
 	}
 	
 	/**
@@ -34,9 +34,9 @@ public class Ball {
 	 * @param time how long the ball should be moving for
 	 */
 	public void move(double time){
-	    double stepSize = 0.05;
-        double newX = circle.getCenter().x() + stepSize*time*velocity.x();
-        double newY = circle.getCenter().y() + stepSize*time*velocity.y();
+	    //double stepSize = 0.05;
+        double newX = circle.getCenter().x() + time*velocity.x();
+        double newY = circle.getCenter().y() + time*velocity.y();
         this.circle = new Circle(newX, newY, circle.getRadius());
 	}
 	

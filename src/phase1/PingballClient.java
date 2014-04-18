@@ -127,22 +127,13 @@ public class PingballClient{
 
 
 		//starting threads and shit
-
+		Board board =null;
 		//single player mode
 		if (host.equals("")) {
-			try {
-				
+			try {				
 				System.out.println("single player");
-				Board board = new Board(file);
+				board = new Board(file);
 				PingballClient player = new PingballClient(board);
-				while(true){
-				    try{
-				        Thread.sleep(50);
-				    } catch(Exception e){
-				        e.printStackTrace();
-				    }
-				    board.display();
-				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
@@ -150,23 +141,22 @@ public class PingballClient{
 		} else { //multiplayer mode
 			try {
 				System.out.println("multiplayer");
-				Board board = new Board(file);
+				board = new Board(file);
 				Socket socket = new Socket(host, port);
 				PingballClient player = new PingballClient(socket, board);
-                while(true){
-                    try{
-                        Thread.sleep(50);
-                    } catch(Exception e){
-                        e.printStackTrace();
-                    }
-                    board.display();
-                }
 			} catch (Exception e) {
 				e.printStackTrace();			
 			}
 		}				
-
-
+		
+        while(true){
+            try{
+                Thread.sleep(50);
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+            System.out.println(board.display());
+        }
 	}
 
 }
