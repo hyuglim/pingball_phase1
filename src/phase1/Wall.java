@@ -11,6 +11,7 @@ public class Wall implements Gadget{
     private final double reflectCoeff = 1.0;
     public String name;
     private int wallNum;
+    private float gravity;
     
     /**
      * Creates an outer wall.
@@ -24,6 +25,7 @@ public class Wall implements Gadget{
             case 2: name = "left"; wall = new LineSegment(-0.05,20.05,-0.05,-0.05); break;
             case 3: name = "right"; wall = new LineSegment(20.05,-0.05,20.05,20.05); break;
         }
+        this.gravity=gravity;
     }
     
     /**
@@ -54,7 +56,7 @@ public class Wall implements Gadget{
     public void collide(Ball ball, double timeToGo, Board board) {
         ball.move(countdown);
         ball.velocity = Geometry.reflectWall(wall, ball.velocity, reflectCoeff);
-
+        ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
        
         if(timeToGo-countdown>0){
             board.moveOneBall(ball, timeToGo-countdown);
