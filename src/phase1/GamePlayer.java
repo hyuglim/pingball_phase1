@@ -11,8 +11,13 @@ public class GamePlayer implements Runnable{
 	public void run() {
 		
 		while(true) {
-			// TODO: run the game here
-			//System.out.println("game player is running");
+		    try {
+		        myBoard.moveAllBalls();
+		        //Thread.sleep(50);
+		        //myBoard.display();
+		    } catch (Exception e){
+		        e.printStackTrace();
+		    }
 		}
 	}
 }

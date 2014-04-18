@@ -12,15 +12,15 @@ public class Main {
         } catch(Exception e){
             e.printStackTrace();
         }
-        while(true){
-            try{
-                Thread.sleep(50);
-            } catch(Exception e){
-                e.printStackTrace();
-            }
-            b.moveAllBalls();
-            //System.out.println(b.display());
-        }
+//        while(true){
+//            try{
+//                Thread.sleep(50);
+//            } catch(Exception e){
+//                e.printStackTrace();
+//            }
+//           // b.moveAllBalls();
+//            System.out.println(b.display());
+//        }
     }
     
 }

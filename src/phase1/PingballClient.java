@@ -135,10 +135,17 @@ public class PingballClient{
 				System.out.println("single player");
 				Board board = new Board(file);
 				PingballClient player = new PingballClient(board);
-				
+				while(true){
+				    try{
+				        Thread.sleep(50);
+				    } catch(Exception e){
+				        e.printStackTrace();
+				    }
+				    board.display();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
+			} 
 
 		} else { //multiplayer mode
 			try {
@@ -146,7 +153,14 @@ public class PingballClient{
 				Board board = new Board(file);
 				Socket socket = new Socket(host, port);
 				PingballClient player = new PingballClient(socket, board);
-				
+                while(true){
+                    try{
+                        Thread.sleep(50);
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    board.display();
+                }
 			} catch (Exception e) {
 				e.printStackTrace();			
 			}

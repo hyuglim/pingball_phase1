@@ -34,7 +34,7 @@ public class Ball {
 	 * @param time how long the ball should be moving for
 	 */
 	public void move(double time){
-	    double stepSize = 0.1;
+	    double stepSize = 0.05;
         double newX = circle.getCenter().x() + stepSize*time*velocity.x();
         double newY = circle.getCenter().y() + stepSize*time*velocity.y();
         this.circle = new Circle(newX, newY, circle.getRadius());

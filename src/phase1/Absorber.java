@@ -51,7 +51,7 @@ public class Absorber implements Gadget {
      */
     public double timeUntilCollision(Ball ball){
         double min = Integer.MAX_VALUE;
-        if (ball.inAbsorber){return min;}
+        if (ball.inAbsorber){ball.inAbsorber=false; return min;}
         double time;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
@@ -91,7 +91,7 @@ public class Absorber implements Gadget {
             for (Ball ball: heldBalls){
                 ball.velocity = new Vect(0, 50);
             }
-            //heldBalls.clear();
+            heldBalls.clear();
         }
     }
     

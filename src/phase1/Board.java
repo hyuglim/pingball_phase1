@@ -388,7 +388,8 @@ public class Board {
          * @param timetoGo time left in this one step for this one ball
          * @returns a message for the client
          */
-        public String moveOneBall(Ball b, double timetoGo) {
+        public void moveOneBall(Ball b, double timetoGo) {
+            if (timetoGo<=0) return;
             System.out.println("in moveoneball "+b.name+" "+timetoGo);
             
             Tuple pos = b.getPosition();
@@ -415,8 +416,8 @@ public class Board {
                 //when the ball doesn't collide with any gadgets
                 b.move(timetoGo);
             }
-            System.out.println(display());
-            return message;
+           // System.out.println(display());
+            //return message;
         }
  
         /**
