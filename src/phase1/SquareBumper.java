@@ -56,7 +56,7 @@ public class SquareBumper implements Gadget {
         double time;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
-            if (time < min) {
+            if (-1< time && time < min) {
                 min = time;
                 wallThatWillCollide = wall;
             }

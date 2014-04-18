@@ -409,7 +409,7 @@ public class Board {
          * @returns a message for the client
          */
         public void moveOneBall(Ball b, double timetoGo) {
-
+<<<<<<< HEAD
             //System.out.println("in moveoneball "+b.name+" "+timetoGo);
             if (timetoGo<=0) return;
         	System.out.println(b.getPosition());
@@ -417,10 +417,12 @@ public class Board {
             state[(int)pos.d1+1][(int)pos.d2+1] = " ";
             
 
+           
+=======
             System.out.println("in moveoneball "+b.name+" "+timetoGo+ b.getPosition());
 
             if (timetoGo<=0) return;        
-
+>>>>>>> 3f9efab38a6aefc578457d79268d13bc8602c960
             
             Gadget gadgetToCollideFirst = null;
             //String message = "";
