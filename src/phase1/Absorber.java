@@ -50,7 +50,7 @@ public class Absorber implements Gadget {
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
-        double min = Integer.MAX_VALUE;
+        double min = Integer.MAX_VALUE; //initializes min
         if (ball.inAbsorber){ball.inAbsorber=false; return min;}
         double time;
         for (LineSegment wall: walls){
@@ -88,10 +88,11 @@ public class Absorber implements Gadget {
     public void action(){
         System.out.println(">>>>>>in Absorber action");
         if (heldBalls.size() > 0){
-            for (Ball ball: heldBalls){
-                ball.velocity = new Vect(0, 50);
-            }
-            heldBalls.clear();
+           //only removes one ball
+        	Double epil=(double) 1/Integer.MAX_VALUE; //small gap so ball is above the absorber
+        	Ball ball=heldBalls.remove(0);
+        	ball.velocity = new Vect(0, 50);
+        	ball.circle=new Circle(coord.x+bottom.length()-0.25,coord.y-0.25-epil,0.25); //simultaneously transport to the top
         }
     }
     

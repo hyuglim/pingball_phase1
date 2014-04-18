@@ -25,7 +25,7 @@ public class Ball {
      */
 	public Ball (String name, Float x, Float y, Float xVel, Float yVel) {
 	    this.name = name;
-	    this.circle = new Circle(x, y, 0.5);
+	    this.circle = new Circle(x, y, 0.25);
 	    this.velocity = new Vect(0.05*xVel, 0.05*yVel);
 	}
 	
@@ -37,7 +37,7 @@ public class Ball {
 	    //double stepSize = 0.05;
         double newX = circle.getCenter().x() + time*velocity.x();
         double newY = circle.getCenter().y() + time*velocity.y();
-        this.circle = new Circle(newX, newY, 0.5);
+        this.circle = new Circle(newX, newY, 0.25);
 	}
 	
 	public Geometry.DoublePair getPosition(){
