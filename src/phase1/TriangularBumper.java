@@ -18,6 +18,7 @@ public class TriangularBumper implements Gadget {
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     private double countdown;
     private LineSegment wallThatWillCollide;
+    private float gravity;
     
     public String getName() {
 		return name;
@@ -29,7 +30,7 @@ public class TriangularBumper implements Gadget {
      * @param angle orientation of the bumper. 0, 90, 180 or 270
      * @param name 
      */
-    public TriangularBumper(Tuple coord, Angle angle, String name){
+    public TriangularBumper(Tuple coord, Angle angle, String name,float gravity){
         this.coord = coord; //always upper-left corner.
         this.name = name;
         this.orientation = angle;
@@ -41,6 +42,7 @@ public class TriangularBumper implements Gadget {
         this.leg1 = Geometry.rotateAround(initleg1, roationCenter, angle);
         this.leg2 = Geometry.rotateAround(initleg2, roationCenter, angle);
         this.hypotenuse = Geometry.rotateAround(inithyp, roationCenter, angle);
+        this.gravity=gravity;
         
         walls = Arrays.asList(leg1, leg2, hypotenuse);
     }
@@ -82,6 +84,7 @@ public class TriangularBumper implements Gadget {
     public void collide(Ball ball, double timeToGo, Board board){       
         ball.move(countdown);
         ball.velocity = Geometry.reflectWall(wallThatWillCollide, ball.velocity, reflectCoeff);
+        ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
             board.moveOneBall(ball, timeToGo-countdown);
         }

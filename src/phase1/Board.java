@@ -113,7 +113,8 @@ public class Board {
                 if (id.equals("board")) {
                         if (counter==2) {
                                 name=names.get(0);
-                                gravity=Float.parseFloat(names.get(1));
+                                gravity=Float.parseFloat(names.get(1))*((float)0.05)*((float)0.05);
+                                System.out.println("gravity: "+gravity);
                                 this.friction1=(float) 0.025;
                                 this.friction2=(float) 0.025;
                                
@@ -121,6 +122,8 @@ public class Board {
                         else {
                                 this.name=names.get(0);
                                 this.gravity=Float.parseFloat(names.get(1));
+                                gravity=Float.parseFloat(names.get(1))*((float)0.05)*((float)0.05);
+                                System.out.println("gravity: "+gravity);
                                 this.friction1=Float.parseFloat(names.get(2));
                                 this.friction2=Float.parseFloat(names.get(3));
                         }
@@ -143,7 +146,7 @@ public class Board {
                         //Geometry.DoublePair sCord=new Geometry.DoublePair((float) xSquare,(float) ySquare);
                         //positionofGadgets.put(sCord, new SquareBumper(sCord,sName));
                         Tuple sCord =new Tuple(xSquare, ySquare);
-                        SquareBumper sBump= new SquareBumper(sCord,sName);
+                        SquareBumper sBump= new SquareBumper(sCord,sName,this.getGravity());
                         positionofGadgets.put(sCord, sBump);
                         nameofGadgets.put(sName, sBump);
                     state[xSquare+1][ySquare+1] = "#";
@@ -170,7 +173,7 @@ public class Board {
                         //Geometry.DoublePair tCord=new Geometry.DoublePair((float) xTriang, (float) yTriang);
                         //positionofGadgets.put(tCord, new TriangularBumper(tCord, new Angle((float) oTriang), tName));
                         Tuple tCord =new Tuple(xTriang, yTriang);
-                        TriangularBumper tBump = new TriangularBumper(tCord, new Angle((float) oTriang), tName);
+                        TriangularBumper tBump = new TriangularBumper(tCord, new Angle((float) oTriang), tName,this.getGravity());
                     positionofGadgets.put(tCord, tBump);
                     nameofGadgets.put(tName, tBump);
                     if (oTriang.equals(0)||oTriang.equals(180)){
@@ -187,7 +190,7 @@ public class Board {
                         Integer oLF=Integer.parseInt(names.get(3));
                         //Geometry.DoublePair lfCord=new Geometry.DoublePair((float) xLF, (float) yLF);
                         Tuple lfCord =new Tuple(xLF, yLF);
-                        LeftFlipper lfBump = new LeftFlipper(lfCord, lfName, new Angle((float) oLF));
+                        LeftFlipper lfBump = new LeftFlipper(lfCord, lfName, new Angle((float) oLF),this.getGravity());
                     positionofGadgets.put(lfCord, lfBump);
                     nameofGadgets.put(lfName, lfBump);
                     if (oLF.equals(0)){
@@ -212,7 +215,7 @@ public class Board {
                         Integer oRF=Integer.parseInt(names.get(3));
                         //Geometry.DoublePair rfCord=new Geometry.DoublePair((float) xRF, (float) yRF);
                     Tuple rfCord =new Tuple(xRF, yRF);
-                    RightFlipper rfBump = new RightFlipper(rfCord, rfName, new Angle((float) oRF));
+                    RightFlipper rfBump = new RightFlipper(rfCord, rfName, new Angle((float) oRF),this.getGravity());
                         positionofGadgets.put(rfCord, rfBump);
                         nameofGadgets.put(rfName, rfBump);
                     if (oRF.equals(0)){
@@ -229,7 +232,7 @@ public class Board {
                         state[xRF+2][yRF+1] = "-";
                     }
                 }
-                //absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
+               // absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
                 if (id.equals("absorber")) {
                         String aName=names.get(0);
                         Integer xAbsorb=Integer.parseInt(names.get(1));
@@ -238,7 +241,7 @@ public class Board {
                         Integer hAbsorb=Integer.parseInt(names.get(4));
                         //Geometry.DoublePair aCord=new Geometry.DoublePair((float) xAbsorb,(float) yAbsorb);
                     Tuple aCord =new Tuple(xAbsorb, yAbsorb);
-                    Absorber aBump = new Absorber(aCord,aName,wAbsorb,hAbsorb);
+                    Absorber aBump = new Absorber(aCord,aName,wAbsorb,hAbsorb,this.getGravity());
                         positionofGadgets.put(aCord, aBump);
                         nameofGadgets.put(aName, aBump);
                         for(int w = 0; w <wAbsorb; w++){
@@ -246,6 +249,8 @@ public class Board {
                                 state[xAbsorb+1+w][yAbsorb+1+h] = "=";        
                             }
                         }
+                           
+                          
                 }
                 //fire trigger=NAME action=NAME
                 if (id.equals("fire")) {
@@ -382,14 +387,6 @@ public class Board {
                 moveOneBall(b, 1.0);
             }
         }
-       
-        /*
-         * LEARN FROM TA TODAY:
-         * OKAY TO SPAWN A BALL JUST AT THE BOARDER OF THE NEIGHBOUR BOARD AT THE START
-         * OF THE NEXT TIMESTEP.
-         * OKAY TO CALL TIME_TILL_COLLISION ON EACH BALL WITH RESPECT TO EACH GADGET
-         * AND THEN KEEP TRACK OF TIME TO GO
-         */
  
         /**
          * Moves one ball in this board for however much time is left in this one game step

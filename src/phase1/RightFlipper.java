@@ -14,6 +14,7 @@ public class RightFlipper implements Gadget{
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     public boolean isOn;
     private double countdown;
+    private float gravity;
     
     public String getName() {
 		return name;
@@ -25,13 +26,14 @@ public class RightFlipper implements Gadget{
      * @param name 
      * @param orientation angle of 0, 90, 180, or 270
      */
-    public RightFlipper(Tuple coord, String name, Angle orientation){
+    public RightFlipper(Tuple coord, String name, Angle orientation,float gravity){
         this.coord = coord;
         this.name = name;
         initflip = new LineSegment(coord.x+2, coord.y, coord.x+2, coord.y+2);
         this.flip = Geometry.rotateAround(initflip, new Vect(coord.x+1, coord.y+1), orientation);
         this.pivot = flip.p1();
         this.isOn = false;
+        this.gravity=gravity;
      }
 
     /**
@@ -54,6 +56,7 @@ public class RightFlipper implements Gadget{
     public void collide(Ball ball, double timeToGo, Board board){       
         ball.move(countdown);
         ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
+        ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
             board.moveOneBall(ball, timeToGo-countdown);
         }
@@ -67,6 +70,7 @@ public class RightFlipper implements Gadget{
     public void collide(Ball ball){
         if (!(Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity)>0)){
             ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
+            ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         }
     }
     
