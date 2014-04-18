@@ -135,10 +135,7 @@ public class Communicator implements Runnable{
 			return null;
 		}
 
-		//DEBUGGING
-		if(tokens[0].equals("hello")) {
-			return "world";
-		}
+		
 
 		// Should never get here--make sure to return in each of the valid cases above.
 		throw new UnsupportedOperationException();

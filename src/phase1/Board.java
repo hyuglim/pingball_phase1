@@ -138,7 +138,7 @@ public class Board {
                         Float yBall=Float.parseFloat(names.get(2));
                         Float xVel=Float.parseFloat(names.get(3));
                         Float yVel=Float.parseFloat(names.get(4));
-                        balls.put(ballName, new Ball(ballName,xBall,yBall,xVel,yVel));
+                        balls.put(ballName, new Ball(ballName,xBall,yBall,xVel,yVel, gravity));
                 }
                 //squareBumper name=NAME x=INTEGER y=INTEGER
                 if (id.equals("squareBumper")) {
@@ -375,7 +375,7 @@ public class Board {
         }
         
         public void insertBall(String ballname, Float x, Float y, Float xVel, Float yVel){
-            balls.put(ballname, new Ball(ballname, x, y, xVel, yVel));
+            balls.put(ballname, new Ball(ballname, x, y, xVel, yVel, gravity));
         }
  
         /**
