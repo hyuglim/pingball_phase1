@@ -11,6 +11,7 @@ public class CircleBumper implements Gadget {
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     private final double reflectionCoeff = 1.0;
     private double countdown;
+    private int gravity;
     
     public String getName() {
 		return name;
@@ -25,6 +26,7 @@ public class CircleBumper implements Gadget {
         this.coord = coord;
         this.name = name;
         this.circle = new Circle(coord.x+0.5, coord.y+0.5, 0.5);
+        this.gravity=gravity;
     }
     
     /**
@@ -47,6 +49,7 @@ public class CircleBumper implements Gadget {
     public void collide(Ball ball, double timeToGo, Board board){       
         ball.move(countdown);
         ball.velocity = Geometry.reflectCircle(circle.getCenter(), ball.circle.getCenter(), ball.velocity, reflectionCoeff);
+        ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
             board.moveOneBall(ball, timeToGo-countdown);
         }

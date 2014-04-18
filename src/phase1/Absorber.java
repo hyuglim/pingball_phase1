@@ -16,8 +16,9 @@ public class Absorber implements Gadget {
     private List<LineSegment> walls;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     public List<Ball> heldBalls = new ArrayList<Ball>();
-    private LineSegment wallThatWillCollide;
+    //private LineSegment wallThatWillCollide;
     private double countdown;
+    private float gravity;
 
     /**
      * Creates an absorber.
@@ -26,7 +27,7 @@ public class Absorber implements Gadget {
      * @param width width of the absorber 
      * @param height height of the absorber
      */
-    public Absorber(Tuple coord, String name, int width, int height){
+    public Absorber(Tuple coord, String name, int width, int height, float gravity){
         this.coord = coord; //"center" coordinate is always the left top corner of the square.
         this.name = name;
         this.left = new LineSegment(coord.x, coord.y, coord.x, coord.y + height);
@@ -34,6 +35,7 @@ public class Absorber implements Gadget {
         this.right = new LineSegment(coord.x + width, coord.y, coord.x + width, coord.y + height);
         this.bottom = new LineSegment(coord.x + width, coord.y + height, coord.x, coord.y + height);
         walls = Arrays.asList(left, top, right, bottom);
+        this.gravity=gravity;
     }
     
     /**
@@ -50,18 +52,17 @@ public class Absorber implements Gadget {
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
-        double min = Integer.MAX_VALUE;
-        if (ball.inAbsorber){ball.inAbsorber=false; return min;}
+        countdown = Integer.MAX_VALUE;
         double time;
+       // wallThatWillCollide = null;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
-            if (-1< time && time < min) {
-                min = time;
-                wallThatWillCollide = wall;
+            if (-1< time && time < countdown) {
+                countdown = time;
+         //       wallThatWillCollide = wall;
             }
         }
-        countdown = min;
-        return min;
+        return countdown;
     };
     
     /**
@@ -73,11 +74,8 @@ public class Absorber implements Gadget {
      */
     public void collide(Ball ball, double timeToGo, Board board){       
         if(countdown>0) ball.move(countdown);
-        ball.inAbsorber = true;
         ball.velocity = new Vect(0, 0);
         ball.circle = new Circle(coord.x+bottom.length()-0.25, coord.y+right.length()-0.25, 0.5);
-        //System.out.println(">>>>>>>>>>>>>>>...<<<<<<<<<<<<<");
-        //board.display();
         heldBalls.add(ball);
         trigger();
     }
@@ -86,12 +84,12 @@ public class Absorber implements Gadget {
      * Shoots the balls out of the corner.
      */
     public void action(){
-        System.out.println(">>>>>>in Absorber action");
         if (heldBalls.size() > 0){
-            for (Ball ball: heldBalls){
-                ball.velocity = new Vect(0, 50);
-            }
-            heldBalls.clear();
+           //only removes one ball
+        	Double epil=(double) 1/Integer.MAX_VALUE; //small gap so ball is above the absorber
+        	Ball ball=heldBalls.remove(0);
+        	ball.velocity = new Vect(0, -0.05*50+gravity); // adds gravity
+        	ball.circle=new Circle(coord.x+bottom.length()-0.25,coord.y-0.25-epil,0.25); //simultaneously transport to the top
         }
     }
     
@@ -99,7 +97,7 @@ public class Absorber implements Gadget {
      * Trigger other gadget's actions.
      */
     public void trigger(){
-        System.out.println(">>>>>>in Absorber trigger");
+        //System.out.println(">>>>>>in Absorber trigger");
         for (Gadget gad : gadgetsToBeTriggered){
             gad.action();
         }

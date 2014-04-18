@@ -14,6 +14,7 @@ public class LeftFlipper implements Gadget{
     public boolean isOn;
     private double countdown;
     private LineSegment initflip;
+    private float gravity;
     
     public String getName() {
 		return name;
@@ -25,13 +26,14 @@ public class LeftFlipper implements Gadget{
      * @param name 
      * @param orientation angle of 0, 90, 180, or 270
      */
-    public LeftFlipper(Tuple coord, String name, Angle orientation){
+    public LeftFlipper(Tuple coord, String name, Angle orientation, float gravity){
         this.coord = coord;
         this.name = name;
         initflip = new LineSegment(coord.x, coord.y, coord.x, coord.y+2);
         this.flip = Geometry.rotateAround(initflip, new Vect(coord.x+1, coord.y+1), orientation);
         this.pivot = flip.p1();
         this.isOn = false;
+        this.gravity=gravity;
     }
     
     /**
@@ -63,6 +65,7 @@ public class LeftFlipper implements Gadget{
         ball.move(countdown);
         //need to add reflect rotating wall later.
         ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
+        ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
             board.moveOneBall(ball, timeToGo-countdown);
         }
