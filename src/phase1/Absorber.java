@@ -50,18 +50,17 @@ public class Absorber implements Gadget {
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
-        double min = Integer.MAX_VALUE; //initializes min
-        if (ball.inAbsorber){ball.inAbsorber=false; return min;}
+        countdown = Integer.MAX_VALUE;
         double time;
+        wallThatWillCollide = null;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
-            if (-1< time && time < min) {
-                min = time;
+            if (-1< time && time < countdown) {
+                countdown = time;
                 wallThatWillCollide = wall;
             }
         }
-        countdown = min;
-        return min;
+        return countdown;
     };
     
     /**
@@ -73,11 +72,8 @@ public class Absorber implements Gadget {
      */
     public void collide(Ball ball, double timeToGo, Board board){       
         if(countdown>0) ball.move(countdown);
-        ball.inAbsorber = true;
         ball.velocity = new Vect(0, 0);
         ball.circle = new Circle(coord.x+bottom.length()-0.25, coord.y+right.length()-0.25, 0.5);
-        //System.out.println(">>>>>>>>>>>>>>>...<<<<<<<<<<<<<");
-        //board.display();
         heldBalls.add(ball);
         trigger();
     }
@@ -86,12 +82,11 @@ public class Absorber implements Gadget {
      * Shoots the balls out of the corner.
      */
     public void action(){
-        System.out.println(">>>>>>in Absorber action");
         if (heldBalls.size() > 0){
            //only removes one ball
         	Double epil=(double) 1/Integer.MAX_VALUE; //small gap so ball is above the absorber
         	Ball ball=heldBalls.remove(0);
-        	ball.velocity = new Vect(0, 50);
+        	ball.velocity = new Vect(0, -0.05*50);
         	ball.circle=new Circle(coord.x+bottom.length()-0.25,coord.y-0.25-epil,0.25); //simultaneously transport to the top
         }
     }

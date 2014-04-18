@@ -59,17 +59,17 @@ public class TriangularBumper implements Gadget {
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
-        double min = Integer.MAX_VALUE;
+        countdown = Integer.MAX_VALUE;
         double time;
+        wallThatWillCollide = null;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
-            if (-1< time && time < min) {
-                min = time;
+            if (-1< time && time < countdown) {
+                countdown = time;
                 wallThatWillCollide = wall;
             }
         }
-        countdown = min;
-        return min;
+        return countdown;
     };
     
     /**
