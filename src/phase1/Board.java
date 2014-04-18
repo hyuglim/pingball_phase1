@@ -36,7 +36,15 @@ public class Board {
 
         List<Wall> walls = Arrays.asList(new Wall(0),new Wall(1),new Wall(2),new Wall(3));
         
-
+        /**
+         * 
+         * @return number of balls
+         */
+        public int getBallsSize() {
+        	return balls.size();
+        }
+        
+        
         /**
          * @returns the name of the board
          */
@@ -366,9 +374,9 @@ public class Board {
         //this should be the method the client calls for each step
         public void moveAllBalls(){
                 //String message;
-            System.out.println("in moveallballs");
+            //System.out.println("in moveallballs");
             for (Ball b: balls.values()) {
-            	System.out.println("ball being used: "+b);
+            	//System.out.println("ball being used: "+b);
                 moveOneBall(b, 1.0);
             }
             //return "";

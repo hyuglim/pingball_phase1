@@ -90,9 +90,7 @@ public class Communicator implements Runnable{
 					}
 				}
 
-				synchronized(out) {
-					out.println("send message to the server");
-				}				
+			
 			}
 		} finally {
 			out.close();

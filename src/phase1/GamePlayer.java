@@ -13,6 +13,7 @@ public class GamePlayer implements Runnable{
 		while(true) {
 		    try {
 		        myBoard.moveAllBalls();
+		        System.out.println("number of balls: " + myBoard.getBallsSize());
 		        Thread.sleep(50);
 		    } catch (Exception e){
 		        e.printStackTrace();
