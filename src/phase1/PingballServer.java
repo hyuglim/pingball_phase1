@@ -277,12 +277,26 @@ public class PingballServer {
 				outSender = new PrintWriter(socketSender.getOutputStream(), true);
 
 				if (hitInvisible) {
-					//System.out.println("hit invisible MAAYNN");
+					System.out.println("hit invisible MAAYNN");
 					String neighbor = neighbors.get(nameOfBoard).getOne().get(wallNum);
 					Socket socketReceiver = neighbors.get(neighbor).getThree();
 					outReceiver = new PrintWriter(socketReceiver.getOutputStream(), true);
 
-					//System.out.println("nameOfBoard: " + nameOfBoard + " neighbor: " + neighbor);
+					switch(wallNum){
+						case 0: 
+							y += 19;
+							break;
+						case 1:
+							y -= 19;
+							break;
+						case 2:
+							x += 19;
+							break;
+						case 3:
+							x -= 19;
+							break;					
+						
+					}
 
 					String msgToSender = "delete " + nameOfBall + " " + x + " " + y + " " + xVel + " " + yVel;
 					String msgToReceiver = "create " + nameOfBall + " " + x + " " + y + " " + xVel + " " + yVel;
