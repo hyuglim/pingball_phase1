@@ -249,7 +249,7 @@ public class Board {
                         //what to do with fire trigger
                     String trigName = names.get(0);
                     String actName = names.get(1);
-                    System.out.println(trigName + " " + actName);
+                    //System.out.println(trigName + " " + actName);
                     Gadget trigGad = nameofGadgets.get(trigName);
                     Gadget actGad = nameofGadgets.get(actName);
                     trigGad.addTrigger(actGad);
