@@ -37,10 +37,10 @@ public class Ball {
 	    //double stepSize = 0.05;
         double newX = circle.getCenter().x() + time*velocity.x();
         double newY = circle.getCenter().y() + time*velocity.y();
-        this.circle = new Circle(newX, newY, circle.getRadius());
+        this.circle = new Circle(newX, newY, 0.5);
 	}
 	
-	public Tuple getPosition(){
-	    return new Tuple((int)Math.floor(circle.getCenter().x()),(int)Math.floor(circle.getCenter().y()));
+	public Geometry.DoublePair getPosition(){
+	    return new Geometry.DoublePair(Math.floor(circle.getCenter().x()),Math.floor(circle.getCenter().y()));
 	}
 }

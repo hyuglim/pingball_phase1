@@ -33,9 +33,9 @@ public class PingballServer {
 	//   ... }
 	// Tuple has a list of strings and a list of booleans
 	private ConcurrentHashMap<String, Triple<List<String>,List<Boolean>,Socket>> neighbors 
-			= new ConcurrentHashMap<String, Triple<List<String>,List<Boolean>,Socket>>();
+	= new ConcurrentHashMap<String, Triple<List<String>,List<Boolean>,Socket>>();
 
-	
+
 	/**
 	 * 
 	 * @param port
@@ -43,10 +43,10 @@ public class PingballServer {
 	 */
 	public PingballServer(int port) throws IOException {
 		this.serverSocket = new ServerSocket(port);
-		
+
 	}
-	
-	
+
+
 	/**
 	 * join boards horizontally
 	 * @param left
@@ -57,22 +57,22 @@ public class PingballServer {
 		if (!neighbors.contains(left) || !neighbors.contains(right)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
 		}
-		
+
 		try {
 			// send message to the left board
 			setNeighborBoards(left, right);
-			
+
 			// send message to the right board
 			setNeighborBoards(right, left);
-					
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 	/**
 	 * join boards vertically
 	 * @param top
@@ -82,29 +82,29 @@ public class PingballServer {
 		if (!neighbors.contains(top) || !neighbors.contains(bottom)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
 		}
-		
+
 		try {
 			// send message to the top board
 			setNeighborBoards(top, bottom);
-			
+
 			// send message to the right board
 			setNeighborBoards(bottom, top);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	private void setNeighborBoards(String s1, String s2) throws IOException {
 		List<String> adjBoardNames = neighbors.get(s1).getOne();
 		List<Boolean> isInvisible = neighbors.get(s1).getTwo();
 		adjBoardNames.set(3, s2);
 		isInvisible.set(3, true);
 
-		
+
 	}
-	
+
 	/**
 	 * the main joinBoards function
 	 * @param command
@@ -133,21 +133,21 @@ public class PingballServer {
 		new Thread() {
 			public void run() {
 				try {
-					
+
 					while(true) {
 						Scanner sc = new Scanner(System.in);
-				        System.out.println("Enter a join command:");
-				        String joinCommand = sc.nextLine();
-				        joinBoards(joinCommand);
-				        sc.close();
+						System.out.println("Enter a join command:");
+						String joinCommand = sc.nextLine();
+						joinBoards(joinCommand);
+						sc.close();
 					}
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				} 
 			}
 		}.start();
-		
+
 		while (true) {
 			final Socket socket;
 			try {
@@ -170,7 +170,7 @@ public class PingballServer {
 		}		
 	}
 
-	
+
 	/**
 	 * listen for messagees coming from the client
 	 * @param socket
@@ -180,10 +180,10 @@ public class PingballServer {
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-		try{      	       	
-			
+		try{      
 			for (String line = in.readLine(); line != null; line = in.readLine()) {
 				
+				System.out.println("line: " + line);
 				//When the client first connects, it passes in the name of the board
 				String[] tokens = line.split(" ");
 				if (tokens[0].equals("name")) {
@@ -194,22 +194,23 @@ public class PingballServer {
 						List<Boolean> invisibles = Arrays.asList(false, false, false, false);
 						Triple<List<String>, List<Boolean>, Socket> triple 
 						= new Triple<List<String>, List<Boolean>,Socket>(adjacents, invisibles, socket);
-								
+
 						neighbors.put(name, triple);
 					}
 				}				
-				
+
 				String output = handleRequest(line); 
 				if (output != null) {
 
 				}
 			}
+			System.out.println("got out of for loop");
 		} finally {
 			out.close();
 			in.close();
 		}
 	}
-	
+
 	/**
 	 * do something with the client messages
 	 * such as choosing the neighbor clients to pass the ball to.
@@ -217,22 +218,22 @@ public class PingballServer {
 	 * @return
 	 */
 	private String handleRequest(String input) {
-		
+
 		System.out.println("input from the client: " + input);
 		String[] tokens = input.split(" ");
-		
+
 		//sample input: name 
 		if(tokens[0].equals("name")) {
 			return input;
 		}
-		
+
 		// sample input: hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel
 		// wallNum is either 0,1,2,3 -> top, bottom, left, right
 		if (tokens[0].equals("hit")) {
 			String nameOfBoard = tokens[1];
 			int wallNum = Integer.parseInt(tokens[2]);
 			String nameOfBall = tokens[3];
-					
+
 			double x = Double.parseDouble(tokens[4]);
 			double y = Double.parseDouble(tokens[5]);
 			double xVel = Double.parseDouble(tokens[6]);
@@ -243,37 +244,55 @@ public class PingballServer {
 			// second, see if the wall that is hit is invisible
 			// third, if so, change the coordinate and send message to the adjacent neighbor
 			// sample output: "invisible NAMEofBall x y xVel yVel" or "visible"
-			
-			String neighbor = neighbors.get(nameOfBoard).getOne().get(wallNum);
+
+
 			boolean hitInvisible= neighbors.get(nameOfBoard).getTwo().get(wallNum);
-			Socket socketSender = neighbors.get(nameOfBoard).getThree();	
-			Socket socketReceiver = neighbors.get(neighbor).getThree();
+			Socket socketSender = neighbors.get(nameOfBoard).getThree();
+
 			PrintWriter outSender;
 			PrintWriter outReceiver;
 			try {
 				outSender = new PrintWriter(socketSender.getOutputStream(), true);
-				outReceiver = new PrintWriter(socketReceiver.getOutputStream(), true);
+
 				if (hitInvisible) {
+					System.out.println("hit invisible MAAYNN");
+					String neighbor = neighbors.get(nameOfBoard).getOne().get(wallNum);
+					Socket socketReceiver = neighbors.get(neighbor).getThree();
+					outReceiver = new PrintWriter(socketReceiver.getOutputStream(), true);
+
+					System.out.println("nameOfBoard: " + nameOfBoard + " neighbor: " + neighbor);
+
 					String msgToSender = "delete " + nameOfBall + " " + x + " " + y + " " + xVel + " " + yVel;
 					String msgToReceiver = "create " + nameOfBall + " " + x + " " + y + " " + xVel + " " + yVel;
 					outSender.println(msgToSender);
 					outReceiver.println(msgToReceiver);
+
+					//return null;
 				} else {
+					System.out.println("hit is visible MAAYN!");
+					
+					
 					outSender.println("visible");
+					return null;
 				}
+				return null;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				System.out.println("custom print");
 				e.printStackTrace();
 			}
-			
-			
-		} 
+
+
+			return null;
+		} else {
+			return null;
+		}
 
 		// Should never get here--make sure to return in each of the valid cases above.
-		throw new UnsupportedOperationException();
+		//throw new UnsupportedOperationException();
 	}
 
-	
+
 
 	/**
 	 * Main method checks for port argument and handles connection
@@ -313,7 +332,7 @@ public class PingballServer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * starts the server
 	 * @param port

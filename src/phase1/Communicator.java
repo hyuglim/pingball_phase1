@@ -52,14 +52,24 @@ public class Communicator implements Runnable{
 			 * to see if a ball hit a wall.
 			 */
 			new Thread(){
+				@SuppressWarnings("static-access")
 				public void run() {
-					String hitwall = board.whichWallGotHit();
-					if(! hitwall.equals("")){//if ball hits a wall
-						synchronized(out){
-							// sample output: hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel
-							out.println(hitwall);
-						}	
+					while(true) {
+//						try {
+//							this.sleep(50);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+						String hitwall = board.whichWallGotHit();
+						if(! hitwall.equals("")){//if ball hits a wall
+							synchronized(out){
+								// sample output: hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel
+								out.println(hitwall);
+							}	
+						}
 					}
+					
 				}
 			}.start();
 
@@ -123,7 +133,8 @@ public class Communicator implements Runnable{
 		}   
 
 		if(tokens[0].equals("visible")) {
-			// DON'T DO ANYTHING. BUSINESS AS USUAL            		                		
+			// DON'T DO ANYTHING. BUSINESS AS USUAL
+			return null;
 		}
 
 		//DEBUGGING

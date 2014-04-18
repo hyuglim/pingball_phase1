@@ -228,31 +228,31 @@ public class Board {
                 }
                 //absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
                 if (id.equals("absorber")) {
-                        String aName=names.get(0);
-                        Integer xAbsorb=Integer.parseInt(names.get(1));
-                        Integer yAbsorb=Integer.parseInt(names.get(2));
-                        Integer wAbsorb=Integer.parseInt(names.get(3));
-                        Integer hAbsorb=Integer.parseInt(names.get(4));
-                        //Geometry.DoublePair aCord=new Geometry.DoublePair((float) xAbsorb,(float) yAbsorb);
-                    Tuple aCord =new Tuple(xAbsorb, yAbsorb);
-                    Absorber aBump = new Absorber(aCord,aName,wAbsorb,hAbsorb);
-                        positionofGadgets.put(aCord, aBump);
-                        nameofGadgets.put(aName, aBump);
-                        for(int w = 0; w <wAbsorb; w++){
-                            for (int h = 0; h < hAbsorb; h++){
-                                state[xAbsorb+1+w][yAbsorb+1+h] = "=";        
-                            }
-                        }
+//                        String aName=names.get(0);
+//                        Integer xAbsorb=Integer.parseInt(names.get(1));
+//                        Integer yAbsorb=Integer.parseInt(names.get(2));
+//                        Integer wAbsorb=Integer.parseInt(names.get(3));
+//                        Integer hAbsorb=Integer.parseInt(names.get(4));
+//                        //Geometry.DoublePair aCord=new Geometry.DoublePair((float) xAbsorb,(float) yAbsorb);
+//                    Tuple aCord =new Tuple(xAbsorb, yAbsorb);
+//                    Absorber aBump = new Absorber(aCord,aName,wAbsorb,hAbsorb);
+//                        positionofGadgets.put(aCord, aBump);
+//                        nameofGadgets.put(aName, aBump);
+//                        for(int w = 0; w <wAbsorb; w++){
+//                            for (int h = 0; h < hAbsorb; h++){
+//                                state[xAbsorb+1+w][yAbsorb+1+h] = "=";        
+//                            }
+//                        }
                 }
                 //fire trigger=NAME action=NAME
                 if (id.equals("fire")) {
                         //what to do with fire trigger
-                    String trigName = names.get(0);
-                    String actName = names.get(1);
-                    //System.out.println(trigName + " " + actName);
-                    Gadget trigGad = nameofGadgets.get(trigName);
-                    Gadget actGad = nameofGadgets.get(actName);
-                    trigGad.addTrigger(actGad);
+//                    String trigName = names.get(0);
+//                    String actName = names.get(1);
+//                    //System.out.println(trigName + " " + actName);
+//                    Gadget trigGad = nameofGadgets.get(trigName);
+//                    Gadget actGad = nameofGadgets.get(actName);
+//                    trigGad.addTrigger(actGad);
                 }
         }
  
@@ -318,8 +318,8 @@ public class Board {
             }
             
             for (Ball b: balls.values()){
-                Tuple pos = b.getPosition();
-                state[pos.x+1][pos.y+1] = "*";
+                Geometry.DoublePair pos = b.getPosition();
+                state[(int)pos.d1+1][(int)pos.d2+1] = "*";
             }
         }
        
@@ -368,6 +368,7 @@ public class Board {
                 //String message;
             System.out.println("in moveallballs");
             for (Ball b: balls.values()) {
+            	System.out.println("ball being used: "+b);
                 moveOneBall(b, 1.0);
             }
             //return "";
@@ -389,11 +390,13 @@ public class Board {
          * @returns a message for the client
          */
         public void moveOneBall(Ball b, double timetoGo) {
-            System.out.println("in moveoneball "+b.name+" "+timetoGo);
-            Tuple pos = b.getPosition();
-            state[pos.x+1][pos.y+1] = " ";
-            
+            //System.out.println("in moveoneball "+b.name+" "+timetoGo);
             if (timetoGo<=0) return;
+        	System.out.println(b.getPosition());
+            Geometry.DoublePair pos = b.getPosition();
+            state[(int)pos.d1+1][(int)pos.d2+1] = " ";
+            
+
            
             
             Gadget gadgetToCollideFirst = null;
@@ -406,8 +409,8 @@ public class Board {
                     timeUntilCollision = gad.timeUntilCollision(b);
                 }
             }
-            System.out.println("Closest gadget: "+gadgetToCollideFirst);
-            System.out.println("time until collsion: "+timeUntilCollision);
+            //System.out.println("Closest gadget: "+gadgetToCollideFirst);
+            //System.out.println("time until collsion: "+timeUntilCollision);
 //                if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
 //                        //  if it's going to collide with a wall, send a message to client with the name of the wall
 //                        // check if it's invisible or not, and react appropriately
@@ -432,9 +435,9 @@ public class Board {
             String message ="";
             for (Ball b: balls.values()){
                 for (Wall w: walls){
-                    if (!(w.timeUntilCollision(b) >0)){
+                    if (!(w.timeUntilCollision(b) > 1)){
                         message += "hit "+ name+ " "+ w.getWallNum()+ " " + b.name+ " " + 
-                    + b.getPosition().x+ " "+ b.getPosition().y+ " " +b.velocity.x()+ " "+ b.velocity.y()+ "\n"; 
+                    + b.getPosition().d1+ " "+ b.getPosition().d2+ " " +b.velocity.x()+ " "+ b.velocity.y()+ "\n"; 
                     }
                 }
             }            
