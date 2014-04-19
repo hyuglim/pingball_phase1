@@ -14,12 +14,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-<<<<<<< HEAD
-
-=======
-import physics.Angle;
-import physics.Geometry;
->>>>>>> b0a0fcb369db2900b3c5651dac65a859ff4d6172
 import physics.*;
 
 /**
