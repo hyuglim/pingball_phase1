@@ -105,21 +105,39 @@ public class PingballServer {
 	 * @param right board
 	 * @throws IllegalArgumentException
 	 */
-	private void makeHorizNeighbors(String left, String right) throws IllegalArgumentException{
+	private void makeHorizNeighbors(String []words) throws IllegalArgumentException{
+		String left = words[1].split("_left")[0];
+		String right = words[2].split("_right")[0];
+
 		if (!neighbors.containsKey(left) || !neighbors.containsKey(right)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
 		}
 
-		try {
+		//if both of them are already joined
+		else if(neighbors.get(left).getTwo().get(3) && neighbors.get(right).getTwo().get(2)) {
+			return;
+		}
+
+		//if left is in the dictionary, and the existing right neighbor does not 
+		//match the current bottom neighbor
+		else if (neighbors.get(left).getTwo().get(3)
+				&& !neighbors.get(left).getOne().get(3).equals(right)) {
+			setNullifyBoards(right, 2);
+		}
+
+		//if right is in the dictionary, and the existing right neighbor does not
+		//match the current left neighbor
+		else if (neighbors.get(right).getTwo().get(2)
+				&& !neighbors.get(right).getOne().get(2).equals(right)) {
+			setNullifyBoards(left, 3);
+		} else {
 			// send message to the left board
 			setNeighborBoards(left, right, 3);
 
 			// send message to the right board
 			setNeighborBoards(right, left, 2);
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+
 	}
 
 
@@ -129,25 +147,48 @@ public class PingballServer {
 	 * @param top
 	 * @param bottom
 	 */
-	private void makeVerticNeighbors(String top, String bottom) throws IllegalArgumentException{
-		if (!neighbors.contains(top) || !neighbors.contains(bottom)) {
+	private void makeVerticNeighbors(String []words) throws IllegalArgumentException{
+		String top = words[1].split("_top")[0];
+		String bottom = words[2].split("_bottom")[0];
+		if (!neighbors.containsKey(top) || !neighbors.containsKey(bottom)) {
 			printNeighbors();
 			throw new IllegalArgumentException("cannot join uncreated board");
 		}
 
-		try {
+		//if both of them are already joined
+		else if (neighbors.get(top).getTwo().get(1) && neighbors.get(bottom).getTwo().get(0)) {
+			return;
+		}
+
+		//if top is in the dictionary, and the existing bottom neighbor does not 
+		//match the current bottom neighbor
+		else if (neighbors.get(top).getTwo().get(1)
+				&& !neighbors.get(top).getOne().get(1).equals(bottom)) {
+			setNullifyBoards(bottom, 0);
+		}
+
+		//if bottom is in the dictionary, and the existing top neighbor does not
+		//match the current top neighbor
+		else if (neighbors.get(bottom).getTwo().get(0)
+				&& !neighbors.get(bottom).getOne().get(0).equals(top)) {
+			setNullifyBoards(top, 1);
+		}
+
+		else {
+
 			// send message to the top board
 			setNeighborBoards(top, bottom, 1);
 
 			// send message to the right board
 			setNeighborBoards(bottom, top, 0);
 
-		} catch (IOException e) {
-			e.printStackTrace();
+
 		}
 
+
+
 	}
-	
+
 	/**
 	 * updates "invisible wall" info in the hashmap
 	 * @param s1 the board that needs to be modified.
@@ -155,14 +196,21 @@ public class PingballServer {
 	 * @param i2 indicates which wall needs to be marked as invisible
 	 * @throws IOException
 	 */
-	private void setNeighborBoards(String s1, String s2, int i2) throws IOException {
+	private void setNeighborBoards(String s1, String s2, int i2) {
 		List<String> adjBoardNames = neighbors.get(s1).getOne();
 		List<Boolean> isInvisible = neighbors.get(s1).getTwo();
 		adjBoardNames.set(i2, s2);
 		isInvisible.set(i2, true);
 		printNeighbors();
 	}
-	
+
+	private void setNullifyBoards(String board, int loc) {
+		List<String> adjBoardNames = neighbors.get(board).getOne();
+		List<Boolean> isInvisible = neighbors.get(board).getTwo();
+		adjBoardNames.set(loc, null);
+		isInvisible.set(loc, false);
+	}
+
 	/**
 	 * prints out the contents of the map
 	 */
@@ -191,14 +239,14 @@ public class PingballServer {
 		String []words = command.split(" ");
 		String first = words[1].split("_")[0];
 		String second = words[2].split("_")[0];
-		
+
 		System.out.println("first: " + first);
 		System.out.println("second: " + second);
-				
+
 		if (words[0].equals("h")) {
-			makeHorizNeighbors(first, second);
+			makeHorizNeighbors(words);
 		} else if (words[0].equals("v")) {
-			makeVerticNeighbors(first, second);
+			makeVerticNeighbors(words);
 		}				
 	}
 
@@ -216,10 +264,10 @@ public class PingballServer {
 					Scanner sc = new Scanner(System.in);
 					System.out.println("Enter a join command:");
 					while(sc.hasNextLine()) {
-					
+
 						String joinCommand = sc.nextLine();
 						joinBoards(joinCommand);
-						
+
 					}
 					sc.close();
 				} catch (Exception e) {
@@ -240,7 +288,7 @@ public class PingballServer {
 						} catch (IOException e) {
 							System.out.println("handleConnection failed inside Server");
 							e.printStackTrace();
-						}
+						} 
 					}
 				}.start();
 
@@ -259,15 +307,16 @@ public class PingballServer {
 	private void handleConnection(Socket socket) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+		String name = null;
 
 		try{      
 			for (String line = in.readLine(); line != null; line = in.readLine()) {
-				
+
 				//System.out.println("line: " + line);
 				//When the client first connects, it passes in the name of the board
 				String[] tokens = line.split(" ");
 				if (tokens[0].equals("name")) {
-					String name = tokens[1];
+					name = tokens[1];
 					if (!neighbors.contains(name)) {
 						//top, bottom, left, right
 						List<String> adjacents = Arrays.asList(null, null, null, null);
@@ -289,7 +338,50 @@ public class PingballServer {
 		} finally {
 			out.close();
 			in.close();
+			socket.close();
+			
+			//when the client disconnects, revert all boards to solid walls
+			revertToSolidWalls(name);
+			
+			//when the client disconnects, all balls inside its board are lost
+			
+			
 		}
+	}
+	
+	/**
+	 * When a client disconnects, find all boards joined to it, and revert to solid walls
+	 * @param name
+	 */
+	private void revertToSolidWalls(String name) {
+		
+		List<String> adjacents = neighbors.get(name).getOne();		
+		List<Boolean> invisibles = neighbors.get(name).getTwo();
+		
+		//go through the neighbors and reset
+		for (int i = 0; i < adjacents.size(); i++) {
+			String neighbor = adjacents.get(i);
+			if (neighbor != null) {
+				List<String> nOfns = neighbors.get(neighbor).getOne();
+				List<Boolean> bOfns = neighbors.get(neighbor).getTwo();
+				int index = nOfns.indexOf(name);
+				
+				System.out.println("name when closed: " + name);
+				System.out.println("index of neighbor: " + index);
+				nOfns.set(index, null);
+				bOfns.set(index, false);
+			}
+		}	
+		
+		// reset the board 
+		adjacents = Arrays.asList(null, null, null, null);
+		invisibles = Arrays.asList(false, false, false, false);
+		Triple<List<String>, List<Boolean>, Socket> triple 
+		= new Triple<List<String>, List<Boolean>,Socket>(adjacents, invisibles, null);
+		neighbors.put(name, triple);
+		
+		System.out.println("**********");
+		printNeighbors();
 	}
 
 	/**
@@ -343,19 +435,19 @@ public class PingballServer {
 					outReceiver = new PrintWriter(socketReceiver.getOutputStream(), true);
 
 					switch(wallNum){
-						case 0: 
-							y += 19;
-							break;
-						case 1:
-							y -= 19;
-							break;
-						case 2:
-							x += 19;
-							break;
-						case 3:
-							x -= 19;
-							break;					
-						
+					case 0: 
+						y += 19;
+						break;
+					case 1:
+						y -= 19;
+						break;
+					case 2:
+						x += 19;
+						break;
+					case 3:
+						x -= 19;
+						break;					
+
 					}
 
 					String msgToSender = "delete " + nameOfBall + " " + x + " " + y + " " + xVel + " " + yVel;
@@ -366,7 +458,7 @@ public class PingballServer {
 					//return null;
 				} else {
 					//System.out.println("hit is visible MAAYN!");
-										
+
 					outSender.println("visible");
 					return null;
 				}

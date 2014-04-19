@@ -1,4 +1,5 @@
 package phase1;
+
 import java.lang.Float;
 import java.lang.Integer;
 import java.awt.geom.Line2D;
@@ -13,7 +14,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+<<<<<<< HEAD
 
+=======
+import physics.Angle;
+import physics.Geometry;
+>>>>>>> b0a0fcb369db2900b3c5651dac65a859ff4d6172
 import physics.*;
 
 /**
@@ -231,6 +237,18 @@ public class Board {
         public Board (File file) throws IOException {
                 BufferedReader bfread=new BufferedReader(new FileReader (file));
                 String line;
+                for (int j =-1; j<21; j++){
+                    for(int i=-1; i<21; i++){
+                        if (i==-1 || j==-1 || i==20 || j==20){
+                            state[i+1][j+1] = ".";
+                        } else {
+                            state[i+1][j+1]=" ";
+                        }
+                    }
+                }
+                //initiate balls and gadgets
+
+                balls=new ConcurrentHashMap <String, Ball>();
                 positionofGadgets.put(new Tuple(-1, 21), walls.get(0));
                 positionofGadgets.put(new Tuple(-1, -1), walls.get(1));
                 positionofGadgets.put(new Tuple(21, -1), walls.get(2));
