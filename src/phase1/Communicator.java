@@ -79,8 +79,11 @@ public class Communicator implements Runnable{
 			for (String line = in.readLine(); line != null; line = in.readLine()) { 
 				String output = handleRequest(line); 
 				if (output != null) {
-					// should never get here; client never closes
-					if (output.equals("server says I should not exist anymore...")) {
+					
+					// when client disconnects, clear all balls
+					if (output.equals("kill")) {
+						System.out.println("I am killed");
+						board.clearAllBalls();
 						return;
 					}
 				}			

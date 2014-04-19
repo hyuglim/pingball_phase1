@@ -335,6 +335,7 @@ public class PingballServer {
 				}
 			}
 			System.out.println("got out of for loop");
+			out.println("kill");
 		} finally {
 			out.close();
 			in.close();

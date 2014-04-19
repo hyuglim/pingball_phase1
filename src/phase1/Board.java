@@ -449,4 +449,11 @@ public class Board {
             }            
             return message;     
         }
+        
+        /**
+         * clears all the balls associated with this board.
+         */
+        public void clearAllBalls(){
+            balls.clear();
+        }
 }
