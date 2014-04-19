@@ -15,22 +15,73 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The Server has two kinds of threads
- * The first kind continuously waits for the user to input join commands
- * The second kind communicates with the client through the socket
+ * ##############Server/Client Overview and Concurrency Arguments###############
+ * 
+ *             Overview:
+ * The Server has n+1 threads, given n clients.
+ * The first thread continuously listens for the user to input join commands.
+ * The last n threads communicate with the client through the socket.
+ * 
+ * Each client has 4 threads running.
+ * (1) The first thread GamePlayer plays the game.
+ * (2) The main thread inside PingballClient displays the game.
+ * (3) The third thread Communicator communicates with the server through the socket.
+ * (4) The fourth thread inside Communicator continuously checks the state of the board at regular intervals
+ *     to see if a ball collided with a wall.
+ * 
+ *             Strategy:
+ * When a client first connects to the server, it sends to the server the name of its board. 
+ * The server stores the name and other info inside the hashmap which is explained below in the comment.
+ * When a user types in a join command, the thread inside the server listens and updates the hashmap for 
+ * both boards mentioned in the command.
+ * 
+ * When (4) determines that a ball did collide with a wall, the thread sends to the server
+ * the name of the ball, its location, and its velocity to the server. The server looks up 
+ * the wall in the hashmap to determine if it's invisible. If the ball hit a visible wall, 
+ * the server sends message back to the client saying play the game as usual. If the ball hit an 
+ * invisible wall, the server sends a message back saying the client should delete the ball.
+ * The server also sends a message to the client's neighbor to create a new ball at an appropriate location.
+ * 
+ *            Concurrency Argument:
+ * The strategy uses two shared memory structures. On the server side, the n threads access the hash map, and 
+ * the last thread modify the hash map. We are using ConcurrentHashMap which provides thread-safe operations.
+ * Since the dictionary key comprises unique board names, when a single ball hits a wall, each client thread will
+ * be accessing different keys, so the methods do not block. When two balls hit a wall from a single client, 
+ * the server calls a get method on the hashmap on the same key which is a thread safe method for ConcurrentHashMap
+ * according to Oracle.com. 
+ * 
+ * On the client side, we have four threads running.
+ * (1) calls moveAllballs which accesses concurrentHashMap balls
+ * (2) calls display() which accesses 2d String array and ConcurrentHashMap of positionofGadgets
+ * (3) calls either insertBall or deleteBall which also accesses balls
+ * (4) calls whichWallGotHit which accesses List of Walls and balls
+ * 
+ * (2) does not block because none of the other threads need to access 2d String array and positionofGadgets
+ * (1),(3), and (4) access balls by calling a get method. As mentioned above, ConcurrentHashmap provides 
+ * thread-safe get method. Therefore, there is no risk of interleaving here. (4) accesses List of Walls which
+ * is not accessed by other threads after the board is initialized. We can apply the same argument for
+ * the ConcurrentHashMap of positionofGadgets as well. PositionofGadgets does not mutate after initialization. 
+ * There is no deadlock because none of the threads are waiting for each other to finish access 
+ * to any of the data strcutures mentioned above.
+ * 
+ * Therefore, the access to the shared memory within Server and Client and between them is thread-safe.
+ * 
  * @author jonathan
  *
  */
 public class PingballServer {
 
 	private final ServerSocket serverSocket;
-	//HashMap<String, Tuple> created when joining the boards is as follows:
+	//ConcurrentHashMap<String, Tuple> created when joining the boards is as follows:
 	//
 	//                 top      bot  left right   top   bot   left right
 	//{ "board1" : ([neighbor1, n2, n3,   n4] , [true, true, true, true], board1's socket)
 	//  "neighbor1": ([null, client1, null, null],[false, true, false, false], neighbor1's socket)
 	//  "board3" : ([n1,  null,   null, n4]   , [true, false, true, false], board3's socket)
 	//   ... }
+	// Thus, each board name has a list of all the neighboring board names which are initialized as null.
+	// Each board name also has a list of booleans indicating if the top, bottom, left, or right wall is 
+	// invisible or not. Finally, each board name has a socket that corresponds to that particular client thread.
 	// Tuple has a list of strings and a list of booleans
 	private ConcurrentHashMap<String, Triple<List<String>,List<Boolean>,Socket>> neighbors 
 	= new ConcurrentHashMap<String, Triple<List<String>,List<Boolean>,Socket>>();
@@ -48,14 +99,13 @@ public class PingballServer {
 
 
 	/**
-	 * join boards horizontally
-	 * @param left
-	 * @param right
+	 * join boards horizontally. 
+	 * Left board's right wall is joined with Right board's left wall
+	 * @param left board
+	 * @param right board
 	 * @throws IllegalArgumentException
 	 */
 	private void makeHorizNeighbors(String left, String right) throws IllegalArgumentException{
-		System.out.println(neighbors.containsKey(left));
-		System.out.println(neighbors.containsKey(right));
 		if (!neighbors.containsKey(left) || !neighbors.containsKey(right)) {
 			throw new IllegalArgumentException("cannot join uncreated board");
 		}
@@ -70,17 +120,16 @@ public class PingballServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
 
 
 	/**
 	 * join boards vertically
+	 * Top board's bottom wall is joined with Bottom board's top wall
 	 * @param top
 	 * @param bottom
 	 */
-	private void makeVerticNeighbors(String top, String bottom) {
+	private void makeVerticNeighbors(String top, String bottom) throws IllegalArgumentException{
 		if (!neighbors.contains(top) || !neighbors.contains(bottom)) {
 			printNeighbors();
 			throw new IllegalArgumentException("cannot join uncreated board");
@@ -98,7 +147,14 @@ public class PingballServer {
 		}
 
 	}
-
+	
+	/**
+	 * updates "invisible wall" info in the hashmap
+	 * @param s1 the board that needs to be modified.
+	 * @param s2 the neighboring board
+	 * @param i2 indicates which wall needs to be marked as invisible
+	 * @throws IOException
+	 */
 	private void setNeighborBoards(String s1, String s2, int i2) throws IOException {
 		List<String> adjBoardNames = neighbors.get(s1).getOne();
 		List<Boolean> isInvisible = neighbors.get(s1).getTwo();
@@ -107,6 +163,9 @@ public class PingballServer {
 		printNeighbors();
 	}
 	
+	/**
+	 * prints out the contents of the map
+	 */
 	private void printNeighbors() {
 		for (String client : neighbors.keySet()) {
 			System.out.println("client: " + client);
@@ -123,6 +182,7 @@ public class PingballServer {
 
 	/**
 	 * the main joinBoards function
+	 * parses the join command
 	 * @param command
 	 */
 	private void joinBoards(String command) {
@@ -192,7 +252,7 @@ public class PingballServer {
 
 
 	/**
-	 * listen for messagees coming from the client
+	 * listen for messages coming from the client
 	 * @param socket
 	 * @throws IOException
 	 */
@@ -306,8 +366,7 @@ public class PingballServer {
 					//return null;
 				} else {
 					//System.out.println("hit is visible MAAYN!");
-					
-					
+										
 					outSender.println("visible");
 					return null;
 				}

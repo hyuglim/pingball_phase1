@@ -1,40 +1,52 @@
-
 package phase1;
+<<<<<<< HEAD
  
  
+=======
 import java.lang.Float;
 import java.lang.Integer;
 import java.awt.geom.Line2D;
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+<<<<<<< HEAD
+
+import physics.Angle;
+import physics.Geometry;
+=======
  
+
 import physics.*;
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
 /**
  * Describes a board that is used for a pingball game. It is 20L x 20L in size.
  *
  */
 public class Board {
-       
         private String name;
         private Float gravity;
         private Float friction1;
         private Float friction2;
-        private Map<Tuple, Gadget> positionofGadgets=new HashMap <Tuple, Gadget>();
-        private Map<String, Gadget> nameofGadgets = new HashMap <String, Gadget>();
-        private Map<String, Ball> balls;
+<<<<<<< HEAD
+        private ConcurrentHashMap<Tuple, Gadget> positionofGadgets=new ConcurrentHashMap <Tuple, Gadget>();
+        private ConcurrentHashMap<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
+        private ConcurrentHashMap<String, Ball> balls;
+=======
+        private Map<Tuple, Gadget> positionofGadgets = new ConcurrentHashMap <Tuple, Gadget>();
+        private Map<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
+        private Map<String, Ball> balls = new ConcurrentHashMap <String, Ball>();
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
         private String[][] state = new String[22][22];
-
-
-        List<Wall> walls = Arrays.asList(new Wall(0),new Wall(1),new Wall(2),new Wall(3));
+        private final List<Wall> walls = Arrays.asList(new Wall(0), new Wall(1), new Wall(2), new Wall(3));
         
         /**
          * 
@@ -43,7 +55,6 @@ public class Board {
         public int getBallsSize() {
         	return balls.size();
         }
-        
         
         /**
          * @returns the name of the board
@@ -74,13 +85,6 @@ public class Board {
         }
  
         /**
-         * @returns the list of gadgets in the board
-         */
-        public Map<Tuple, Gadget> getPositionofGadgets() {
-                return positionofGadgets;
-        }
- 
-        /**
          * @returns the balls in the board at this step
          */
         public Map<String, Ball> getBalls() {
@@ -89,6 +93,9 @@ public class Board {
         
         
  
+        public Map<Tuple, Gadget> getPositionofGadgets(){
+            return positionofGadgets;
+        }
         /**
          * Reads the line and gets information about the board from it.
          * @param line one line of String read from the file
@@ -119,8 +126,10 @@ public class Board {
                 //board name=NAME gravity=FLOAT friction1=FLOAT friction2=FLOAT (last two optional
                 if (id.equals("board")) {
                         if (counter==2) {
-                                this.name=names.get(0);
-                                this.gravity=Float.parseFloat(names.get(1));
+                                name=names.get(0);
+                                gravity=Float.parseFloat(names.get(1));
+                                gravity= gravity*((float)0.05);
+                                System.out.println("gravity: "+gravity);
                                 this.friction1=(float) 0.025;
                                 this.friction2=(float) 0.025;
                                
@@ -128,6 +137,8 @@ public class Board {
                         else {
                                 this.name=names.get(0);
                                 this.gravity=Float.parseFloat(names.get(1));
+                                gravity= gravity*((float)0.05);
+                                System.out.println("gravity: "+gravity);
                                 this.friction1=Float.parseFloat(names.get(2));
                                 this.friction2=Float.parseFloat(names.get(3));
                         }
@@ -142,42 +153,37 @@ public class Board {
                         Float yVel=Float.parseFloat(names.get(4));
                         balls.put(ballName, new Ball(ballName,xBall,yBall,xVel,yVel, gravity));
                 }
+                
                 //squareBumper name=NAME x=INTEGER y=INTEGER
                 if (id.equals("squareBumper")) {
-                        String sName=names.get(0);
-                        Integer xSquare=Integer.parseInt(names.get(1));
-                        Integer ySquare=Integer.parseInt(names.get(2));
-                        //Geometry.DoublePair sCord=new Geometry.DoublePair((float) xSquare,(float) ySquare);
-                        //positionofGadgets.put(sCord, new SquareBumper(sCord,sName));
-                        Tuple sCord =new Tuple(xSquare, ySquare);
-                        SquareBumper sBump= new SquareBumper(sCord,sName,this.getGravity());
-                        positionofGadgets.put(sCord, sBump);
-                        nameofGadgets.put(sName, sBump);
+                    String sName=names.get(0);
+                    Integer xSquare=Integer.parseInt(names.get(1));
+                    Integer ySquare=Integer.parseInt(names.get(2));
+                    Tuple sCord =new Tuple(xSquare, ySquare);
+                    SquareBumper sBump= new SquareBumper(sCord,sName,this.getGravity());
+                    positionofGadgets.put(sCord, sBump);
+                    nameofGadgets.put(sName, sBump);
                     state[xSquare+1][ySquare+1] = "#";
                 }
                 //circleBumper name=NAME x=INTEGER y=INTEGER
                 if (id.equals("circleBumper")) {
-                        String cName=names.get(0);
-                        Integer xCircle=Integer.parseInt(names.get(1));
-                        Integer yCircle=Integer.parseInt(names.get(2));
-                        //Geometry.DoublePair cCord=new Geometry.DoublePair((float) xCircle,(float) yCircle);
-                        //positionofGadgets.put(cCord, new CircleBumper(cCord,cName));
-                        Tuple cCord =new Tuple(xCircle, yCircle);
-                        CircleBumper cBump = new CircleBumper(cCord,cName);
+                    String cName=names.get(0);
+                    Integer xCircle=Integer.parseInt(names.get(1));
+                    Integer yCircle=Integer.parseInt(names.get(2));
+                    Tuple cCord =new Tuple(xCircle, yCircle);
+                    CircleBumper cBump = new CircleBumper(cCord,cName);
                     positionofGadgets.put(cCord, cBump);
                     nameofGadgets.put(cName, cBump);
                     state[xCircle+1][yCircle+1] = "O";
                 }
                 //triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("triangleBumper")) {
-                        String tName=names.get(0);
-                        Integer xTriang=Integer.parseInt(names.get(1));
-                        Integer yTriang=Integer.parseInt(names.get(2));
-                        Integer oTriang=Integer.parseInt(names.get(3));
-                        //Geometry.DoublePair tCord=new Geometry.DoublePair((float) xTriang, (float) yTriang);
-                        //positionofGadgets.put(tCord, new TriangularBumper(tCord, new Angle((float) oTriang), tName));
-                        Tuple tCord =new Tuple(xTriang, yTriang);
-                        TriangularBumper tBump = new TriangularBumper(tCord, new Angle((float) oTriang), tName,this.getGravity());
+                    String tName=names.get(0);
+                    Integer xTriang=Integer.parseInt(names.get(1));
+                    Integer yTriang=Integer.parseInt(names.get(2));
+                    Integer oTriang=Integer.parseInt(names.get(3));
+                    Tuple tCord =new Tuple(xTriang, yTriang);
+                    TriangularBumper tBump = new TriangularBumper(tCord, new Angle((float) oTriang), tName,this.getGravity());
                     positionofGadgets.put(tCord, tBump);
                     nameofGadgets.put(tName, tBump);
                     if (oTriang.equals(0)||oTriang.equals(180)){
@@ -188,13 +194,12 @@ public class Board {
                 }
                 //leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("leftFlipper")) {
-                        String lfName=names.get(0);
-                        Integer xLF=Integer.parseInt(names.get(1));
-                        Integer yLF=Integer.parseInt(names.get(2));
-                        Integer oLF=Integer.parseInt(names.get(3));
-                        //Geometry.DoublePair lfCord=new Geometry.DoublePair((float) xLF, (float) yLF);
-                        Tuple lfCord =new Tuple(xLF, yLF);
-                        LeftFlipper lfBump = new LeftFlipper(lfCord, lfName, new Angle((float) oLF),this.getGravity());
+                    String lfName=names.get(0);
+                    Integer xLF=Integer.parseInt(names.get(1));
+                    Integer yLF=Integer.parseInt(names.get(2));
+                    Integer oLF=Integer.parseInt(names.get(3));
+                    Tuple lfCord =new Tuple(xLF, yLF);
+                    LeftFlipper lfBump = new LeftFlipper(lfCord, lfName, new Angle((float) oLF),this.getGravity());
                     positionofGadgets.put(lfCord, lfBump);
                     nameofGadgets.put(lfName, lfBump);
                     if (oLF.equals(0)){
@@ -213,11 +218,10 @@ public class Board {
                 }
                 //rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("rightFlipper")) {
-                        String rfName=names.get(0);
-                        Integer xRF=Integer.parseInt(names.get(1));
-                        Integer yRF=Integer.parseInt(names.get(2));
-                        Integer oRF=Integer.parseInt(names.get(3));
-                        //Geometry.DoublePair rfCord=new Geometry.DoublePair((float) xRF, (float) yRF);
+                    String rfName=names.get(0);
+                    Integer xRF=Integer.parseInt(names.get(1));
+                    Integer yRF=Integer.parseInt(names.get(2));
+                    Integer oRF=Integer.parseInt(names.get(3));
                     Tuple rfCord =new Tuple(xRF, yRF);
                     RightFlipper rfBump = new RightFlipper(rfCord, rfName, new Angle((float) oRF),this.getGravity());
                         positionofGadgets.put(rfCord, rfBump);
@@ -238,12 +242,11 @@ public class Board {
                 }
                // absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
                 if (id.equals("absorber")) {
-                        String aName=names.get(0);
-                        Integer xAbsorb=Integer.parseInt(names.get(1));
-                        Integer yAbsorb=Integer.parseInt(names.get(2));
-                        Integer wAbsorb=Integer.parseInt(names.get(3));
-                        Integer hAbsorb=Integer.parseInt(names.get(4));
-                        //Geometry.DoublePair aCord=new Geometry.DoublePair((float) xAbsorb,(float) yAbsorb);
+                    String aName=names.get(0);
+                    Integer xAbsorb=Integer.parseInt(names.get(1));
+                    Integer yAbsorb=Integer.parseInt(names.get(2));
+                    Integer wAbsorb=Integer.parseInt(names.get(3));
+                    Integer hAbsorb=Integer.parseInt(names.get(4));
                     Tuple aCord =new Tuple(xAbsorb, yAbsorb);
                     Absorber aBump = new Absorber(aCord,aName,wAbsorb,hAbsorb,this.getGravity());
                         positionofGadgets.put(aCord, aBump);
@@ -251,15 +254,13 @@ public class Board {
                         for(int w = 0; w <wAbsorb; w++){
                             for (int h = 0; h < hAbsorb; h++){
                                 state[xAbsorb+1+w][yAbsorb+1+h] = "=";        
-//                            }
-                          }
+                            }
+                        }                                    
                 }
                 //fire trigger=NAME action=NAME
                 if (id.equals("fire")) {
-                        //what to do with fire trigger
                     String trigName = names.get(0);
                     String actName = names.get(1);
-                    //System.out.println(trigName + " " + actName);
                     Gadget trigGad = nameofGadgets.get(trigName);
                     Gadget actGad = nameofGadgets.get(actName);
                     trigGad.addTrigger(actGad);
@@ -286,7 +287,10 @@ public class Board {
                     }
                 }
                 //initiate balls and gadgets
-                balls=new HashMap <String, Ball>();
+<<<<<<< HEAD
+                balls=new ConcurrentHashMap <String, Ball>();
+=======
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
                 positionofGadgets.put(new Tuple(-1, 21), walls.get(0));
                 positionofGadgets.put(new Tuple(-1, -1), walls.get(1));
                 positionofGadgets.put(new Tuple(21, -1), walls.get(2));
@@ -310,12 +314,8 @@ public class Board {
             //System.out.println("in updatestate");
             for (int j =-1; j<21; j++){
                 for(int i=-1; i<21; i++){
-                    if (!state[i+1][j+1].equals(".")&&!state[i+1][j+1].equals("#")&&
-                            !state[i+1][j+1].equals("\\")&&!state[i+1][j+1].equals("/")&&
-                            //!state[i+1][j+1].equals("|")&&!state[i+1][j+1].equals("-")&&
-                            !state[i+1][j+1].equals("O")){
-                        state[i+1][j+1] = " ";
-                    }
+                   // if ()
+                    if(state[i+1][j+1].equals("*"))state[i+1][j+1] = " ";
                 }
             }
             
@@ -357,7 +357,6 @@ public class Board {
          * @returns a String representation of the state of the board, including the ball's whereabouts.
          */
         public String display(){
-            //System.out.println("in display");
             String result ="";
             updateState();
             for (int j =-1; j<21; j++){
@@ -383,42 +382,22 @@ public class Board {
  
         /**
          * Simulates the movements of all balls in this board for one game step.
-         * @returns a message for the client
          */
-        //this should be the method the client calls for each step
         public void moveAllBalls(){
-                //String message;
-            //System.out.println("in moveallballs");
             for (Ball b: balls.values()) {
-            	//System.out.println("ball being used: "+b);
                 moveOneBall(b, 1.0);
             }
-            //return "";
-                //hmm we should think about balls colliding with each other.
         }
  
         /**
          * Moves one ball in this board for however much time is left in this one game step
          * @param b ball that is being moved
          * @param timetoGo time left in this one step for this one ball
-         * @returns a message for the client
          */
         public void moveOneBall(Ball b, double timetoGo) {
-
-            //System.out.println("in moveoneball "+b.name+" "+timetoGo);
             if (timetoGo<=0) return;
-        	System.out.println(b.getPosition());
-            Geometry.DoublePair pos = b.getPosition();
-            state[(int)pos.d1+1][(int)pos.d2+1] = " ";
-            
-
-            System.out.println("in moveoneball "+b.name+" "+timetoGo+ b.getPosition());
-
-            if (timetoGo<=0) return;        
-
             
             Gadget gadgetToCollideFirst = null;
-            //String message = "";
             double timeUntilCollision = timetoGo;
             
             for (Gadget gad:positionofGadgets.values()) {
@@ -429,19 +408,13 @@ public class Board {
             }
             //System.out.println("Closest gadget: "+gadgetToCollideFirst);
             //System.out.println("time until collsion: "+timeUntilCollision);
-//                if (gadgetToCollideFirst instanceof Wall){ // or better yet, check if the name of the gadget is top, bottom, etc
-//                        //  if it's going to collide with a wall, send a message to client with the name of the wall
-//                        // check if it's invisible or not, and react appropriately
-//                        return "left";
-//                }
+
             if (timeUntilCollision < timetoGo){
                 gadgetToCollideFirst.collide(b, timetoGo, this);
             } else{
                 //when the ball doesn't collide with any gadgets
                 b.move(timetoGo);
             }
-           // System.out.println(display());
-            //return message;
         }
  
         /**
@@ -455,26 +428,10 @@ public class Board {
                 for (Wall w: walls){
                     if (!(w.timeUntilCollision(b) > 1)){
                         message += "hit "+ name+ " "+ w.getWallNum()+ " " + b.name+ " " + 
-                    + b.getPosition().d1+ " "+ b.getPosition().d2+ " " +b.velocity.x()+ " "+ b.velocity.y()+ "\n"; 
+                    + b.getPosition().d1+ " "+ b.getPosition().d2+ " " +20*b.velocity.x()+ " "+ 20*b.velocity.y()+ "\n"; 
                     }
                 }
             }            
             return message;     
         }
-        /* may or maynot need this helper function....
-        /**
-         * updates the position of the ball
-         * first updates the velocity of the balls
-         * then uses updated velocity in the move method to update the postion
-         * of the ball
-         */
-        /*public void collideGadget() {
-                for (Ball b: balls) {
-                        for (Geometry.DoublePair key: positionofGadgets.keySet()) {
-                                positionofGadgets.get(key).collide(b);
-                        }
-                        b.move();
-                }
-        }
-         */
 }

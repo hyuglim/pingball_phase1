@@ -54,17 +54,26 @@ public class SquareBumper implements Gadget {
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
-        double min = Integer.MAX_VALUE;
+        countdown = Integer.MAX_VALUE;
         double time;
+        wallThatWillCollide = null;
         for (LineSegment wall: walls){
+            int counter = 0;
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
-            if (-1< time && time < min) {
-                min = time;
+            if (time == 0) {
+                counter ++;
+                System.out.println("counter time: " + counter);
+            }
+            
+            if (-1< time && time < countdown) {
+                countdown = time;
+//                if(countdown == 0)
+//                    countdown = (double) 1.0/100;
+//               
                 wallThatWillCollide = wall;
             }
         }
-        countdown = min;
-        return min;
+        return countdown;
     };
     
     /**
@@ -74,12 +83,13 @@ public class SquareBumper implements Gadget {
      * @param timeToGo how much time is left in this step
      * @param board needed for recursive calling
      */
-    public void collide(Ball ball, double timeToGo, Board board){       
-        ball.move(countdown);
+    public void collide(Ball ball, double timeToGo, Board board){ 
+        System.out.println("countdown: "+countdown);
+        ball.move(countdown-0.5/ball.velocity.length());
         ball.velocity = Geometry.reflectWall(wallThatWillCollide, ball.velocity, reflectCoeff);
         ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
-            board.moveOneBall(ball, timeToGo-countdown);
+            board.moveOneBall(ball, timeToGo-countdown+0.5/ball.velocity.length());
         }
         trigger();
     }

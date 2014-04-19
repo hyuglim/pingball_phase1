@@ -12,9 +12,7 @@ public class Ball {
 
 	public Vect velocity;
 	public Circle circle;
-	public final String name;
-	public boolean inAbsorber = false;
-	//private final Vect gravity = new Vect(0, -25); //will worry about gravity and friction at the end
+	public final String name;	
 
 	/**
 	 * Creates a Ball instance.
@@ -27,7 +25,7 @@ public class Ball {
 	public Ball (String name, Float x, Float y, Float xVel, Float yVel, Float gravity) {
 		this.name = name;
 		this.circle = new Circle(x, y, 0.25);
-		this.velocity = new Vect(0.05*xVel, 0.05*(yVel-gravity));
+		this.velocity = new Vect(0.05*xVel, 0.05*yVel);
 	}
 
 	/**

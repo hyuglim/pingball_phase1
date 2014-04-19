@@ -47,11 +47,11 @@ public class CircleBumper implements Gadget {
      * @param board needed for recursive calling
      */
     public void collide(Ball ball, double timeToGo, Board board){       
-        ball.move(countdown);
+        ball.move(countdown-0.5/ball.velocity.length());
         ball.velocity = Geometry.reflectCircle(circle.getCenter(), ball.circle.getCenter(), ball.velocity, reflectionCoeff);
         ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
-            board.moveOneBall(ball, timeToGo-countdown);
+            board.moveOneBall(ball, timeToGo-countdown+0.5/ball.velocity.length());
         }
         trigger();
     }

@@ -61,17 +61,17 @@ public class TriangularBumper implements Gadget {
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
-        double min = Integer.MAX_VALUE;
+        countdown = Integer.MAX_VALUE;
         double time;
+        wallThatWillCollide = null;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
-            if (-1< time && time < min) {
-                min = time;
+            if (-1< time && time < countdown) {
+                countdown = time;
                 wallThatWillCollide = wall;
             }
         }
-        countdown = min;
-        return min;
+        return countdown;
     };
     
     /**
@@ -82,11 +82,12 @@ public class TriangularBumper implements Gadget {
      * @param board needed for recursive calling
      */
     public void collide(Ball ball, double timeToGo, Board board){       
-        ball.move(countdown);
+        System.out.println("countdown: "+countdown);
+        ball.move(countdown-0.5/ball.velocity.length());
         ball.velocity = Geometry.reflectWall(wallThatWillCollide, ball.velocity, reflectCoeff);
         ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
-            board.moveOneBall(ball, timeToGo-countdown);
+            board.moveOneBall(ball, timeToGo-countdown+0.5/ball.velocity.length());
         }
         trigger();
     }
