@@ -1,5 +1,4 @@
 package phase1;
-//import physics.*;
 
 /**
  * @author Harlin
@@ -7,7 +6,11 @@ package phase1;
  */
 public interface Gadget {
 	
+    /**
+     * @returns name of the gadget
+     */
 	public String getName();
+	
     /**
      * Add trigger-action hook to a gadget.
      * @param gadget the gadget whose action will be hooked

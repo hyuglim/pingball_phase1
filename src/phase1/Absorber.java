@@ -13,10 +13,11 @@ public class Absorber implements Gadget {
     public final LineSegment top;
     public final LineSegment right;
     public final LineSegment bottom;
+    public final int width;
+    public final int height;
     private List<LineSegment> walls;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     public List<Ball> heldBalls = new ArrayList<Ball>();
-    //private LineSegment wallThatWillCollide;
     private double countdown;
     private float gravity;
 
@@ -30,6 +31,8 @@ public class Absorber implements Gadget {
     public Absorber(Tuple coord, String name, int width, int height, float gravity){
         this.coord = coord; //"center" coordinate is always the left top corner of the square.
         this.name = name;
+        this.height = height;
+        this.width = width;
         this.left = new LineSegment(coord.x, coord.y, coord.x, coord.y + height);
         this.top = new LineSegment(coord.x, coord.y, coord.x+ width, coord.y);
         this.right = new LineSegment(coord.x + width, coord.y, coord.x + width, coord.y + height);
@@ -54,12 +57,10 @@ public class Absorber implements Gadget {
     public double timeUntilCollision(Ball ball){
         countdown = Integer.MAX_VALUE;
         double time;
-       // wallThatWillCollide = null;
         for (LineSegment wall: walls){
             time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
             if (-1< time && time < countdown) {
                 countdown = time;
-         //       wallThatWillCollide = wall;
             }
         }
         return countdown;
@@ -73,7 +74,7 @@ public class Absorber implements Gadget {
      * @param board needed for recursive calling
      */
     public void collide(Ball ball, double timeToGo, Board board){       
-        if(countdown>0) ball.move(countdown);
+        if(countdown>0) ball.move(countdown-0.5/ball.velocity.length());
         ball.velocity = new Vect(0, 0);
         ball.circle = new Circle(coord.x+bottom.length()-0.25, coord.y+right.length()-0.25, 0.5);
         heldBalls.add(ball);
@@ -97,7 +98,6 @@ public class Absorber implements Gadget {
      * Trigger other gadget's actions.
      */
     public void trigger(){
-        //System.out.println(">>>>>>in Absorber trigger");
         for (Gadget gad : gadgetsToBeTriggered){
             gad.action();
         }

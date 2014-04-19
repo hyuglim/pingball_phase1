@@ -8,7 +8,7 @@ import physics.*;
 
 public class SquareBumper implements Gadget {
     public final String name;
-    private final Tuple coord; //should be only integers
+    private final Tuple coord; 
     public final LineSegment left;
     public final LineSegment top;
     public final LineSegment right;
@@ -20,6 +20,9 @@ public class SquareBumper implements Gadget {
     private double countdown;
     private float gravity;
     
+    /**
+     * @returns name of the gadget
+     */
     public String getName() {
 		return name;
 	}
@@ -58,7 +61,7 @@ public class SquareBumper implements Gadget {
         double time;
         wallThatWillCollide = null;
         for (LineSegment wall: walls){
-            time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
+            time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);            
             if (-1< time && time < countdown) {
                 countdown = time;
                 wallThatWillCollide = wall;
@@ -74,26 +77,22 @@ public class SquareBumper implements Gadget {
      * @param timeToGo how much time is left in this step
      * @param board needed for recursive calling
      */
-    public void collide(Ball ball, double timeToGo, Board board){       
-        ball.move(countdown);
-        //System.out.println(countdown+ " "+ timeToGo);
-        //System.out.println(ball.velocity);
+    public void collide(Ball ball, double timeToGo, Board board){ 
+        ball.move(countdown-0.5/ball.velocity.length());
         ball.velocity = Geometry.reflectWall(wallThatWillCollide, ball.velocity, reflectCoeff);
         ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
-        //System.out.println(ball.velocity);
         if (timeToGo-countdown >0){
-            board.moveOneBall(ball, timeToGo-countdown);
+            board.moveOneBall(ball, timeToGo-countdown+0.5/ball.velocity.length());
         }
         trigger();
     }
     
     /**
-   * nothing happens.
-   */
+     * nothing happens.
+     */
     public void action(){
         
     }
-    
 
     /**
      * Trigger other gadget's actions.
