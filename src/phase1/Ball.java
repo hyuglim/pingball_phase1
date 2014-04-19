@@ -6,7 +6,7 @@ import java.util.List;
 import physics.*;
 
 /**
- * Describes a ball that is used in a pingball game. It has a diameter of 1L.
+ * Describes a ball that is used in a pingball game. It has a diameter of 0.5L.
  */
 public class Ball {
 
@@ -25,6 +25,7 @@ public class Ball {
 	public Ball (String name, Float x, Float y, Float xVel, Float yVel, Float gravity) {
 		this.name = name;
 		this.circle = new Circle(x, y, 0.25);
+		//to account for our time step 50ms
 		this.velocity = new Vect(0.05*xVel, 0.05*yVel);
 	}
 
@@ -34,6 +35,7 @@ public class Ball {
 	 */
 	public void move(double time){
 		double newX = circle.getCenter().x() + time*velocity.x();
+		
 		if (newX+circle.getRadius() > 20.05) newX = 20.05-circle.getRadius();
 		if (newX-circle.getRadius() < -0.05) newX = -0.05+circle.getRadius();
 

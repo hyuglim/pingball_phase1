@@ -2,7 +2,6 @@ package phase1;
 
 import java.lang.Float;
 import java.lang.Integer;
-import java.awt.geom.Line2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,8 +17,6 @@ import physics.*;
 
 /**
  * Describes a board that is used for a pingball game. It is 20L x 20L in size.
- * @author Harlin
- *
  */
 public class Board {
         private String name;
@@ -31,7 +28,7 @@ public class Board {
         private Map<String, Ball> balls = new ConcurrentHashMap <String, Ball>();
         private String[][] state = new String[22][22];
         private final List<Wall> walls = Arrays.asList(new Wall(0), new Wall(1), new Wall(2), new Wall(3));
-        private final String[] neighbors= new String[4];
+        public final String[] neighbors= new String[4];
         
         /**
          * 
@@ -231,22 +228,18 @@ public class Board {
         public Board (File file) throws IOException {
                 BufferedReader bfread=new BufferedReader(new FileReader (file));
                 String line;
-                for (int j =-1; j<21; j++){
-                    for(int i=-1; i<21; i++){
-                        if (i==-1 || j==-1 || i==20 || j==20){
-                            state[i+1][j+1] = ".";
-                        } else {
-                            state[i+1][j+1]=" ";
-                        }
-                    }
-                }
+                
                 //initiate balls and gadgets
-
-                balls=new ConcurrentHashMap <String, Ball>();
                 positionofGadgets.put(new Tuple(-1, 21), walls.get(0));
                 positionofGadgets.put(new Tuple(-1, -1), walls.get(1));
                 positionofGadgets.put(new Tuple(21, -1), walls.get(2));
                 positionofGadgets.put(new Tuple(21, 21), walls.get(3));
+                
+                nameofGadgets.put(walls.get(0).name, walls.get(0));
+                nameofGadgets.put(walls.get(1).name, walls.get(1));
+                nameofGadgets.put(walls.get(2).name, walls.get(2));
+                nameofGadgets.put(walls.get(3).name, walls.get(3));
+                
                 while ((line=bfread.readLine())!=null) {
                   //empty lines with just spaces will be ignored
                         if (line.equals("")) {
@@ -314,24 +307,28 @@ public class Board {
                 for(int i=-1; i<21; i++){
                     //draw the outside walls
                     if (i==-1 || j==-1 || i==20 || j==20){
-                        state[i+1][j+1] = ".";
-                        //if this board has neighbors, show the name.
-                        if (neighbors[0]!=null){
-                            state[i+1][-1] = String.valueOf(neighbors[0].charAt(i+1));
-                        }
-                        if (neighbors[1]!=null){
-                            state[i+1][20] = String.valueOf(neighbors[1].charAt(i+1));
-                        }
-                        if (neighbors[2]!=null){
-                            state[-1][j+1] = String.valueOf(neighbors[2].charAt(j+1));
-                        }
-                        if (neighbors[3]!=null){
-                            state[20][j+1] = String.valueOf(neighbors[3].charAt(j+1));
-                        }
+                       //if this board has neighbors, show the name.
+                       if (neighbors[0]!=null && i+1 < neighbors[0].length()){
+                           state[i+2][0] = String.valueOf(neighbors[0].charAt(i+1)) ;
+                       }
+                       if (neighbors[1]!=null && i+1 < neighbors[1].length()){
+                           state[i+2][21] = String.valueOf(neighbors[1].charAt(i+1));
+                       }
+                       if (neighbors[2]!=null && j+1 < neighbors[2].length()){
+                           state[0][j+2] = String.valueOf(neighbors[2].charAt(j+1));
+                       }
+                       if (neighbors[3]!=null && j+1 < neighbors[3].length()){
+                           state[21][j+2] = String.valueOf(neighbors[3].charAt(j+1));
+                       }
+                       
+                       //if there's no more name to print, print "."
+                       if (state[i+1][j+1] ==null) state[i+1][j+1] = ".";
+                       
                     } else if(state[i+1][j+1] ==null || state[i+1][j+1].equals("*")){
                         //clear non-gadget space and previous ball positions
                         state[i+1][j+1] = " ";
                     }
+                    
                 }
             }
             
@@ -343,13 +340,8 @@ public class Board {
         }
         
         /**
-         * Show which boards are adjacent to this board.
-         * @param wallNum is either 0, 1, 2, 3 -> each corresponding to top, bottom, left, right walls
-         */
-        
-        /**
          * Tells the board who its new neighbor is.
-         * @param wallNum indicates which wall has become invisible
+         * @param wallNum indicates which wall has become invisible. 0, 1, 2, 3 -> each corresponding to top, bottom, left, right walls
          * @param neighbor name of the neighboring board
          */
         public void giveNeighborsName(int wallNum, String neighbor){
@@ -421,7 +413,7 @@ public class Board {
             double timeUntilCollision = timetoGo;
             
             //loop through the gadgets and find the closest gadget in the path.
-            for (Gadget gad:positionofGadgets.values()) {
+            for (Gadget gad:nameofGadgets.values()) {
                 if (gad.timeUntilCollision(b) < timeUntilCollision) {
                     gadgetToCollideFirst = gad;
                     timeUntilCollision = gad.timeUntilCollision(b);
