@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import physics.*;
 
 import physics.Angle;
 import physics.Geometry;
@@ -28,9 +27,9 @@ public class Board {
         private Float gravity;
         private Float friction1;
         private Float friction2;
-        private Map<Tuple, Gadget> positionofGadgets = new ConcurrentHashMap <Tuple, Gadget>();
-        private Map<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
-        private Map<String, Ball> balls = new ConcurrentHashMap <String, Ball>();
+        private ConcurrentHashMap<Tuple, Gadget> positionofGadgets=new ConcurrentHashMap <Tuple, Gadget>();
+        private ConcurrentHashMap<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
+        private ConcurrentHashMap<String, Ball> balls;
         private String[][] state = new String[22][22];
         private final List<Wall> walls = Arrays.asList(new Wall(0), new Wall(1), new Wall(2), new Wall(3));
         public final String[] neighbors= new String[4];
@@ -77,9 +76,19 @@ public class Board {
         public Map<String, Ball> getBalls() {
                 return balls;
         }
+<<<<<<< HEAD
         
         
         
+=======
+       
+        /**
+         * clears all the balls associated with this board.
+         */
+        public void clearAllBalls(){
+            balls.clear();
+        }
+>>>>>>> 5de80968726825f454e02d7e5c92cf4f08ae89dc
         /**
          * @returns the positionofGadgets
          */
@@ -221,8 +230,7 @@ public class Board {
                     Gadget actGad = nameofGadgets.get(actName);
                     trigGad.addTrigger(actGad);
                 }
-        }
- 
+           }
  
         /**
          * Initializes a new Board and all the Gadgets in it from a .pb File.
@@ -234,6 +242,7 @@ public class Board {
                 String line;
                 
                 //initiate balls and gadgets
+                balls=new ConcurrentHashMap <String, Ball>();
                 positionofGadgets.put(new Tuple(-1, 21), walls.get(0));
                 positionofGadgets.put(new Tuple(-1, -1), walls.get(1));
                 positionofGadgets.put(new Tuple(21, -1), walls.get(2));
@@ -457,7 +466,10 @@ public class Board {
         /**
          * clears all the balls associated with this board.
          */
+<<<<<<< HEAD
         public void clearAllBalls(){
             balls.clear();
         }
+=======
+>>>>>>> 5de80968726825f454e02d7e5c92cf4f08ae89dc
 }

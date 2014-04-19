@@ -16,6 +16,7 @@ public class LeftFlipper implements Gadget{
     private double countdown;
     private LineSegment initflip;
     private float gravity;
+    private float angle;
     
     /**
      * @return the name of the flipper.
@@ -39,6 +40,7 @@ public class LeftFlipper implements Gadget{
         this.isOn = false;
         this.isRotating = false;
         this.gravity=gravity;
+        this.angle=0;
     }
     
     /**
@@ -87,6 +89,7 @@ public class LeftFlipper implements Gadget{
     
     /**
      * Toggles the flipper.
+     * 
      */
     public void action(){
         if (!isOn){
@@ -94,7 +97,7 @@ public class LeftFlipper implements Gadget{
             isOn = true;
             isRotating = true;
         } else {
-            flip = Geometry.rotateAround(flip, pivot, Angle.DEG_90);
+            flip = Geometry.rotateAround(flip, pivot, new Angle((float) 36));
             isOn = false;
             isRotating = true;
         }

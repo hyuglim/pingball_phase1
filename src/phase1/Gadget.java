@@ -42,4 +42,9 @@ public interface Gadget {
      * Trigger other gadget's actions.
      */
     public void trigger();
+    
+    /** 
+     * @return to string rep of the gadget
+     */
+    public String toString();
 }

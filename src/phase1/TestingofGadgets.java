@@ -3,7 +3,7 @@ package phase1;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class TestingRegex {
+public class TestingofGadgets {
 	
 	public static void main(String[] args) {
 		String test1="       board name = sampleBoard1 gravity=20.0 friction1=0.020 friction2=0.020";
