@@ -7,9 +7,9 @@ import physics.*;
 public class RightFlipper implements Gadget{
     public final Tuple coord;
     private final Vect pivot;
-    public LineSegment flip;
+    private LineSegment flip;
     LineSegment initflip;
-    public final String name;
+    private final String name;
     private final double reflectCoeff = 0.95;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
     private boolean isOn;
@@ -17,6 +17,9 @@ public class RightFlipper implements Gadget{
     private double countdown;
     private float gravity;
     
+    /**
+     * @returns name of the gadget
+     */
     public String getName() {
 		return name;
 	}
@@ -44,8 +47,9 @@ public class RightFlipper implements Gadget{
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
+        double angularvelocity = 1080*0.05; //In our design, each timestep is 0.05 
         if (isRotating){
-            countdown = Geometry.timeUntilRotatingWallCollision(flip, pivot, 54, ball.circle, ball.velocity);
+            countdown = Geometry.timeUntilRotatingWallCollision(flip, pivot, angularvelocity, ball.circle, ball.velocity);
         } else {
             countdown = Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity);
         }
@@ -60,12 +64,13 @@ public class RightFlipper implements Gadget{
      * @param timeToGo how much time is left in this step
      * @param board needed for recursive calling
      */
-    public void collide(Ball ball, double timeToGo, Board board){       
+    public void collide(Ball ball, double timeToGo, Board board){   
+        double angularvelocity = 1080*0.05; //In our design, each timestep is 0.05 
         ball.move(countdown-0.5/ball.velocity.length());
         if (isRotating){
-            ball.velocity = Geometry.reflectRotatingWall(flip, ball.circle.getCenter(), 54, ball.circle, ball.velocity, reflectCoeff);
+            ball.velocity = Geometry.reflectRotatingWall(flip, ball.circle.getCenter(), angularvelocity, ball.circle, ball.velocity, reflectCoeff);
         } else {
-            ball.velocity = Geometry.reflectRotatingWall(flip, ball.circle.getCenter(), 0, ball.circle, ball.velocity, reflectCoeff);
+            ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
         }
         ball.velocity = new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
@@ -108,8 +113,7 @@ public class RightFlipper implements Gadget{
     }
     
     /**
-     * 
-     * @return
+     * @returns how the flipper should be represented as a String.
      */
     public String[] showOrientation(){
         String[] result = new String[4];

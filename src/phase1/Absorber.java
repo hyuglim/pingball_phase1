@@ -7,17 +7,17 @@ import java.util.List;
 import physics.*;
 
 public class Absorber implements Gadget {
-    public final String name;
-    private final Tuple coord; //should be only integers
-    public final LineSegment left;
-    public final LineSegment top;
-    public final LineSegment right;
-    public final LineSegment bottom;
+    private final String name;
+    private final Tuple coord;
+    private final LineSegment left;
+    private final LineSegment top;
+    private final LineSegment right;
+    private final LineSegment bottom;
     public final int width;
     public final int height;
     private List<LineSegment> walls;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
-    public List<Ball> heldBalls = new ArrayList<Ball>();
+    private List<Ball> heldBalls = new ArrayList<Ball>();
     private double countdown;
     private float gravity;
 
@@ -103,6 +103,9 @@ public class Absorber implements Gadget {
         }
     }
 
+    /**
+     * @returns name of the gadget
+     */
 	public String getName() {
 		return name;
 	}

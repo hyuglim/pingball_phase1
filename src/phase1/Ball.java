@@ -44,7 +44,10 @@ public class Ball {
 		this.circle = new Circle(newX, newY, circle.getRadius());
 	}
 
+	/**
+	 * @returns the ball's center, but the coordinates are rounded down.  
+	 */
 	public Geometry.DoublePair getPosition(){
-		return new Geometry.DoublePair(Math.floor(circle.getCenter().x()),Math.floor(circle.getCenter().y()));
+		return new Geometry.DoublePair(Math.floor(circle.getCenter().x()), Math.floor(circle.getCenter().y()));
 	}
 }
