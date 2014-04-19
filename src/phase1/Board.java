@@ -1,12 +1,7 @@
 package phase1;
-<<<<<<< HEAD
- 
- 
-=======
 import java.lang.Float;
 import java.lang.Integer;
 import java.awt.geom.Line2D;
->>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,17 +13,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-<<<<<<< HEAD
-
-import physics.Angle;
-import physics.Geometry;
-=======
- 
-
 import physics.*;
->>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
+
 /**
  * Describes a board that is used for a pingball game. It is 20L x 20L in size.
+ * @author Harlin
  *
  */
 public class Board {
@@ -36,15 +25,9 @@ public class Board {
         private Float gravity;
         private Float friction1;
         private Float friction2;
-<<<<<<< HEAD
-        private ConcurrentHashMap<Tuple, Gadget> positionofGadgets=new ConcurrentHashMap <Tuple, Gadget>();
-        private ConcurrentHashMap<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
-        private ConcurrentHashMap<String, Ball> balls;
-=======
         private Map<Tuple, Gadget> positionofGadgets = new ConcurrentHashMap <Tuple, Gadget>();
         private Map<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
         private Map<String, Ball> balls = new ConcurrentHashMap <String, Ball>();
->>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
         private String[][] state = new String[22][22];
         private final List<Wall> walls = Arrays.asList(new Wall(0), new Wall(1), new Wall(2), new Wall(3));
         
@@ -91,6 +74,9 @@ public class Board {
                 return balls;
         }
  
+        /**
+         * @returns the positionofGadgets
+         */
         public Map<Tuple, Gadget> getPositionofGadgets(){
             return positionofGadgets;
         }
@@ -161,7 +147,6 @@ public class Board {
                     SquareBumper sBump= new SquareBumper(sCord,sName,this.getGravity());
                     positionofGadgets.put(sCord, sBump);
                     nameofGadgets.put(sName, sBump);
-                    state[xSquare+1][ySquare+1] = "#";
                 }
                 //circleBumper name=NAME x=INTEGER y=INTEGER
                 if (id.equals("circleBumper")) {
@@ -172,7 +157,6 @@ public class Board {
                     CircleBumper cBump = new CircleBumper(cCord,cName);
                     positionofGadgets.put(cCord, cBump);
                     nameofGadgets.put(cName, cBump);
-                    state[xCircle+1][yCircle+1] = "O";
                 }
                 //triangleBumper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("triangleBumper")) {
@@ -184,11 +168,6 @@ public class Board {
                     TriangularBumper tBump = new TriangularBumper(tCord, new Angle((float) oTriang), tName,this.getGravity());
                     positionofGadgets.put(tCord, tBump);
                     nameofGadgets.put(tName, tBump);
-                    if (oTriang.equals(0)||oTriang.equals(180)){
-                        state[xTriang+1][yTriang+1] = "/";
-                    } else {
-                        state[xTriang+1][yTriang+1] = "\\";
-                    }
                 }
                 //leftFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("leftFlipper")) {
@@ -200,19 +179,6 @@ public class Board {
                     LeftFlipper lfBump = new LeftFlipper(lfCord, lfName, new Angle((float) oLF),this.getGravity());
                     positionofGadgets.put(lfCord, lfBump);
                     nameofGadgets.put(lfName, lfBump);
-                    if (oLF.equals(0)){
-                        state[xLF+1][yLF+1] = "|";
-                        state[xLF+1][yLF+2] = "|";
-                    } else if(oLF.equals(90)){
-                        state[xLF+1][yLF+1] = "-";
-                        state[xLF+2][yLF+1] = "-";
-                    } else if(oLF.equals(180)){
-                        state[xLF+2][yLF+1] = "|";
-                        state[xLF+2][yLF+2] = "|";
-                    } else{
-                        state[xLF+1][yLF+2] = "-";
-                        state[xLF+2][yLF+2] = "-";
-                    }
                 }
                 //rightFlipper name=NAME x=INTEGER y=INTEGER orientation=0|90|180|270
                 if (id.equals("rightFlipper")) {
@@ -224,19 +190,6 @@ public class Board {
                     RightFlipper rfBump = new RightFlipper(rfCord, rfName, new Angle((float) oRF),this.getGravity());
                         positionofGadgets.put(rfCord, rfBump);
                         nameofGadgets.put(rfName, rfBump);
-                    if (oRF.equals(0)){
-                        state[xRF+2][yRF+1] = "|";
-                        state[xRF+2][yRF+2] = "|";
-                    } else if(oRF.equals(90)){
-                        state[xRF+1][yRF+2] = "-";
-                        state[xRF+2][yRF+2] = "-";
-                    } else if(oRF.equals(180)){
-                        state[xRF+1][yRF+1] = "|";
-                        state[xRF+1][yRF+2] = "|";
-                    } else{
-                        state[xRF+1][yRF+1] = "-";
-                        state[xRF+2][yRF+1] = "-";
-                    }
                 }
                // absorber name=NAME x=INTEGER y=INTEGER width=INTEGER height=INTEGER
                 if (id.equals("absorber")) {
@@ -248,12 +201,7 @@ public class Board {
                     Tuple aCord =new Tuple(xAbsorb, yAbsorb);
                     Absorber aBump = new Absorber(aCord,aName,wAbsorb,hAbsorb,this.getGravity());
                         positionofGadgets.put(aCord, aBump);
-                        nameofGadgets.put(aName, aBump);
-                        for(int w = 0; w <wAbsorb; w++){
-                            for (int h = 0; h < hAbsorb; h++){
-                                state[xAbsorb+1+w][yAbsorb+1+h] = "=";        
-                            }
-                        }                                    
+                        nameofGadgets.put(aName, aBump);                                  
                 }
                 //fire trigger=NAME action=NAME
                 if (id.equals("fire")) {
@@ -274,20 +222,6 @@ public class Board {
         public Board (File file) throws IOException {
                 BufferedReader bfread=new BufferedReader(new FileReader (file));
                 String line;
-                for (int j =-1; j<21; j++){
-                    for(int i=-1; i<21; i++){
-                        if (i==-1 || j==-1 || i==20 || j==20){
-                            state[i+1][j+1] = ".";
-                        } else {
-                            state[i+1][j+1]=" ";
-                        }
-                    }
-                }
-                //initiate balls and gadgets
-<<<<<<< HEAD
-                balls=new ConcurrentHashMap <String, Ball>();
-=======
->>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
                 positionofGadgets.put(new Tuple(-1, 21), walls.get(0));
                 positionofGadgets.put(new Tuple(-1, -1), walls.get(1));
                 positionofGadgets.put(new Tuple(21, -1), walls.get(2));
@@ -307,39 +241,67 @@ public class Board {
                 bfread.close();
         }
  
-        public void updateState(){
-            //System.out.println("in updatestate");
+        public void updateState(){          
+            for (Tuple pos: positionofGadgets.keySet()){
+                Gadget gad = positionofGadgets.get(pos);
+                if (gad.getClass().equals(SquareBumper.class)){
+                        //draw squarebumpers
+                        state[pos.x+1][pos.y+1] = "#";
+                    } else if (gad.getClass().equals(CircleBumper.class)){
+                        //print circlebumpers
+                        state[pos.x+1][pos.y+1] = "O";
+                    } else if (gad.getClass().equals(TriangularBumper.class)){
+                        //print triangular bumpers
+                        if (((TriangularBumper)gad).orientation.equals(Angle.ZERO)||((TriangularBumper)gad).orientation.equals(Angle.DEG_180)){
+                            state[pos.x+1][pos.y+1] = "/";
+                        } else {
+                            state[pos.x+1][pos.y+1] = "\\";
+                        }
+                    } else if (gad.getClass().equals(Absorber.class)){
+                        //print absorbers
+                        for(int w = 0; w <((Absorber)gad).width; w++){
+                            for (int h = 0; h < ((Absorber)gad).height; h++){
+                                state[pos.x+1+w][pos.y+1+h] = "=";        
+                            }
+                        } 
+                    } else {
+                        //draw the flippers
+                        String[] box = null;
+                        if (gad.getClass().equals(LeftFlipper.class)){
+                            LeftFlipper LFgad = (LeftFlipper) gad;
+                            box = LFgad.showOrientation();
+                        } else if (gad.getClass().equals(RightFlipper.class)){
+                            RightFlipper RFgad = (RightFlipper) gad;
+                            box = RFgad.showOrientation();
+                        }
+                        //flippers are a bitch.
+                        if (box!=null){
+                            state[pos.x+1][pos.y+1] = box[0];
+                            state[pos.x+2][pos.y+1] = box[1];
+                            state[pos.x+1][pos.y+2] = box[2];
+                            state[pos.x+2][pos.y+2] = box[3];
+                        }        
+                    }
+                }
+      
             for (int j =-1; j<21; j++){
                 for(int i=-1; i<21; i++){
-                   // if ()
-                    if(state[i+1][j+1].equals("*"))state[i+1][j+1] = " ";
-                }
-            }
-            
-            for (Gadget gad: positionofGadgets.values()){
-                Tuple coord =null;
-                String[] box = null;
-                if (gad.getClass().equals(LeftFlipper.class)){
-                    LeftFlipper LFgad = (LeftFlipper) gad;
-                    coord = LFgad.coord;
-                    box = LFgad.showOrientation();
-                } else if (gad.getClass().equals(RightFlipper.class)){
-                    RightFlipper RFgad = (RightFlipper) gad;
-                    coord = RFgad.coord;
-                    box = RFgad.showOrientation();
-                }
-                if (coord != null && box!=null){
-                    state[coord.x+1][coord.y+1] = box[0];
-                    state[coord.x+2][coord.y+1] = box[1];
-                    state[coord.x+1][coord.y+2] = box[2];
-                    state[coord.x+2][coord.y+2] = box[3];
+                    //draw the outside walls
+                    if (i==-1 || j==-1 || i==20 || j==20){
+                        state[i+1][j+1] = ".";
+                    } else if(state[i+1][j+1] ==null || state[i+1][j+1].equals("*")){
+                        //clear non-gadget space and previous ball positions
+                        state[i+1][j+1] = " ";
+                    }
                 }
             }
             
             for (Ball b: balls.values()){
+                //draw the balls. should be the last step.
                 Geometry.DoublePair pos = b.getPosition();
                 state[(int)pos.d1+1][(int)pos.d2+1] = "*";
             }
+
         }
        
         /**
@@ -366,13 +328,21 @@ public class Board {
         }
  
         /**
-         * Update the list of balls that are on the board at the beginning of time step.
-         * @param b list of balls
+         * Takes a ball out of this board.
+         * @param ballname name of the Ball that is to be removed from this board.
          */
         public void deleteBall(String ballname){
             balls.remove(ballname);
         }
         
+        /**
+         * Inserts a ball into the board.
+         * @param ballname name of the Ball
+         * @param x starting x-coordinate of the ball
+         * @param y starting y-coordinate of the ball
+         * @param xVel starting x-velocity of the ball
+         * @param yVel starting y-velocity of the ball
+         */
         public void insertBall(String ballname, Float x, Float y, Float xVel, Float yVel){
             balls.put(ballname, new Ball(ballname, x, y, xVel, yVel, gravity));
         }
@@ -397,27 +367,30 @@ public class Board {
             Gadget gadgetToCollideFirst = null;
             double timeUntilCollision = timetoGo;
             
+            //loop through the gadgets and find the closest gadget in the path.
             for (Gadget gad:positionofGadgets.values()) {
                 if (gad.timeUntilCollision(b) < timeUntilCollision) {
                     gadgetToCollideFirst = gad;
                     timeUntilCollision = gad.timeUntilCollision(b);
                 }
             }
-            //System.out.println("Closest gadget: "+gadgetToCollideFirst);
-            //System.out.println("time until collsion: "+timeUntilCollision);
 
             if (timeUntilCollision < timetoGo){
+                //call collide method of the gadget
                 gadgetToCollideFirst.collide(b, timetoGo, this);
             } else{
-                //when the ball doesn't collide with any gadgets
+                //when the ball doesn't collide with any gadgets, just move in empty space
                 b.move(timetoGo);
             }
         }
  
         /**
-         *  format: hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel
-         *  wallNum is either 0,1,2,3 -> top, bottom, left, right
-         * @return output message
+         * Communicate with the client thread whether a ball is hitting a wall or not.
+         * The return message should either be empty(for no collision)
+         * or be in the format of: 
+         * "hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel"
+         * where wallNum is either 0,1,2,3 -> each corresponding to top, bottom, left, right walls
+         * @returns message for the client thread
          */
         public String whichWallGotHit(){
             String message ="";

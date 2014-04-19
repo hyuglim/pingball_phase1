@@ -107,6 +107,10 @@ public class RightFlipper implements Gadget{
         }
     }
     
+    /**
+     * 
+     * @return
+     */
     public String[] showOrientation(){
         String[] result = new String[4];
         if (flip.toLine2D().ptSegDist(coord.x, coord.y+1.0)<=0.1){
@@ -130,9 +134,6 @@ public class RightFlipper implements Gadget{
             result[2] = " ";
             result[3] = " ";
         }
-        //System.out.println(name);
-        //System.out.println(flip);
-        //System.out.println(result[0]+result[1]+"\n"+result[2]+result[3]);
         return result;
     }
 }
