@@ -8,7 +8,7 @@ import physics.*;
 
 public class SquareBumper implements Gadget {
     public final String name;
-    private final Tuple coord; //should be only integers
+    private final Tuple coord; 
     public final LineSegment left;
     public final LineSegment top;
     public final LineSegment right;
@@ -20,6 +20,9 @@ public class SquareBumper implements Gadget {
     private double countdown;
     private float gravity;
     
+    /**
+     * @returns name of the gadget
+     */
     public String getName() {
 		return name;
 	}
@@ -58,18 +61,9 @@ public class SquareBumper implements Gadget {
         double time;
         wallThatWillCollide = null;
         for (LineSegment wall: walls){
-            int counter = 0;
-            time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);
-            if (time == 0) {
-                counter ++;
-                System.out.println("counter time: " + counter);
-            }
-            
+            time = Geometry.timeUntilWallCollision(wall, ball.circle, ball.velocity);            
             if (-1< time && time < countdown) {
                 countdown = time;
-//                if(countdown == 0)
-//                    countdown = (double) 1.0/100;
-//               
                 wallThatWillCollide = wall;
             }
         }
@@ -84,7 +78,6 @@ public class SquareBumper implements Gadget {
      * @param board needed for recursive calling
      */
     public void collide(Ball ball, double timeToGo, Board board){ 
-        System.out.println("countdown: "+countdown);
         ball.move(countdown-0.5/ball.velocity.length());
         ball.velocity = Geometry.reflectWall(wallThatWillCollide, ball.velocity, reflectCoeff);
         ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
@@ -95,12 +88,11 @@ public class SquareBumper implements Gadget {
     }
     
     /**
-   * nothing happens.
-   */
+     * nothing happens.
+     */
     public void action(){
         
     }
-    
 
     /**
      * Trigger other gadget's actions.
