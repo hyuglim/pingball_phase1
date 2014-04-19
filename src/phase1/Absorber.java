@@ -73,7 +73,7 @@ public class Absorber implements Gadget {
      * @param board needed for recursive calling
      */
     public void collide(Ball ball, double timeToGo, Board board){       
-        if(countdown>0) ball.move(countdown);
+        if(countdown>0) ball.move(countdown-0.5/ball.velocity.length());
         ball.velocity = new Vect(0, 0);
         ball.circle = new Circle(coord.x+bottom.length()-0.25, coord.y+right.length()-0.25, 0.5);
         heldBalls.add(ball);

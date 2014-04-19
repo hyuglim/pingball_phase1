@@ -124,8 +124,6 @@ public class PingballClient{
 		System.out.println("host: " + host);
 		System.out.println("file: " + file);
 
-
-
 		//starting threads and shit
 		Board board =null;
 		//single player mode

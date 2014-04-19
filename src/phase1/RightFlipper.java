@@ -12,7 +12,8 @@ public class RightFlipper implements Gadget{
     public final String name;
     private final double reflectCoeff = 0.95;
     private List<Gadget> gadgetsToBeTriggered = new ArrayList<Gadget>();
-    public boolean isOn;
+    private boolean isOn;
+    private boolean isRotating;
     private double countdown;
     private float gravity;
     
@@ -33,6 +34,7 @@ public class RightFlipper implements Gadget{
         this.flip = Geometry.rotateAround(initflip, new Vect(coord.x+1, coord.y+1), orientation);
         this.pivot = flip.p1();
         this.isOn = false;
+        this.isRotating = false;
         this.gravity=gravity;
      }
 
@@ -42,7 +44,12 @@ public class RightFlipper implements Gadget{
      * @returns how much time is left until collision
      */
     public double timeUntilCollision(Ball ball){
-        countdown = Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity); 
+        if (isRotating){
+            countdown = Geometry.timeUntilRotatingWallCollision(flip, pivot, 54, ball.circle, ball.velocity);
+        } else {
+            countdown = Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity);
+        }
+        isRotating = false;
         return countdown;
     };
     
@@ -54,25 +61,19 @@ public class RightFlipper implements Gadget{
      * @param board needed for recursive calling
      */
     public void collide(Ball ball, double timeToGo, Board board){       
-        ball.move(countdown);
-        ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
-        ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
+        ball.move(countdown-0.5/ball.velocity.length());
+        if (isRotating){
+            ball.velocity = Geometry.reflectRotatingWall(flip, ball.circle.getCenter(), 54, ball.circle, ball.velocity, reflectCoeff);
+        } else {
+            ball.velocity = Geometry.reflectRotatingWall(flip, ball.circle.getCenter(), 0, ball.circle, ball.velocity, reflectCoeff);
+        }
+        ball.velocity = new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
         if (timeToGo-countdown >0){
-            board.moveOneBall(ball, timeToGo-countdown);
+            board.moveOneBall(ball, timeToGo-countdown+0.5/ball.velocity.length());
         }
         trigger();
     }
-    
-    /**
-     * Add trigger-action hook to a gadget.
-     * @param gadget the gadget whose action will be hooked
-     */
-    public void collide(Ball ball){
-        if (!(Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity)>0)){
-            ball.velocity = Geometry.reflectWall(flip, ball.velocity, reflectCoeff);
-            ball.velocity=new Vect(ball.velocity.x(), ball.velocity.y()+gravity);
-        }
-    }
+
     
     /**
      * Add trigger-action hook to a gadget.
@@ -89,9 +90,11 @@ public class RightFlipper implements Gadget{
         if (!isOn){
             flip = Geometry.rotateAround(flip, pivot, Angle.DEG_90);
             isOn = true;
+            isRotating = true;
         } else {
             flip = Geometry.rotateAround(flip, pivot, Angle.DEG_270);
             isOn = false;
+            isRotating = true;
         }
     }
 
