@@ -115,9 +115,21 @@ public class TestingParser {
 			assertTrue(b.getGravity().equals((float) 0.5));
 			String s="";
 			//checks for all the right tags
-			for (Gadget g: b.getPositionofGadgets().values()) {
-				s=s.concat(g.getName());
+			String temp="";
+			for (String name: b.nameofGadgets().keySet()) {
+				temp=temp.concat(name);
 			}
+			System.out.println(temp);
+			assertTrue(temp.contains("Square"));
+			assertTrue(temp.contains("SquareB"));
+			assertTrue(temp.contains("SquareC"));
+			assertTrue(temp.contains("SquareD"));
+			assertTrue(temp.contains("SquareE"));
+			assertTrue(temp.contains("SquareF"));
+			assertTrue(temp.contains("SquareG"));
+			assertTrue(temp.contains("SquareH"));
+			assertTrue(temp.contains("Circle"));
+			assertTrue(temp.contains("Tri"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -131,6 +143,16 @@ public class TestingParser {
 			assertTrue(b.getFriction2().equals((float) 0.025));
 			assertTrue(b.getName().equals("ExampleA"));
 			assertTrue(b.getGravity().equals((float) 1.0));
+			String temp="";
+			for (String name: b.nameofGadgets().keySet()) {
+				temp=temp.concat(name);
+			}
+			assertTrue(temp.contains("Square"));
+			assertTrue(temp.contains("SquareB"));
+			assertTrue(temp.contains("SquareC"));
+			assertTrue(temp.contains("SquareD"));
+			assertTrue(temp.contains("Circle"));
+			assertTrue(temp.contains("Tri"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

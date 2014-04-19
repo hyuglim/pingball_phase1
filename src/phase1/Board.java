@@ -1,4 +1,5 @@
 package phase1;
+
 import java.lang.Float;
 import java.lang.Integer;
 import java.awt.geom.Line2D;
@@ -34,6 +35,7 @@ public class Board {
         private ConcurrentHashMap<String, Ball> balls;
         private String[][] state = new String[22][22];
         private final List<Wall> walls = Arrays.asList(new Wall(0), new Wall(1), new Wall(2), new Wall(3));
+        private final String[] neighbors= new String[4];
         
         /**
          * 
@@ -77,21 +79,29 @@ public class Board {
         public Map<String, Ball> getBalls() {
                 return balls;
         }
-        
-        
- 
+       
+        /**
+         * clears all the balls associated with this board.
+         */
+        public void clearAllBalls(){
+            balls.clear();
+        }
         /**
          * @returns the positionofGadgets
          */
         public Map<Tuple, Gadget> getPositionofGadgets(){
             return positionofGadgets;
         }
+        
+        public ConcurrentHashMap<String, Gadget> nameofGadgets(){
+            return nameofGadgets;
+        }
+        
         /**
          * Reads the line and gets information about the board from it.
          * @param line one line of String read from the file
          */
         public void matching (String line) {
- 
                 String id="";
                 String firstWord= "\\s*([a-zA-Z0-9]+)\\s+";
                 Pattern firstWordpat=Pattern.compile(firstWord);
@@ -118,8 +128,8 @@ public class Board {
                         if (counter==2) {
                                 name=names.get(0);
                                 gravity=Float.parseFloat(names.get(1));
+                                //scale gravity to our time step of 50ms
                                 gravity= gravity*((float)0.05);
-                                System.out.println("gravity: "+gravity);
                                 this.friction1=(float) 0.025;
                                 this.friction2=(float) 0.025;
                                
@@ -127,8 +137,8 @@ public class Board {
                         else {
                                 this.name=names.get(0);
                                 this.gravity=Float.parseFloat(names.get(1));
+                                //scale gravity to our time step of 50ms
                                 gravity= gravity*((float)0.05);
-                                System.out.println("gravity: "+gravity);
                                 this.friction1=Float.parseFloat(names.get(2));
                                 this.friction2=Float.parseFloat(names.get(3));
                         }
@@ -243,7 +253,7 @@ public class Board {
                 positionofGadgets.put(new Tuple(21, -1), walls.get(2));
                 positionofGadgets.put(new Tuple(21, 21), walls.get(3));
                 while ((line=bfread.readLine())!=null) {
-                       
+                  //empty lines with just spaces will be ignored
                         if (line.equals("")) {
                                 continue;
                         }
@@ -251,12 +261,17 @@ public class Board {
                                 continue;
                         }
                         else {
-                                this.matching(line); //empty lines with just spaces will be ignored
+                                this.matching(line); 
                         }
                 }
                 bfread.close();
         }
- 
+        
+        
+        /**
+         * Updates the state of the board at the moment, including the orientation of flippers
+         * and position of balls.
+         */
         public void updateState(){          
             for (Tuple pos: positionofGadgets.keySet()){
                 Gadget gad = positionofGadgets.get(pos);
@@ -305,6 +320,19 @@ public class Board {
                     //draw the outside walls
                     if (i==-1 || j==-1 || i==20 || j==20){
                         state[i+1][j+1] = ".";
+                        //if this board has neighbors, show the name.
+                        if (neighbors[0]!=null){
+                            state[i+1][-1] = String.valueOf(neighbors[0].charAt(i+1));
+                        }
+                        if (neighbors[1]!=null){
+                            state[i+1][20] = String.valueOf(neighbors[1].charAt(i+1));
+                        }
+                        if (neighbors[2]!=null){
+                            state[-1][j+1] = String.valueOf(neighbors[2].charAt(j+1));
+                        }
+                        if (neighbors[3]!=null){
+                            state[20][j+1] = String.valueOf(neighbors[3].charAt(j+1));
+                        }
                     } else if(state[i+1][j+1] ==null || state[i+1][j+1].equals("*")){
                         //clear non-gadget space and previous ball positions
                         state[i+1][j+1] = " ";
@@ -317,9 +345,22 @@ public class Board {
                 Geometry.DoublePair pos = b.getPosition();
                 state[(int)pos.d1+1][(int)pos.d2+1] = "*";
             }
-
         }
-       
+        
+        /**
+         * Show which boards are adjacent to this board.
+         * @param wallNum is either 0, 1, 2, 3 -> each corresponding to top, bottom, left, right walls
+         */
+        
+        /**
+         * Tells the board who its new neighbor is.
+         * @param wallNum indicates which wall has become invisible
+         * @param neighbor name of the neighboring board
+         */
+        public void giveNeighborsName(int wallNum, String neighbor){
+            neighbors[wallNum] = neighbor;
+        }
+        
         /**
          * Display the board! The rules are as follows:
          * Ball: "*"
@@ -368,7 +409,8 @@ public class Board {
          */
         public void moveAllBalls(){
             for (Ball b: balls.values()) {
-                moveOneBall(b, 1.0+this.friction1+this.friction2); //assume friction elongates travel time by this set amount
+                //elongates time step due to friction.
+                moveOneBall(b, 1.0+this.friction1 +this.friction2);
             }
         }
  
@@ -405,7 +447,7 @@ public class Board {
          * The return message should either be empty(for no collision)
          * or be in the format of: 
          * "hit NAMEofBoard wallNum  NAMEofBall x y xVel yVel"
-         * where wallNum is either 0,1,2,3 -> each corresponding to top, bottom, left, right walls
+         * where wallNum is either 0, 1, 2, 3 -> each corresponding to top, bottom, left, right walls
          * @returns message for the client thread
          */
         public String whichWallGotHit(){
@@ -420,4 +462,8 @@ public class Board {
             }            
             return message;     
         }
+        
+        /**
+         * clears all the balls associated with this board.
+         */
 }

@@ -18,6 +18,9 @@ public class LeftFlipper implements Gadget{
     private float gravity;
     private float angle;
     
+    /**
+     * @return the name of the flipper.
+     */
     public String getName() {
 		return name;
 	}
@@ -60,8 +63,6 @@ public class LeftFlipper implements Gadget{
             countdown = Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity);
         }
         isRotating = false;
-
-//        countdown = Geometry.timeUntilWallCollision(flip, ball.circle, ball.velocity); 
         return countdown;
     };
     
@@ -111,7 +112,10 @@ public class LeftFlipper implements Gadget{
             gad.action();
         }
     }
-
+    
+    /**
+     * @returns how the flipper should be represented as a String.
+     */
     public String[] showOrientation(){
         String[] result = new String[4];
         if (flip.toLine2D().ptSegDist(coord.x, coord.y+1.0)<=0.1){
@@ -135,9 +139,6 @@ public class LeftFlipper implements Gadget{
             result[2] = " ";
             result[3] = " ";
         }
-        //System.out.println(name);
-        //System.out.println(flip);
-        //System.out.println(result[0]+result[1]+"\n"+result[2]+result[3]);
         return result;
     }
 }
