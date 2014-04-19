@@ -1,7 +1,12 @@
 package phase1;
+<<<<<<< HEAD
+ 
+ 
+=======
 import java.lang.Float;
 import java.lang.Integer;
 import java.awt.geom.Line2D;
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,9 +18,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+<<<<<<< HEAD
+
+import physics.Angle;
+import physics.Geometry;
+=======
  
 
 import physics.*;
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
 /**
  * Describes a board that is used for a pingball game. It is 20L x 20L in size.
  *
@@ -25,9 +36,15 @@ public class Board {
         private Float gravity;
         private Float friction1;
         private Float friction2;
+<<<<<<< HEAD
+        private ConcurrentHashMap<Tuple, Gadget> positionofGadgets=new ConcurrentHashMap <Tuple, Gadget>();
+        private ConcurrentHashMap<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
+        private ConcurrentHashMap<String, Ball> balls;
+=======
         private Map<Tuple, Gadget> positionofGadgets = new ConcurrentHashMap <Tuple, Gadget>();
         private Map<String, Gadget> nameofGadgets = new ConcurrentHashMap <String, Gadget>();
         private Map<String, Ball> balls = new ConcurrentHashMap <String, Ball>();
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
         private String[][] state = new String[22][22];
         private final List<Wall> walls = Arrays.asList(new Wall(0), new Wall(1), new Wall(2), new Wall(3));
         
@@ -267,6 +284,10 @@ public class Board {
                     }
                 }
                 //initiate balls and gadgets
+<<<<<<< HEAD
+                balls=new ConcurrentHashMap <String, Ball>();
+=======
+>>>>>>> b32861c95f7b6512da4524dc580f8323b44c8231
                 positionofGadgets.put(new Tuple(-1, 21), walls.get(0));
                 positionofGadgets.put(new Tuple(-1, -1), walls.get(1));
                 positionofGadgets.put(new Tuple(21, -1), walls.get(2));

@@ -21,7 +21,9 @@ public class Communicator implements Runnable{
 		this.board = board;
 	}
 
-
+	/**
+	 * handleConnection and then close the socket
+	 */
 	public void run() {
 		try{
 			//if connection successful
@@ -55,12 +57,12 @@ public class Communicator implements Runnable{
 				@SuppressWarnings("static-access")
 				public void run() {
 					while(true) {
-//						try {
-//							this.sleep(50);
-//						} catch (InterruptedException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
+						try {
+							this.sleep(50);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						String hitwall = board.whichWallGotHit();
 						if(! hitwall.equals("")){//if ball hits a wall
 							synchronized(out){
@@ -81,16 +83,7 @@ public class Communicator implements Runnable{
 					if (output.equals("server says I should not exist anymore...")) {
 						return;
 					}
-
-					//random debugin details
-					if(output.equals("hello")) {
-						synchronized(out) {
-							out.println("client!");
-						}						
-					}
-				}
-
-			
+				}			
 			}
 		} finally {
 			out.close();
@@ -99,7 +92,7 @@ public class Communicator implements Runnable{
 	}
 
 	/**
-	 * 
+	 * Modify the board according to what the server says
 	 * @param input
 	 * @return a String telling the Client what to do
 	 */
