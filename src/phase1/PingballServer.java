@@ -96,6 +96,20 @@ public class PingballServer {
 		this.serverSocket = new ServerSocket(port);
 
 	}
+	
+	private void notifyBoard(String name) throws IOException {
+		Socket socket = neighbors.get(name).getThree();
+		List<String> adj = neighbors.get(name).getOne();
+		List<Boolean> invis = neighbors.get(name).getTwo();
+		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+		
+		for (int i = 0; i < adj.size(); i++) {
+			if (invis.get(i)) {
+				String neigh = adj.get(i);
+				out.println("mark " + i + " " + neigh);
+			}
+		}		
+	}
 
 
 	/**
@@ -104,8 +118,9 @@ public class PingballServer {
 	 * @param left board
 	 * @param right board
 	 * @throws IllegalArgumentException
+	 * @throws IOException 
 	 */
-	private void makeHorizNeighbors(String []words) throws IllegalArgumentException{
+	private void makeHorizNeighbors(String []words) throws IllegalArgumentException, IOException{
 		String left = words[1].split("_left")[0];
 		String right = words[2].split("_right")[0];
 
@@ -133,12 +148,19 @@ public class PingballServer {
 		} else {
 			// send message to the left board
 			setNeighborBoards(left, right, 3);
+			notifyBoard(left);
 
 			// send message to the right board
 			setNeighborBoards(right, left, 2);
+			notifyBoard(right);
+			
+			return;
 		}
+		
+		
 
 	}
+	
 
 
 	/**
@@ -146,8 +168,9 @@ public class PingballServer {
 	 * Top board's bottom wall is joined with Bottom board's top wall
 	 * @param top
 	 * @param bottom
+	 * @throws IOException 
 	 */
-	private void makeVerticNeighbors(String []words) throws IllegalArgumentException{
+	private void makeVerticNeighbors(String []words) throws IllegalArgumentException, IOException{
 		String top = words[1].split("_top")[0];
 		String bottom = words[2].split("_bottom")[0];
 		if (!neighbors.containsKey(top) || !neighbors.containsKey(bottom)) {
@@ -178,14 +201,14 @@ public class PingballServer {
 
 			// send message to the top board
 			setNeighborBoards(top, bottom, 1);
+			notifyBoard(top);
 
 			// send message to the right board
 			setNeighborBoards(bottom, top, 0);
-
+			notifyBoard(bottom);
+			return;
 
 		}
-
-
 
 	}
 
@@ -204,6 +227,11 @@ public class PingballServer {
 		printNeighbors();
 	}
 
+	/**
+	 * set a certain neighbor to be solid wall
+	 * @param board
+	 * @param loc
+	 */
 	private void setNullifyBoards(String board, int loc) {
 		List<String> adjBoardNames = neighbors.get(board).getOne();
 		List<Boolean> isInvisible = neighbors.get(board).getTwo();
@@ -232,22 +260,20 @@ public class PingballServer {
 	 * the main joinBoards function
 	 * parses the join command
 	 * @param command
+	 * @throws IOException 
+	 * @throws IllegalArgumentException 
 	 */
-	private void joinBoards(String command) {
+	private void joinBoards(String command) throws IllegalArgumentException, IOException {
 		// sample input: h NAME_left NAME_right
 		//               v NAME_top NAME_bottom
 		String []words = command.split(" ");
-		String first = words[1].split("_")[0];
-		String second = words[2].split("_")[0];
-
-		System.out.println("first: " + first);
-		System.out.println("second: " + second);
 
 		if (words[0].equals("h")) {
 			makeHorizNeighbors(words);
 		} else if (words[0].equals("v")) {
 			makeVerticNeighbors(words);
-		}				
+		}
+		
 	}
 
 	/**

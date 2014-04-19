@@ -76,12 +76,7 @@ public class Board {
                 return balls;
         }
         
-        /**
-         * clears all the balls associated with this board.
-         */
-        public void clearAllBalls(){
-            balls.clear();
-        }
+        
         
         /**
          * @returns the positionofGadgets

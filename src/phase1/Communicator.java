@@ -130,6 +130,13 @@ public class Communicator implements Runnable{
 			// DON'T DO ANYTHING. BUSINESS AS USUAL
 			return null;
 		}
+		
+		if(tokens[0].equals("mark")) {
+			int wallNum = Integer.parseInt(tokens[1]);
+			String neighbor = tokens[2];
+			board.giveNeighborsName(wallNum, neighbor);
+			return null;
+		}
 
 		
 
