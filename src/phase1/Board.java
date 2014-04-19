@@ -86,6 +86,8 @@ public class Board {
         public Map<String, Ball> getBalls() {
                 return balls;
         }
+        
+        
  
         /**
          * Reads the line and gets information about the board from it.
@@ -262,6 +264,7 @@ public class Board {
                     Gadget actGad = nameofGadgets.get(actName);
                     trigGad.addTrigger(actGad);
                 }
+           }
         }
  
  
